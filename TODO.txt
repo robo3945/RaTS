@@ -22,8 +22,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 
 DESIDERATA:
 
-- summary of the outcome
-- retrieve the file type magic byte from the web and store in a NoSQL DB
+- summary of the outcomes
+- retrieve the file type magic byte from the web and store in a NoSQL/SQLite DB
 - improve the speed of scanning (test with PyPy)
 - randomness test: compression lib must be configurable
 - automatic alerting with threshold

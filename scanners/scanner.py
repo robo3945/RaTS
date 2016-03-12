@@ -96,3 +96,11 @@ class Scanner(metaclass=abc.ABCMeta):
                     handle.write(s)
 
         return s
+
+    def print_found_csv_report(self, file_name=None):
+        """
+        Print a report of the outcomes
+        :param file_name:
+        :return:
+        """
+        raise NotImplementedError
