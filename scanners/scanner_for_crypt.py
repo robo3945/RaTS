@@ -81,13 +81,11 @@ class ScannerForCrypt(Scanner):
             for f in file_list:
                 if self.verbose:
                     print("- Searching for crypto content in the file: " + str(f))
-                # with utils.Timer(True) as t:
                 found = self.search_for_crypted_content(f)
                 if found:
                     print("=====> Found crypto content in: " + str(f))
                     self.found.append(found)
 
-            # passo ricorsivo nelle directory
             if recursive:
                 dir_list = [x for x in p.iterdir() if not x.is_symlink() and x.is_dir()]
                 for x in dir_list:

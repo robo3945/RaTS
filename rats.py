@@ -23,6 +23,7 @@ import sys
 from pathlib import Path
 
 from config import config
+from misc import utils
 from misc.notify import MailSender
 from scanners.scanner_for_crypt import ScannerForCrypt
 from scanners.scanner_for_file import ScannerForFile
@@ -153,4 +154,5 @@ def main_process(inputdir, prefix_output_file, ana_type, email, verbose=False, r
 
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    with utils.Timer(verbose=True) as t:
+        main(sys.argv[1:])
