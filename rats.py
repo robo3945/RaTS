@@ -2,7 +2,7 @@
 
 """
 RaTS: Ransomware Traces Scanner
-Copyright (C) 2015, 2016 Roberto Battistoni (r.battistoni@gmail.com)
+Copyright (C) 2015, 2016, 2017 Roberto Battistoni (r.battistoni@gmail.com)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -18,7 +18,9 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>
 """
 import getopt
+import random
 import re
+import string
 import sys
 from pathlib import Path
 
@@ -44,8 +46,9 @@ def main(argv):
     recursive = False
     verbose = False
 
-    usage_sample = \
-        config.name + ' - v. ' + config.version + """
+    output_start = config.RATS_LOGO + \
+                   "\n" + config.RATS_NAME + ' - v. ' + config.RATS_VERSION
+    usage_sample = output_start + """
 usage: rats.py -i <inputdir> | -l <dirlistfile> -o <outcsv> [-k|-m] [-e <notify_email>] [-r] [-h]
 -i <inputdir>       : the starting directory
 -l <dirlistfile>  : a txt file with the directories to scan
@@ -61,14 +64,14 @@ usage: rats.py -i <inputdir> | -l <dirlistfile> -o <outcsv> [-k|-m] [-e <notify_
     try:
         opts, args = getopt.getopt(argv, "hkmrvi:o:e:l:")
     except getopt.GetoptError as error:
-        print('************ arguments error ************', end='\n\n\n')
+        print('************ arguments error ************', end='\n')
         print('error: ' + str(error))
         print(usage_sample)
         sys.exit(2)
 
     for opt, arg in opts:
         if opt == '-h':
-            print('************ help ************', end='\n\n\n')
+            print('************ help ************', end='\n')
             print(usage_sample)
             sys.exit()
         elif opt == '-k':
@@ -89,25 +92,34 @@ usage: rats.py -i <inputdir> | -l <dirlistfile> -o <outcsv> [-k|-m] [-e <notify_
             dst_email = arg
 
     if (inputdir or dirlistfile) and ana_type:
-        dirs = []
-        if dirlistfile:
-            with open(dirlistfile, 'r') as handle:
-                content = handle.read()
-                dirs = content.split(sep='\n')
-                dirs = [dir.strip() for dir in dirs if dir and dir.strip()[0] != '#']
-        elif inputdir:
-            dirs.append(inputdir)
+        with utils.Timer(verbose=True):
+            dirs = []
+            if dirlistfile:
+                with open(dirlistfile, 'r') as handle:
+                    content = handle.read()
+                    dirs = content.split(sep='\n')
+                    dirs = [dir.strip() for dir in dirs if dir and dir.strip()[0] != '#']
+            elif inputdir:
+                dirs.append(inputdir)
 
-        for adir in dirs:
-            if ana_type == "all":
-                main_process(adir, outputcsv_prefix + "-manifest@", 'm', dst_email, verbose=verbose, recursive=recursive)
-                main_process(adir, outputcsv_prefix + "-crypto@", 'k', dst_email, verbose=verbose, recursive=recursive)
-            else:
-                main_process(adir, outputcsv_prefix + "-" + ana_type + "@", ana_type, dst_email, verbose=verbose,
-                             recursive=recursive)
+            for adir in dirs:
+                print(output_start + "\n\nHere we are!\n\n")
+                if ana_type == "all":
+                    main_process(adir, outputcsv_prefix + "-manifest@", 'm', dst_email, verbose=verbose,
+                                 recursive=recursive)
+                    main_process(adir, outputcsv_prefix + "-crypto@", 'k', dst_email, verbose=verbose,
+                                 recursive=recursive)
+                else:
+                    d = {'k': 'crypto', 'm': 'manifest'}
+                    main_process(adir, outputcsv_prefix + "-" + d[ana_type] + "@", ana_type, dst_email, verbose=verbose,
+                                 recursive=recursive)
     else:
-        print('************ no arguments given ************', end='\n\n\n')
         print(usage_sample)
+
+
+# Lambda expression for the random string
+def rand_str(n):
+    return ''.join([random.choice(string.ascii_lowercase) for i in range(n)])
 
 
 def main_process(inputdir, prefix_output_file, ana_type, email, verbose=False, recursive=False):
@@ -140,19 +152,18 @@ def main_process(inputdir, prefix_output_file, ana_type, email, verbose=False, r
 
     s.search(inputdir, recursive=recursive)
     suffix = re.sub(r"\W+", '_', inputdir, flags=re.IGNORECASE)
-    output_file = prefix_output_file + suffix + '.csv'
+    output_file = prefix_output_file + suffix + "." + rand_str(4) + '.csv'
     msg = s.print_found_csv(output_file)
-    if not msg.split():
+    if len(msg) == 0:
         print("Nothing detected!")
     elif email:
-        from_part = config.name
+        from_part = config.RATS_NAME
         to_part = email
         ms = MailSender()
-        subject = config.name + ": notify"
+        subject = config.RATS_NAME + ": notify"
         print("Send the notification e-mail to: " + to_part)
         ms.send_email(from_part, to_part, subject, msg)
 
 
 if __name__ == "__main__":
-    with utils.Timer(verbose=True) as t:
-        main(sys.argv[1:])
+    main(sys.argv[1:])

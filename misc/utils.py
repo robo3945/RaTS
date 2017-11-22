@@ -2,7 +2,7 @@
 
 """
 RaTS: Ransomware Traces Scanner
-Copyright (C) 2015, 2016 Roberto Battistoni (r.battistoni@gmail.com)
+Copyright (C) 2015, 2016, 2017 Roberto Battistoni (r.battistoni@gmail.com)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -18,9 +18,11 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>
 """
 
+import os
 import time
 
-from config import config
+from config.config import PATH_FOR_SIGNATURES, URL_FOR_SIGNATURES
+from logic.check_sigs import compile_sigs, check_sig_content
 
 try:
     import resource
@@ -28,10 +30,19 @@ except ImportError:
     pass
 
 
+def norm_percentage(f: float) -> str:
+    """
+    Normalize float in [0,1] to xxx% number with comma replacing dots
+    :param f:
+    :return:
+    """
+    return str(f * 100).replace('.', ',')
+
+
 def get_mem():
     res = 0
     try:
-        res = (resource.getrusage(resource.RUSAGE_SELF).ru_maxrss) / 1000000
+        res = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1000000
     except NameError:
         pass
 
@@ -45,28 +56,28 @@ def print_mem_usage(s):
         print('"Resource" package is not available on Windows')
         pass
 
-        # TODO missing the mem check for Windows platform
-        # http://code.activestate.com/recipes/511491/
 
-
-def is_compressed_file(content):
+def is_known_file_type(content, verbose: bool = False) -> bool:
     """
     Check if the file has a compressed file signature
     :param content:
+    :param verbose:
     :return:
     """
 
-    for s in config.compressed_signatures:
-        found = True
-        for i in range(len(s[1])):
-            if s[1][i] != content[i]:
-                found = False
-                break
+    path = os.path.expanduser(PATH_FOR_SIGNATURES)
+    url = URL_FOR_SIGNATURES
+    signatures = compile_sigs(path, url)
+    results = check_sig_content(content, signatures)
 
-        if found:
-            return s[0]
+    if results and results[0][2] == 0:
+        # It returns only the first one
+        if verbose:
+            sig, desc, offset = results[0][0], results[0][1], results[0][2]
+            print("[+] {0} : First type recogn. \"{1}\" <- Offset: {2}".format(sig, desc, str(offset)))
+        return True
 
-    return None
+    return False
 
 
 def check_configuration():

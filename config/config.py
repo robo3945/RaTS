@@ -2,7 +2,7 @@
 
 """
 RaTS: Ransomware Traces Scanner
-Copyright (C) 2015, 2016 Roberto Battistoni (r.battistoni@gmail.com)
+Copyright (C) 2015, 2016, 2017 Roberto Battistoni (r.battistoni@gmail.com)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -18,15 +18,24 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>
 """
 
-name = 'RaTS'
-version = '0.1b'
+RATS_NAME = 'RaTS'
+RATS_LOGO = \
+"""
+______    _____ _____ 
+| ___ \  |_   _/  ___|
+| |_/ /__ _| | \ `--. 
+|    // _` | |  `--. \\
+| |\ \ (_| | | /\__/ /
+\_| \_\__,_\_/ \____/ 
+"""
+RATS_VERSION = '0.9a'
 
 # ------ Rules file -------
 
 # ======================> File name test
 
 # ==> 1-step: Bad file name extensions that reveal the high probability of ransomware presence
-file_bad_exts = """
+FILE_BAS_EXTS = """
 .aaa,
 .cryptotorlocker,
 .ecc,
@@ -40,7 +49,7 @@ file_bad_exts = """
 """
 
 # ==> 2-step: File name prefixs that reveal the malware
-file_name_terms = """
+MANIFEST_FILE_NAME_TERM = """
 cryptolocker,
 !Decrypt-All-Files-,
 decrypt_instruct,
@@ -69,14 +78,14 @@ vault,
 # ==> 3-step: check the terms inside the content of the 2-step files
 
 # The maximum size of the file to be analyzed: ransomware disclaimer are little
-max_size = 40000  # bytes
+MANIFEST_MAX_SIZE = 40000  # bytes
 
 # extension of file name to analyze to check the evidence of terms ("file_text_terms_dic")
 # with certain percentage (>100)
-file_name_exts = ".html, .txt"
+FILE_NAME_EXTS = ".html, .txt"
 
 # RegEx pattern to search into the text: there is a tuple with regex ptrn and a percentage that is its weight
-file_text_terms_dic = [(r'\bcryptowall\b', 100),
+FILE_TEXT_TERMS_DIC = [(r'\bcryptowall\b', 100),
                        (r'\bcryptolocker\b', 100),
                        (r'\bCryptoDefense\b', 100),
                        (r'\bprivate\s+key\b', 80),
@@ -89,32 +98,56 @@ file_text_terms_dic = [(r'\bcryptowall\b', 100),
                        (r'\bencryption\b', 30),
                        (r'\bcrypto\b', 30)]
 
-# ==> threshold for the detection of the terms in the textual files
-threshold_terms_perc = 100
+# ==> threshold for the detection of the terms in the text files
+TERM_PREC_TH = 100
 
-# ======================> Crypto test
+# ----------------------------------------------------------
 
 # threshold for the randomness test
-randomness_threshold = 1.0
-rand_first_n_bytes_to_check = 100000000  # 1 MB
+COMPR_RAND_TH = 0.70
+ENTR_RAND_TH = 7.80
+# rand_first_n_bytes_to_check = 100_000_000
+NUM_BYTES_TO_RAND_CHECK = None
 
 # ----------------------------------------------------------
 
 # notification settings
-smtp_host = 'smtp.gmail.com'
-smtp_port = 465
-smtp_user = 'an.email@something.com'
-smtp_passwd = 'an.email.password'
+SMTP_HOST = 'smtp.gmail.com'
+SMTP_PORT = 465
+SMTP_USER = 'an.email@something.com'
+SMTP_PWD = 'an.email.password'
 
+# ----------------------------------------------------------
 # file type signatures
 
-compressed_signatures = \
-    [("ZIP: PKZIP archive_1", b'\x50\x4B\x03\x04'),
-     ("GZ", b'\x1F\x8B\x08'),
-     ("RAR", b'\x52\x61\x72\x21\x1A\x07\x00'),
-     ("SWF:flash file", b'\x43\x57\x53'),
-     ("SWF:flash player", b'\x46\x57\x53'),
-     ("CAB: Install Shield compressed file", b'\x49\x53\x63\x28'),
-     ("CAB: Microsoft cabinet file", b'\x4D\x53\x43\x46'),
-     ("7Z: 7-Zip compressed file", b'\x37\x7A\xBC\xAF\x27\x1C')
-     ]
+"""
+        b'\x50\x4B\x03\x04': "zip,jar,odt,ods,odp,docx,xlsx,pptx,vsdx,apk,aar" ,
+        b'\x50\x4B\x05\x06': "zip,jar,odt,ods,odp,docx,xlsx,pptx,vsdx,apk,aar",
+        b'\x50\x4B\x07\x08': "zip,jar,odt,ods,odp,docx,xlsx,pptx,vsdx,apk,aar",
+        b'\x1F\x8B\x08': "GZ",
+        b'\x52\x61\x72\x21\x1A\x07\x00': "RAR1.5",
+        b'\x52\x61\x72\x21\x1A\x07\x10\x00': "RAR5.0",
+        b'\x43\x57\x53': "SWF:flash file",
+        b'\x46\x57\x53': "SWF:flash player",
+        b'\x49\x53\x63\x28': "CAB: Install Shield compressed file",
+        b'\x4D\x53\x43\x46': "CAB: Microsoft cabinet file",
+        b'\x37\x7A\xBC\xAF\x27\x1C': "7Z: 7-Zip compressed file",
+        b'\x25\x50\x44\x46': "PDF",
+        b'\x30\x26\xB2\x75\x8E\x66\xCF\x11\xA6\xD9\x00\xAA\x00\x62\xCE\x6C': "asf, wma, wmv"
+
+"""
+
+# https://en.wikipedia.org/wiki/List_of_file_signatures
+KNOWN_FILE_SIGS = \
+    {
+        "deadbeef": "DEAD BEEF",
+        "ffd8ff": "JPEG ALL",
+        "0a0501": "PCX ALL"
+    }
+
+PATH_FOR_SIGNATURES = './file_sigs.pickle'
+URL_FOR_SIGNATURES = "http://www.filesignatures.net/index.php?page=all&currentpage={}"
+# the maximum lenght of the signature to find in the Dump file
+MAX_SIGNATURE_LENGHT = 60
+# the minimun length to consider the compression value
+MIN_LEN_COMPRESSED_CONTENT = 100

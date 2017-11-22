@@ -23,4 +23,4 @@ RaTS is written for Python 3 (> 3.5) and it works fine in a compiled way for Win
 
 ## Version history ##
 
-first version: 0.1 b
+first version: 0.9a

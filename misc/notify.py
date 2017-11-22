@@ -2,7 +2,7 @@
 
 """
 RaTS: Ransomware Traces Scanner
-Copyright (C) 2015, 2016 Roberto Battistoni (r.battistoni@gmail.com)
+Copyright (C) 2015, 2016, 2017 Roberto Battistoni (r.battistoni@gmail.com)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -29,10 +29,10 @@ from config import config
 
 class MailSender(object):
     def __init__(self):
-        self.smtp_host = config.smtp_host
-        self.smtp_port = config.smtp_port
-        self.smtp_user = config.smtp_user
-        self.smtp_passwd = config.smtp_passwd
+        self.smtp_host = config.SMTP_HOST
+        self.smtp_port = config.SMTP_PORT
+        self.smtp_user = config.SMTP_USER
+        self.smtp_passwd = config.SMTP_PWD
 
     def send_email(self, from_part, to_part, subject, content):
         """

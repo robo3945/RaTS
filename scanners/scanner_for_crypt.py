@@ -2,7 +2,7 @@
 
 """
 RaTS: Ransomware Traces Scanner
-Copyright (C) 2015, 2016 Roberto Battistoni (r.battistoni@gmail.com)
+Copyright (C) 2015, 2016, 2017 Roberto Battistoni (r.battistoni@gmail.com)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -18,13 +18,14 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>
 """
 
-import gzip
-import hashlib
-import imghdr
 from pathlib import Path
+
 from config import config
+from config.config import MIN_LEN_COMPRESSED_CONTENT
+from logic.csv_row import CsvRow
+from logic.randomness import RandTest
 from misc import utils
-from scanners.csv_row import CsvRow
+from misc.utils import norm_percentage
 from scanners.scanner import Scanner
 
 IMAGE = "Image"
@@ -36,10 +37,6 @@ class ScannerForCrypt(Scanner):
     Class managing the encrypted file: in the filename and in the content
     """
 
-    __b0 = str("").encode("utf-8")
-    __c0 = gzip.compress(__b0)
-    __l0 = len(__c0)
-
     def __init__(self, verbose=False):
         """
         Initialization
@@ -50,8 +47,10 @@ class ScannerForCrypt(Scanner):
     def print_config(self):
         print("%s Config elements for '%s' %s" % (Scanner.sep, __name__, Scanner.sep))
         print()
-        print("Randomness threshold (strictly greater than): " + str(config.randomness_threshold))
-        print("Number of first bytes of the content to elaborate: " + str(config.rand_first_n_bytes_to_check))
+        print(
+            "Compression Randomness threshold (strictly greater than): " + str(config.COMPR_RAND_TH))
+        print("Entropy Randomness threshold (strictly greater than): " + str(config.ENTR_RAND_TH))
+        print("Number of first bytes of the content to elaborate: " + str(config.NUM_BYTES_TO_RAND_CHECK))
         print()
 
     def search(self, path, recursive=True):
@@ -107,30 +106,26 @@ class ScannerForCrypt(Scanner):
         """
         try:
             with file.open(mode='rb') as handle:
-                content = handle.read(config.rand_first_n_bytes_to_check)
+                content = handle.read(config.NUM_BYTES_TO_RAND_CHECK)
+                lcontent = len(content)
 
                 # for the empty files
-                if len(content) == 0:
+                if lcontent == 0:
                     return None
 
-                sha1 = hashlib.sha1(content).hexdigest()
-                rnd = self.calc_randomness(content)
-                if rnd and rnd > config.randomness_threshold:
+                if not utils.is_known_file_type(content, verbose=self.verbose):
 
-                    # Localizable
-                    rnd = str(rnd * 100).replace('.', ',')
+                    # First test is the Entropy
+                    rnd_test_entropy = round(RandTest.calc_entropy_test(content, self.verbose), 2)
+                    if rnd_test_entropy > config.ENTR_RAND_TH:
 
-                    # default is crypto
-                    file_type = CRYPTO
-                    # if compressed and image then it's not random data
-                    if imghdr.what(file, h=content):
-                        file_type = IMAGE
-                    else:
-                        # magic bytes to identify compressed content
-                        ret = utils.is_compressed_file(content)
-                        file_type = ret if ret else file_type
+                        # Second test is the Compression factor
+                        rnd_test_compr = round(RandTest.calc_compression_test(content, self.verbose), 2)
+                        if rnd_test_compr > config.COMPR_RAND_TH and lcontent > MIN_LEN_COMPRESSED_CONTENT:
 
-                    return CsvRow(file, file_type, rnd, sha1)
+                            #rnd_test_compr = norm_percentage(rnd_test_compr)
+                            adesc = "ent: {0} ==> cmp: {1}".format(str(rnd_test_entropy),rnd_test_compr)
+                            return CsvRow(file, CRYPTO, adesc)
 
         except PermissionError:
             print("EEE => Permissions error for: " + str(file))
@@ -138,32 +133,3 @@ class ScannerForCrypt(Scanner):
             print("EEE => OSError: " + e.strerror)
 
         return None
-
-    def calc_randomness(self, bcontent):
-        """
-        Calculates the randomness of the content using the Kolmogorov complexity
-
-        It's a practical manner we compress the content and evaluate the grade of the compression:
-        - lesser the compression is, higher the randomness is
-        - len(zipped)/len(content)
-        :param bcontent:
-        :return:
-        """
-
-        # if print_path:
-        #    print("The content is: %s" % content)
-        d = len(bcontent)
-        if d == 0:
-            if self.verbose:
-                print("Empty string, nothing to do!")
-            return None
-
-        c = gzip.compress(bcontent, 9)
-        # deleting the footprint for the compression
-        n = (len(c) - ScannerForCrypt.__l0) * 1.0
-        randomness = n / d
-
-        if self.verbose:
-            print("-> crypto values: n: %s, d: %s, l0: %s, rand ratio: %s " % (n, d, ScannerForCrypt.__l0, randomness))
-
-        return randomness

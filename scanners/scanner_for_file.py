@@ -2,7 +2,7 @@
 
 """
 RaTS: Ransomware Traces Scanner
-Copyright (C) 2015, 2016 Roberto Battistoni (r.battistoni@gmail.com)
+Copyright (C) 2015, 2016, 2017 Roberto Battistoni (r.battistoni@gmail.com)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -18,12 +18,13 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>
 """
 
-from pathlib import Path
-from operator import itemgetter
-from config import config
 import re
+from operator import itemgetter
+from pathlib import Path
+from typing import Optional
 
-from scanners.csv_row import CsvRow
+from config import config
+from logic.csv_row import CsvRow
 from scanners.scanner import Scanner
 
 
@@ -38,13 +39,13 @@ class ScannerForFile(Scanner):
         :return:
         """
         super().__init__(verbose)
-        self.list_file_bad_exts = [line.strip().lower() for line in config.file_bad_exts.split(",") if
+        self.list_file_bad_exts = [line.strip().lower() for line in config.FILE_BAS_EXTS.split(",") if
                                    line.strip() != ""]
-        self.list_file_name_terms = [line.strip().lower() for line in config.file_name_terms.split(",") if
+        self.list_file_name_terms = [line.strip().lower() for line in config.MANIFEST_FILE_NAME_TERM.split(",") if
                                      line.strip() != ""]
-        self.list_file_name_exts = [line.strip().lower() for line in config.file_name_exts.split(",") if
+        self.list_file_name_exts = [line.strip().lower() for line in config.FILE_NAME_EXTS.split(",") if
                                     line.strip() != ""]
-        self.list_file_text_terms = sorted(config.file_text_terms_dic, key=itemgetter(1), reverse=True)
+        self.list_file_text_terms = sorted(config.FILE_TEXT_TERMS_DIC, key=itemgetter(1), reverse=True)
 
     def print_config(self):
         """
@@ -104,7 +105,7 @@ class ScannerForFile(Scanner):
         except OSError as e:
             print("EEE => OSError: " + e.strerror)
 
-    def __search_in_file(self, file) -> str:
+    def __search_in_file(self, file) -> Optional[CsvRow]:
         """
         The search for the file
 
@@ -121,14 +122,14 @@ class ScannerForFile(Scanner):
         res = None
 
         # check only the files with max a size
-        if file.stat().st_size <= config.max_size:
+        if file.stat().st_size <= config.MANIFEST_MAX_SIZE:
 
             # check if the file has a bad extension
             ext = file.suffix.lower()
             if ext in self.list_file_bad_exts:
                 if self.verbose:
                     print("-> Found bad extension in the file: " + str(ext))
-                res = CsvRow(file, "bad_ext", ext, 0)
+                res = CsvRow(file, "bad_ext", ext)
             else:
                 # Only the allowed extensions in the config are checked for the file name and the content
                 if ext in self.list_file_name_exts:
@@ -140,11 +141,9 @@ class ScannerForFile(Scanner):
                             print("-> Processing the file for the content")
                         res = self._search_in_file_content(file)
 
-
-
         return res
 
-    def _search_in_file_name(self, file) -> str:
+    def _search_in_file_name(self, file) -> Optional[CsvRow]:
         """
         Search the match for the file name
         :param file:
@@ -153,12 +152,12 @@ class ScannerForFile(Scanner):
         for f in self.list_file_name_terms:
             if file.stem.lower().startswith(f):
                 if self.verbose:
-                    print("==> Found a file name starting with: " + str(f))
-                return CsvRow(file, "file_name_start_with", '"' + str(f) + '"', 0)
+                    print("==> Found a file name starting with: {0}".format(str(f)))
+                return CsvRow(file, None, 'file_name_start_with: "{0}"'.format(str(f)))
 
         return None
 
-    def _search_in_file_content(self, file) -> str:
+    def _search_in_file_content(self, file) -> Optional[CsvRow]:
         """
         Search for terms in the file content
         :param file:
@@ -173,10 +172,10 @@ class ScannerForFile(Scanner):
                     found = re.search(k, content, re.IGNORECASE | re.MULTILINE)
                     if found:
                         perc += v
-                        if perc >= config.threshold_terms_perc:
+                        if perc >= config.TERM_PREC_TH:
                             if self.verbose:
                                 print("==> Found a pattern in the file content: " + str(k))
-                            return CsvRow(file, "ptrn_in_file_content", '"' + str(k) + '"', 0)
+                            return CsvRow(file, "ptrn_in_file_content", '"' + str(k) + '"')
 
         except PermissionError:
             print("EEE => Permissions error for: " + str(file))

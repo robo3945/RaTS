@@ -2,7 +2,7 @@
 
 """
 RaTS: Ransomware Traces Scanner
-Copyright (C) 2015, 2016 Roberto Battistoni (r.battistoni@gmail.com)
+Copyright (C) 2015, 2016, 2017 Roberto Battistoni (r.battistoni@gmail.com)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -19,7 +19,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 """
 import abc
 
-from scanners.csv_row import CsvRow
+from logic.csv_row import CsvRow
+
+import pandas as pd
 
 
 class Scanner(metaclass=abc.ABCMeta):
@@ -66,6 +68,16 @@ class Scanner(metaclass=abc.ABCMeta):
         """
         raise NotImplementedError
 
+    # TODO: implement in the subclasses the method
+    # @abc.abstractmethod
+    def print_found_csv_report(self, file_name=None):
+        """
+        Print a report of the outcomes
+        :param file_name:
+        :return:
+        """
+        raise NotImplementedError
+
     def print_found_list(self):
         """
         Print the list of found items
@@ -74,33 +86,27 @@ class Scanner(metaclass=abc.ABCMeta):
         print(Scanner.sep + " Found items " + Scanner.sep)
         print(self.found)
 
-    def print_found_csv(self, file_name=None):
+    def print_found_csv(self, file_name):
         """
         Print the list of found items in the form of CSV file
         :param file_name:
         :return:
         """
 
-        s = ''
+        s = ""
         if self.found:
             s = CsvRow.get_header() + "\n"
             for x in self.found:
                 s = s + str(x) + "\n"
 
-            print("******************** CSV ****************************")
-            print(s, end="")
-            print("*****************************************************")
-
             if file_name and s.split():
-                with open(file_name, "w") as handle:
+                with open(file_name, "w", encoding="UTF8") as handle:
                     handle.write(s)
 
-        return s
+                df = pd.read_csv(file_name, sep=";", encoding="UTF8")
+                print("\n\n%s %s %s" % (Scanner.sep, "Result in the CSV file", Scanner.sep))
+                print(df.filter(df.columns[2:]))
+                print("*****************************************************")
+                return df
 
-    def print_found_csv_report(self, file_name=None):
-        """
-        Print a report of the outcomes
-        :param file_name:
-        :return:
-        """
-        raise NotImplementedError
+        return s

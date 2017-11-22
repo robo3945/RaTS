@@ -22,9 +22,4 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 
 DESIDERATA:
 
-1) import logging with which manages the logs
-2) summary of the outcomes
-3) retrieve the file type magic byte from the web and store in a NoSQL/SQLite DB
-4) improve the speed of scanning (test with PyPy)
-5) randomness test: compression lib must be configurable
-6) automatic alerting with threshold
+1) improve the "scanner for file" to dynamically retrieve the ransomware extensions and manifests from site like that: https://id-ransomware.malwarehunterteam.com/api/documentation.php
