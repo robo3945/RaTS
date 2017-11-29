@@ -68,7 +68,7 @@ def check_sig_content(content, signatures):
 
     res = []
     for sig, desc in signatures:
-        offset = dump.find(sig, None, config.MAX_SIGNATURE_LENGHT)
+        offset = dump.find(sig, None, config.CFG_MAX_FILE_SIGNATURE_LENGTH)
         if len(sig) > 2 and offset >= 0:
             res.append([sig, desc, offset])
 

@@ -41,9 +41,9 @@ class ScannerForFile(Scanner):
         super().__init__(verbose)
         self.list_file_bad_exts = [line.strip().lower() for line in config.FILE_BAS_EXTS.split(",") if
                                    line.strip() != ""]
-        self.list_file_name_terms = [line.strip().lower() for line in config.MANIFEST_FILE_NAME_TERM.split(",") if
+        self.list_file_name_terms = [line.strip().lower() for line in config.MANIFEST_FILE_NAME_TERMS.split(",") if
                                      line.strip() != ""]
-        self.list_file_name_exts = [line.strip().lower() for line in config.FILE_NAME_EXTS.split(",") if
+        self.list_file_name_exts = [line.strip().lower() for line in config.CFG_FILE_NAME_EXTS.split(",") if
                                     line.strip() != ""]
         self.list_file_text_terms = sorted(config.FILE_TEXT_TERMS_DIC, key=itemgetter(1), reverse=True)
 
@@ -122,7 +122,7 @@ class ScannerForFile(Scanner):
         res = None
 
         # check only the files with max a size
-        if file.stat().st_size <= config.MANIFEST_MAX_SIZE:
+        if file.stat().st_size <= config.CFG_MANIFEST_MAX_SIZE:
 
             # check if the file has a bad extension
             ext = file.suffix.lower()
@@ -172,7 +172,7 @@ class ScannerForFile(Scanner):
                     found = re.search(k, content, re.IGNORECASE | re.MULTILINE)
                     if found:
                         perc += v
-                        if perc >= config.TERM_PREC_TH:
+                        if perc >= config.CFG_TERM_PERC_TH:
                             if self.verbose:
                                 print("==> Found a pattern in the file content: " + str(k))
                             return CsvRow(file, "ptrn_in_file_content", '"' + str(k) + '"')

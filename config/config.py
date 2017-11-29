@@ -28,13 +28,13 @@ ______    _____ _____
 | |\ \ (_| | | /\__/ /
 \_| \_\__,_\_/ \____/ 
 """
-RATS_VERSION = '0.9a'
+RATS_VERSION = '1.0b'
 
 # ------ Rules file -------
 
 # ======================> File name test
 
-# ==> 1-step: Bad file name extensions that reveal the high probability of ransomware presence
+# ==> Bad file name extensions that reveal the high probability of ransomware presence
 FILE_BAS_EXTS = """
 .aaa,
 .cryptotorlocker,
@@ -48,8 +48,8 @@ FILE_BAS_EXTS = """
 .vvv
 """
 
-# ==> 2-step: File name prefixs that reveal the malware
-MANIFEST_FILE_NAME_TERM = """
+# ==> File name prefixes that reveal the malware
+MANIFEST_FILE_NAME_TERMS = """
 cryptolocker,
 !Decrypt-All-Files-,
 decrypt_instruct,
@@ -75,16 +75,15 @@ restore_files_
 vault,
 """
 
-# ==> 3-step: check the terms inside the content of the 2-step files
+# ==> terms inside the content of the found manifest files
 
 # The maximum size of the file to be analyzed: ransomware disclaimer are little
-MANIFEST_MAX_SIZE = 40000  # bytes
+CFG_MANIFEST_MAX_SIZE = 40_000  # bytes
 
-# extension of file name to analyze to check the evidence of terms ("file_text_terms_dic")
-# with certain percentage (>100)
-FILE_NAME_EXTS = ".html, .txt"
+# extension of file name to analyze to check the evidence of terms
+CFG_FILE_NAME_EXTS = ".html, .txt"
 
-# RegEx pattern to search into the text: there is a tuple with regex ptrn and a percentage that is its weight
+# RegEx pattern for searching into the text: tuples with: (regex ptrn, percentage_weight)
 FILE_TEXT_TERMS_DIC = [(r'\bcryptowall\b', 100),
                        (r'\bcryptolocker\b', 100),
                        (r'\bCryptoDefense\b', 100),
@@ -98,24 +97,24 @@ FILE_TEXT_TERMS_DIC = [(r'\bcryptowall\b', 100),
                        (r'\bencryption\b', 30),
                        (r'\bcrypto\b', 30)]
 
-# ==> threshold for the detection of the terms in the text files
-TERM_PREC_TH = 100
+# threshold for the detection of the terms in the text files
+CFG_TERM_PERC_TH = 100
 
 # ----------------------------------------------------------
 
 # threshold for the randomness test
-COMPR_RAND_TH = 0.70
-ENTR_RAND_TH = 7.80
+CFG_COMPR_RAND_TH = 0.70
+CFG_ENTR_RAND_TH = 7.80
 # rand_first_n_bytes_to_check = 100_000_000
-NUM_BYTES_TO_RAND_CHECK = None
+CFG_N_BYTES_2_RAND_CHECK = None
 
 # ----------------------------------------------------------
 
 # notification settings
-SMTP_HOST = 'smtp.gmail.com'
-SMTP_PORT = 465
-SMTP_USER = 'an.email@something.com'
-SMTP_PWD = 'an.email.password'
+CFG_SMTP_HOST = 'smtp.gmail.com'
+CFG_SMTP_PORT = 465
+CFG_SMTP_USER = 'an.email@something.com'
+CFG_SMTP_PWD = 'an.email.password'
 
 # ----------------------------------------------------------
 # file type signatures
@@ -145,9 +144,9 @@ KNOWN_FILE_SIGS = \
         "0a0501": "PCX ALL"
     }
 
-PATH_FOR_SIGNATURES = './file_sigs.pickle'
 URL_FOR_SIGNATURES = "http://www.filesignatures.net/index.php?page=all&currentpage={}"
+CFG_PATH_FOR_SIGNATURES = './file_sigs.pickle'
 # the maximum lenght of the signature to find in the Dump file
-MAX_SIGNATURE_LENGHT = 60
-# the minimun length to consider the compression value
-MIN_LEN_COMPRESSED_CONTENT = 100
+CFG_MAX_FILE_SIGNATURE_LENGTH = 60
+# the minimum bytes length for checking the compressed item
+CFG_COMPRESSED_CONTENT_MIN_LEN = 100

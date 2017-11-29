@@ -21,7 +21,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 import os
 import time
 
-from config.config import PATH_FOR_SIGNATURES, URL_FOR_SIGNATURES
+import sys
+from urllib.error import HTTPError
+
+from config.config import CFG_PATH_FOR_SIGNATURES, URL_FOR_SIGNATURES
 from logic.check_sigs import compile_sigs, check_sig_content
 
 try:
@@ -65,9 +68,17 @@ def is_known_file_type(content, verbose: bool = False) -> bool:
     :return:
     """
 
-    path = os.path.expanduser(PATH_FOR_SIGNATURES)
+    path = os.path.expanduser(CFG_PATH_FOR_SIGNATURES)
     url = URL_FOR_SIGNATURES
-    signatures = compile_sigs(path, url)
+    try:
+        signatures = compile_sigs(path, url)
+    except HTTPError as err:
+        if err.code == 404:
+            print("File Signatures web site is not available. I am not able to dynamically recreate the file. Please drop a signatures file in the application directory.")
+            sys.exit()
+        else:
+            raise
+
     results = check_sig_content(content, signatures)
 
     if results and results[0][2] == 0:

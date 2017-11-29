@@ -21,11 +21,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 from pathlib import Path
 
 from config import config
-from config.config import MIN_LEN_COMPRESSED_CONTENT
 from logic.csv_row import CsvRow
 from logic.randomness import RandTest
 from misc import utils
-from misc.utils import norm_percentage
 from scanners.scanner import Scanner
 
 IMAGE = "Image"
@@ -48,9 +46,9 @@ class ScannerForCrypt(Scanner):
         print("%s Config elements for '%s' %s" % (Scanner.sep, __name__, Scanner.sep))
         print()
         print(
-            "Compression Randomness threshold (strictly greater than): " + str(config.COMPR_RAND_TH))
-        print("Entropy Randomness threshold (strictly greater than): " + str(config.ENTR_RAND_TH))
-        print("Number of first bytes of the content to elaborate: " + str(config.NUM_BYTES_TO_RAND_CHECK))
+            "Compression Randomness threshold (strictly greater than): " + str(config.CFG_COMPR_RAND_TH))
+        print("Entropy Randomness threshold (strictly greater than): " + str(config.CFG_ENTR_RAND_TH))
+        print("Number of first bytes of the content to elaborate: " + str(config.CFG_N_BYTES_2_RAND_CHECK))
         print()
 
     def search(self, path, recursive=True):
@@ -106,7 +104,7 @@ class ScannerForCrypt(Scanner):
         """
         try:
             with file.open(mode='rb') as handle:
-                content = handle.read(config.NUM_BYTES_TO_RAND_CHECK)
+                content = handle.read(config.CFG_N_BYTES_2_RAND_CHECK)
                 lcontent = len(content)
 
                 # for the empty files
@@ -117,11 +115,11 @@ class ScannerForCrypt(Scanner):
 
                     # First test is the Entropy
                     rnd_test_entropy = round(RandTest.calc_entropy_test(content, self.verbose), 2)
-                    if rnd_test_entropy > config.ENTR_RAND_TH:
+                    if rnd_test_entropy > config.CFG_ENTR_RAND_TH:
 
                         # Second test is the Compression factor
                         rnd_test_compr = round(RandTest.calc_compression_test(content, self.verbose), 2)
-                        if rnd_test_compr > config.COMPR_RAND_TH and lcontent > MIN_LEN_COMPRESSED_CONTENT:
+                        if rnd_test_compr > config.CFG_COMPR_RAND_TH and lcontent > config.CFG_COMPRESSED_CONTENT_MIN_LEN:
 
                             #rnd_test_compr = norm_percentage(rnd_test_compr)
                             adesc = "ent: {0} ==> cmp: {1}".format(str(rnd_test_entropy),rnd_test_compr)

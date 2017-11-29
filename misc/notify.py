@@ -29,10 +29,10 @@ from config import config
 
 class MailSender(object):
     def __init__(self):
-        self.smtp_host = config.SMTP_HOST
-        self.smtp_port = config.SMTP_PORT
-        self.smtp_user = config.SMTP_USER
-        self.smtp_passwd = config.SMTP_PWD
+        self.smtp_host = config.CFG_SMTP_HOST
+        self.smtp_port = config.CFG_SMTP_PORT
+        self.smtp_user = config.CFG_SMTP_USER
+        self.smtp_passwd = config.CFG_SMTP_PWD
 
     def send_email(self, from_part, to_part, subject, content):
         """

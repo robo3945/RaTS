@@ -25,6 +25,7 @@ import sys
 from pathlib import Path
 
 from config import config
+from config.config_utils import read_config_file
 from misc import utils
 from misc.notify import MailSender
 from scanners.scanner_for_crypt import ScannerForCrypt
@@ -38,10 +39,11 @@ def main(argv):
     :return:
     """
 
-    inputdir = ''
-    dirlistfile = ''
-    outputcsv_prefix = ''
-    dst_email = ''
+    inputdir = ""
+    dirlistfile = ""
+    outputcsv_prefix = ""
+    dst_email = ""
+    config_file_path = None
     ana_type = "all"  # default is to do Manifest and Crypto checks
     recursive = False
     verbose = False
@@ -57,12 +59,13 @@ usage: rats.py -i <inputdir> | -l <dirlistfile> -o <outcsv> [-k|-m] [-e <notify_
 [-k]                : search for crypted files
 [-m]                : search for manifest files
 [-r]                : recursive search
+[-c]                : path for the configuration YAML file
 [-v]                : verbose mode
 [-h]                : print this help
 """
 
     try:
-        opts, args = getopt.getopt(argv, "hkmrvi:o:e:l:")
+        opts, args = getopt.getopt(argv, "hkmrvi:o:e:l:c:")
     except getopt.GetoptError as error:
         print('************ arguments error ************', end='\n')
         print('error: ' + str(error))
@@ -90,9 +93,16 @@ usage: rats.py -i <inputdir> | -l <dirlistfile> -o <outcsv> [-k|-m] [-e <notify_
             outputcsv_prefix = arg
         elif opt == "-e":
             dst_email = arg
+        elif opt == "-c":
+            config_file_path = arg
 
     if (inputdir or dirlistfile) and ana_type:
         with utils.Timer(verbose=True):
+            print(output_start + "\n\nHere we are!\n\n")
+
+            # read the config file if it was specified
+            if config_file_path is not None:
+                read_config_file(config_file_path)
             dirs = []
             if dirlistfile:
                 with open(dirlistfile, 'r') as handle:
@@ -103,7 +113,6 @@ usage: rats.py -i <inputdir> | -l <dirlistfile> -o <outcsv> [-k|-m] [-e <notify_
                 dirs.append(inputdir)
 
             for adir in dirs:
-                print(output_start + "\n\nHere we are!\n\n")
                 if ana_type == "all":
                     main_process(adir, outputcsv_prefix + "-manifest@", 'm', dst_email, verbose=verbose,
                                  recursive=recursive)
