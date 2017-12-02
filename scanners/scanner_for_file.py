@@ -93,7 +93,6 @@ class ScannerForFile(Scanner):
                     print("=====> Found matches in: " + str(f))
                     self.found.append(found)
 
-            # passo ricorsivo nelle directory
             if recursive:
                 dir_list = [x for x in p.iterdir() if not x.is_symlink() and x.is_dir()]
                 for x in dir_list:
@@ -149,8 +148,9 @@ class ScannerForFile(Scanner):
         :param file:
         :return:
         """
+        lfile = file.stem.lower()
         for f in self.list_file_name_terms:
-            if file.stem.lower().startswith(f):
+            if lfile.startswith(f):
                 if self.verbose:
                     print("==> Found a file name starting with: {0}".format(str(f)))
                 return CsvRow(file, None, 'file_name_start_with: "{0}"'.format(str(f)))

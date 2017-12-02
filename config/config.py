@@ -35,18 +35,12 @@ RATS_VERSION = '1.0b'
 # ======================> File name test
 
 # ==> Bad file name extensions that reveal the high probability of ransomware presence
-FILE_BAS_EXTS = """
-.aaa,
-.cryptotorlocker,
-.ecc,
-.encrypted,
-.exx,
-.ezz,
-.frtrss,
-.locky,
-.vault,
-.vvv
-"""
+# check this project: https://gist.github.com/CHEF-KOCH/6ccf6143b567685dab9ccd2286ee4db0
+FILE_BAS_EXTS = """.ecc, .ezz, .exx, .zzz, .xyz, .aaa, *.cryp1, .abc, .ccc, .vvv, *.zepto, .xxx, .ttt, .micro, 
+.encrypted, .locked, .crypto, _crypt, .crinf, .r5a, .XRNT, .XTBL, .crypt, .R16M01D05, .pzdc, .good, .LOL!, .OMG!, 
+.RDM, .RRK, .encryptedRSA, .crjoker, .EnCiPhErEd, .LeChiffre, .keybtc@inbox_com, .0x0, .bleep, .1999, .vault, .HA3, 
+.toxcrypt, .magic, .SUPERCRYPT, .CTBL, .CTB2, .diablo6, .Lukitus, .locky """
+
 
 # ==> File name prefixes that reveal the malware
 MANIFEST_FILE_NAME_TERMS = """
