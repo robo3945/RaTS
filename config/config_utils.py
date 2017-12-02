@@ -1,4 +1,6 @@
 import sys
+from pprint import pprint
+
 import yaml
 
 from config import config
@@ -41,7 +43,7 @@ def read_config_file(path: str):
             config.CFG_SMTP_USER = cfg_dict['mail_sec']['CFG_SMTP_USER']
             config.CFG_SMTP_PWD = cfg_dict['mail_sec']['CFG_SMTP_PWD']
 
-            print(cfg_dict)
+            pprint(cfg_dict)
         else:
             print("Problem with configuration file!")
     except FileNotFoundError:

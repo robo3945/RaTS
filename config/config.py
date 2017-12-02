@@ -2,7 +2,7 @@
 
 """
 RaTS: Ransomware Traces Scanner
-Copyright (C) 2015, 2016, 2017 Roberto Battistoni (r.battistoni@gmail.com)
+Copyright (C) 2015, 2016, 2017, 2018 Roberto Battistoni (r.battistoni@gmail.com)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -84,13 +84,15 @@ CFG_MANIFEST_MAX_SIZE = 40_000  # bytes
 CFG_FILE_NAME_EXTS = ".html, .txt"
 
 # RegEx pattern for searching into the text: tuples with: (regex ptrn, percentage_weight)
-FILE_TEXT_TERMS_DIC = [(r'\bcryptowall\b', 100),
-                       (r'\bcryptolocker\b', 100),
-                       (r'\bCryptoDefense\b', 100),
+FILE_TEXT_TERMS_DIC = [(r'\bcryptowall\b', 99),
+                       (r'\bcryptolocker\b', 99),
+                       (r'\bCryptoDefense\b', 99),
+                       (r'\bloker\b', 99),
                        (r'\bprivate\s+key\b', 80),
                        (r'\bAES-256\b', 80),
                        (r'\bRSA-2048\b', 80),
                        (r'.onion', 50),
+                       (r'torproject.org', 50),
                        (r'\bbitcoin\b', 50),
                        (r'\btor\b', 30),
                        (r'\bencrypted\b', 30),

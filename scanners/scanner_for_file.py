@@ -2,7 +2,7 @@
 
 """
 RaTS: Ransomware Traces Scanner
-Copyright (C) 2015, 2016, 2017 Roberto Battistoni (r.battistoni@gmail.com)
+Copyright (C) 2015, 2016, 2017, 2018 Roberto Battistoni (r.battistoni@gmail.com)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -111,8 +111,8 @@ class ScannerForFile(Scanner):
 
         It searches for:
 
-        1)  If the file has a Bad extension. If yes it detect it and continue on the next file
-        2)  If, for the extensions allowed (not the Bad exts), it has a file name with suspect name part or terms
+        1)  If the file has a Bad extension
+        2)  For the allowed extensions allowed (not the Bad exts), if it has a file name with suspect name part or terms
             in the content. If yes it detect it and continue on the next file
 
         :param file: the file analyzed
@@ -121,7 +121,7 @@ class ScannerForFile(Scanner):
 
         res = None
 
-        # check only the files with max a size
+        # check only the files with the max size in the configuration
         if file.stat().st_size <= config.CFG_MANIFEST_MAX_SIZE:
 
             # check if the file has a bad extension
@@ -167,15 +167,16 @@ class ScannerForFile(Scanner):
             with file.open(mode='r', errors='ignore') as handle:
                 content = handle.read()
 
-                perc = 0
+                perc, list_found = 0, []
                 for k, v in self.list_file_text_terms:
                     found = re.search(k, content, re.IGNORECASE | re.MULTILINE)
                     if found:
+                        list_found.append((k, v))
                         perc += v
                         if perc >= config.CFG_TERM_PERC_TH:
                             if self.verbose:
-                                print("==> Found a pattern in the file content: " + str(k))
-                            return CsvRow(file, "ptrn_in_file_content", '"' + str(k) + '"')
+                                print("==> Found patterns in the file content: " + str(list_found))
+                            return CsvRow(file, "ptrn_in_file_content", '"' + str(list_found) + '"')
 
         except PermissionError:
             print("EEE => Permissions error for: " + str(file))
