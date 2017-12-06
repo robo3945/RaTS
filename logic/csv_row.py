@@ -52,16 +52,16 @@ class CsvRow(object):
 
     @staticmethod
     def get_header():
-        return "Full file name" + ";" + \
-               "file path" + ";" + \
-               "file name" + ";" + \
-               "file size" + ";" + \
-               "File extension" + ";" + \
-               "File Type" + ";" + \
-               "A description" + ";" + \
-                "Last Access Date and Time" + ";" + \
-                "Last Modification Date and Time" + ";" + \
-                "Last Status Change Date and Time"
+        return "Full file name;" + \
+               "file path;" + \
+               "file name;" + \
+               "file size;" + \
+               "File extension;" + \
+               "File Type;" + \
+               "A description;" + \
+               "Last Access Date and Time;" + \
+               "Last Modification Date and Time;" + \
+               "Last Status Change Date and Time"
 
     def __repr__(self):
         file_size = bitmath.Byte(bytes=self.file_size).best_prefix()
@@ -77,7 +77,6 @@ class CsvRow(object):
                str(self.adate) + ";" + \
                str(self.mdate) + ";" + \
                str(self.cdate)
-
 
     def __str__(self):
         return self.__repr__()

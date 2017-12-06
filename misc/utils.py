@@ -85,7 +85,7 @@ def is_known_file_type(content, verbose: bool = False) -> bool:
         # It returns only the first one
         if verbose:
             sig, desc, offset = results[0][0], results[0][1], results[0][2]
-            print("[+] {0} : First type recogn. \"{1}\" <- Offset: {2}".format(sig, desc, str(offset)))
+            print(f"[+] {sig} : First type recogn. \"{desc}\" <- Offset: {str(offset)}")
         return True
 
     return False

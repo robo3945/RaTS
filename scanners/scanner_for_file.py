@@ -52,12 +52,12 @@ class ScannerForFile(Scanner):
         Print the values of the configuration
         :return:
         """
-        print("%s Config elements for '%s' %s" % (Scanner.sep, __name__, Scanner.sep))
+        print(f'{Scanner.sep} Config elements for "{__name__}" {Scanner.sep}')
         print()
-        print("Bad file extensions detected: " + str(self.list_file_bad_exts))
-        print("File extensions analyzed: " + str(self.list_file_name_exts))
-        print("File names detected (without the extensions): " + str(self.list_file_name_terms))
-        print("List with terms and their \"relevance\": " + str(self.list_file_text_terms))
+        print(f'Bad file extensions detected: {str(self.list_file_bad_exts)}')
+        print(f'File extensions analyzed: {str(self.list_file_name_exts)}')
+        print(f'File names detected (without the extensions): {str(self.list_file_name_terms)}')
+        print(f'List with terms and their "relevance": {str(self.list_file_text_terms)}')
         print()
 
     def search(self, path, recursive=True):
@@ -71,7 +71,7 @@ class ScannerForFile(Scanner):
 
         if self.verbose:
             self.print_config()
-        print(Scanner.sep + " Starting search Ransomware manifest traces in: " + str(path) + " " + Scanner.sep)
+        print(f'{Scanner.sep} Starting search Ransomware manifest traces in: {str(path)} {Scanner.sep}')
         self._search(path, recursive)
 
     def _search(self, path, recursive=True):
@@ -87,22 +87,22 @@ class ScannerForFile(Scanner):
             file_list = [x for x in p.iterdir() if not x.is_symlink() and x.is_file()]
             for f in file_list:
                 if self.verbose:
-                    print("- Processing the file: " + str(f))
+                    print(f'- Processing the file: {str(f)}')
                 found = self.__search_in_file(f)
                 if found:
-                    print("=====> Found matches in: " + str(f))
+                    print(f'=====> Found matches in: {str(f)}')
                     self.found.append(found)
 
             if recursive:
                 dir_list = [x for x in p.iterdir() if not x.is_symlink() and x.is_dir()]
                 for x in dir_list:
                     if self.verbose:
-                        print("+ Searching in the path: " + str(x))
+                        print(f'+ Searching in the path: {str(x)}')
                     self._search(x, recursive)
         except PermissionError:
-            print("EEE => Permissions error for: " + str(p))
+            print(f'EEE => Permissions error for: {str(p)}')
         except OSError as e:
-            print("EEE => OSError: " + e.strerror)
+            print(f'EEE => OSError: {e.strerror}')
 
     def __search_in_file(self, file) -> Optional[CsvRow]:
         """
@@ -127,17 +127,17 @@ class ScannerForFile(Scanner):
             ext = file.suffix.lower()
             if ext in self.list_file_bad_exts:
                 if self.verbose:
-                    print("-> Found bad extension in the file: " + str(ext))
+                    print(f'-> Found bad extension in the file: {str(ext)}')
                 res = CsvRow(file, "bad_ext", ext)
             else:
                 # Only the allowed extensions in the config are checked for the file name and the content
                 if ext in self.list_file_name_exts:
                     if self.verbose:
-                        print("-> Processing the file for the extension: " + str(ext))
+                        print(f'-> Processing the file for the extension: {str(ext)}')
                     res = self._search_in_file_name(file)
                     if not res:
                         if self.verbose:
-                            print("-> Processing the file for the content")
+                            print('-> Processing the file for the content')
                         res = self._search_in_file_content(file)
 
         return res
@@ -152,8 +152,8 @@ class ScannerForFile(Scanner):
         for f in self.list_file_name_terms:
             if lfile.startswith(f):
                 if self.verbose:
-                    print("==> Found a file name starting with: {0}".format(str(f)))
-                return CsvRow(file, None, 'file_name_start_with: "{0}"'.format(str(f)))
+                    print(f'==> Found a file name starting with: {str(f)}')
+                return CsvRow(file, None, f'file_name_start_with: "{str(f)}"')
 
         return None
 
@@ -175,12 +175,12 @@ class ScannerForFile(Scanner):
                         perc += v
                         if perc >= config.CFG_TERM_PERC_TH:
                             if self.verbose:
-                                print("==> Found patterns in the file content: " + str(list_found))
-                            return CsvRow(file, "ptrn_in_file_content", '"' + str(list_found) + '"')
+                                print(f'==> Found patterns in the file content: {str(list_found)}')
+                            return CsvRow(file, "ptrn_in_file_content", f'\"{str(list_found)}\"')
 
         except PermissionError:
-            print("EEE => Permissions error for: " + str(file))
+            print(f'EEE => Permissions error for: {str(file)}')
         except OSError as e:
-            print("EEE => OSError: " + e.strerror)
+            print(f'EEE => OSError: {e.strerror}')
 
         return None

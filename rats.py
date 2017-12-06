@@ -68,7 +68,7 @@ usage: rats.py -i <inputdir> | -l <dirlistfile> -o <outcsv> [-k|-m] [-e <notify_
         opts, args = getopt.getopt(argv, "hkmrvi:o:e:l:c:")
     except getopt.GetoptError as error:
         print('************ arguments error ************', end='\n')
-        print('error: ' + str(error))
+        print(f'error: {str(error)}')
         print(usage_sample)
         sys.exit(2)
 
@@ -148,10 +148,10 @@ def main_process(inputdir, prefix_output_file, ana_type, email, verbose=False, r
     try:
         [x for x in p.iterdir() if not x.is_symlink() and x.is_file()]
     except PermissionError:
-        print("EEE => Permissions error for: " + str(inputdir))
+        print(f"EEE => Permissions error for: {str(inputdir)}")
         sys.exit(1)
     except OSError as e:
-        print("EEE => OSError: " + e.strerror)
+        print(f"EEE => OSError: {e.strerror}")
         sys.exit(1)
 
     if ana_type == 'm':
@@ -170,7 +170,7 @@ def main_process(inputdir, prefix_output_file, ana_type, email, verbose=False, r
         to_part = email
         ms = MailSender()
         subject = config.RATS_NAME + ": notify"
-        print("Send the notification e-mail to: " + to_part)
+        print(f'Send the notification e-mail to: {to_part}')
         ms.send_email(from_part, to_part, subject, msg)
 
 

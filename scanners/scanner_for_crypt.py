@@ -43,12 +43,12 @@ class ScannerForCrypt(Scanner):
         super().__init__(verbose)
 
     def print_config(self):
-        print("%s Config elements for '%s' %s" % (Scanner.sep, __name__, Scanner.sep))
+        print(f'{Scanner.sep} Config elements for \"{__name__}\" {Scanner.sep}')
         print()
         print(
-            "Compression Randomness threshold (strictly greater than): " + str(config.CFG_COMPR_RAND_TH))
-        print("Entropy Randomness threshold (strictly greater than): " + str(config.CFG_ENTR_RAND_TH))
-        print("Number of first bytes of the content to elaborate: " + str(config.CFG_N_BYTES_2_RAND_CHECK))
+            f'Compression Randomness threshold (strictly greater than): {str(config.CFG_COMPR_RAND_TH)}')
+        print(f'Entropy Randomness threshold (strictly greater than): {str(config.CFG_ENTR_RAND_TH)}')
+        print(f'Number of first bytes of the content to elaborate: {str(config.CFG_N_BYTES_2_RAND_CHECK)}')
         print()
 
     def search(self, path, recursive=True):
@@ -61,7 +61,7 @@ class ScannerForCrypt(Scanner):
         """
         if self.verbose:
             self.print_config()
-        print(Scanner.sep + " Starting search Crypto content in: " + str(path) + " " + Scanner.sep)
+        print(f'{Scanner.sep} Starting search Crypto content in: {str(path)} {Scanner.sep}')
         self._search(path, recursive)
 
     def _search(self, path, recursive=True):
@@ -77,23 +77,23 @@ class ScannerForCrypt(Scanner):
             file_list = [x for x in p.iterdir() if not x.is_symlink() and x.is_file()]
             for f in file_list:
                 if self.verbose:
-                    print("- Searching for crypto content in the file: " + str(f))
+                    print(f'- Searching for crypto content in the file: {str(f)}')
                 found = self.search_for_crypted_content(f)
                 if found:
-                    print("=====> Found crypto content in: " + str(f))
+                    print(f'=====> Found crypto content in: {str(f)}')
                     self.found.append(found)
 
             if recursive:
                 dir_list = [x for x in p.iterdir() if not x.is_symlink() and x.is_dir()]
                 for x in dir_list:
                     if self.verbose:
-                        print("+ Searching (for crypto) in the path: " + str(x))
+                        print(f'+ Searching (for crypto) in the path: {str(x)}')
                     self._search(x, recursive)
 
         except PermissionError:
-            print("EEE => Permissions error for: " + str(p))
+            print(f'EEE => Permissions error for: {str(p)}')
         except OSError as e:
-            print("EEE => OSError: " + e.strerror)
+            print(f'EEE => OSError: {e.strerror}')
 
     def search_for_crypted_content(self, file):
         """
@@ -121,13 +121,12 @@ class ScannerForCrypt(Scanner):
                         rnd_test_compr = round(RandTest.calc_compression_test(content, self.verbose), 2)
                         if rnd_test_compr > config.CFG_COMPR_RAND_TH and lcontent > config.CFG_COMPRESSED_CONTENT_MIN_LEN:
 
-                            #rnd_test_compr = norm_percentage(rnd_test_compr)
-                            adesc = "ent: {0} ==> cmp: {1}".format(str(rnd_test_entropy),rnd_test_compr)
+                            adesc = f'ent: {str(rnd_test_entropy)} ==> cmp: {rnd_test_compr}'
                             return CsvRow(file, CRYPTO, adesc)
 
         except PermissionError:
-            print("EEE => Permissions error for: " + str(file))
+            print(f'EEE => Permissions error for: {str(file)}')
         except OSError as e:
-            print("EEE => OSError: " + e.strerror)
+            print(f'EEE => OSError: {e.strerror}')
 
         return None
