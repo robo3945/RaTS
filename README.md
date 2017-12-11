@@ -19,7 +19,7 @@ RaTS is especially useful to periodically monitor network share or external driv
 
 ## Platform ##
 
-RaTS is written for Python 3 (> 3.5) and it works fine in a compiled way for Windows, MacOSX and Linux. We have tested it with PYINSTALLER. 
+RaTS is written for Python 3 (> 3.6) and it works fine in a compiled way for Windows, MacOSX and Linux. We have tested it with PYINSTALLER. 
 
 - Cmd line: *pyinstaller –-onefile rats.[osx|win32].pyinstaller* (update the path of the binary in the *.pyinstaller)
 
