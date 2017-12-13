@@ -100,7 +100,7 @@ class Scanner(metaclass=abc.ABCMeta):
                 s = s + str(x) + "\n"
 
             if file_name and s.split():
-                with open(file_name, "w", encoding="UTF8") as handle:
+                with open(file_name, "w", encoding="UTF8", errors='ignore') as handle:
                     handle.write(s)
 
                 df = pd.read_csv(file_name, sep=";", encoding="UTF8")
