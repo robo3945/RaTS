@@ -64,11 +64,13 @@ def check_sig_file(fn, signatures):
 def check_sig_content(content, signatures):
     """ Hex dump the file and search for signatures """
 
-    dump = str(binascii.hexlify(content))[2:-1]
+    dump = str(binascii.hexlify(content[:config.CFG_MAX_FILE_SIGNATURE_LENGTH]))[2:-1]
+    #dump = str(binascii.hexlify(content))[2:-1]
 
     res = []
     for sig, desc in signatures:
-        offset = dump.find(sig, None, config.CFG_MAX_FILE_SIGNATURE_LENGTH)
+        #offset = dump.find(sig, None, config.CFG_MAX_FILE_SIGNATURE_LENGTH)
+        offset = dump.find(sig)
         if len(sig) > 2 and offset >= 0:
             res.append([sig, desc, offset])
 

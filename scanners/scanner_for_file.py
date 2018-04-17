@@ -17,7 +17,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>
 """
-
+import os
 import re
 from operator import itemgetter
 from pathlib import Path
@@ -39,13 +39,13 @@ class ScannerForFile(Scanner):
         :return:
         """
         super().__init__(verbose)
-        self.list_file_bad_exts = [line.strip().lower() for line in config.FILE_BAS_EXTS.split(",") if
-                                   line.strip() != ""]
-        self.list_file_name_terms = [line.strip().lower() for line in config.MANIFEST_FILE_NAME_TERMS.split(",") if
-                                     line.strip() != ""]
-        self.list_file_name_exts = [line.strip().lower() for line in config.CFG_FILE_NAME_EXTS.split(",") if
-                                    line.strip() != ""]
-        self.list_file_text_terms = sorted(config.FILE_TEXT_TERMS_DIC, key=itemgetter(1), reverse=True)
+        self.file_bad_exts_set = set([line.strip().lower() for line in config.FILE_BAS_EXTS.split(",") if
+                                      line.strip() != ""])
+        self.file_name_terms_set = set([line.strip().lower() for line in config.MANIFEST_FILE_NAME_TERMS.split(",") if
+                                        line.strip() != ""])
+        self.file_name_exts_set = set([line.strip().lower() for line in config.CFG_FILE_NAME_EXTS.split(",") if
+                                       line.strip() != ""])
+        self.file_text_terms_set = set(sorted(config.FILE_TEXT_TERMS_DIC, key=itemgetter(1), reverse=True))
 
     def print_config(self):
         """
@@ -54,10 +54,10 @@ class ScannerForFile(Scanner):
         """
         print(f'{Scanner.sep} Config elements for "{__name__}" {Scanner.sep}')
         print()
-        print(f'Bad file extensions detected: {str(self.list_file_bad_exts)}')
-        print(f'File extensions analyzed: {str(self.list_file_name_exts)}')
-        print(f'File names detected (without the extensions): {str(self.list_file_name_terms)}')
-        print(f'List with terms and their "relevance": {str(self.list_file_text_terms)}')
+        print(f'Bad file extensions detected: {str(self.file_bad_exts_set)}')
+        print(f'File extensions analyzed: {str(self.file_name_exts_set)}')
+        print(f'File names detected (without the extensions): {str(self.file_name_terms_set)}')
+        print(f'List with terms and their "relevance": {str(self.file_text_terms_set)}')
         print()
 
     def search(self, path, recursive=True):
@@ -81,28 +81,24 @@ class ScannerForFile(Scanner):
         :param path: starting path
         :return:
         """
-        p = Path(path)
+        with os.scandir(path) as it:
+            for f in it:
+                try:
+                    if not f.name.startswith('.') and f.is_file() and not f.is_symlink():
+                        found = self.__search_in_file(f)
+                        if found:
+                            print(f'=====> Found matches in: {f.path}')
+                            self.found.append(found)
 
-        try:
-            file_list = [x for x in p.iterdir() if not x.is_symlink() and x.is_file()]
-            for f in file_list:
-                if self.verbose:
-                    print(f'- Processing the file: {str(f)}')
-                found = self.__search_in_file(f)
-                if found:
-                    print(f'=====> Found matches in: {str(f)}')
-                    self.found.append(found)
+                    if recursive and f.is_dir():
+                        if self.verbose:
+                            print(f'+ Searching in the path: {f.path}')
+                        self._search(f, recursive)
 
-            if recursive:
-                dir_list = [x for x in p.iterdir() if not x.is_symlink() and x.is_dir()]
-                for x in dir_list:
-                    if self.verbose:
-                        print(f'+ Searching in the path: {str(x)}')
-                    self._search(x, recursive)
-        except PermissionError:
-            print(f'EEE => Permissions error for: {str(p)}')
-        except OSError as e:
-            print(f'EEE => OSError: {e.strerror}')
+                except PermissionError:
+                    print(f'EEE => Permissions error for: {f.path}')
+                except OSError as e:
+                    print(f'EEE => OSError "{e.strerror}" for: {f.path}')
 
     def __search_in_file(self, file) -> Optional[CsvRow]:
         """
@@ -119,25 +115,24 @@ class ScannerForFile(Scanner):
         """
 
         res = None
-
+        ext = Path(file).suffix.lower()
         # check only the files with the max size in the configuration
-        if file.stat().st_size <= config.CFG_MANIFEST_MAX_SIZE:
+        if (ext in self.file_bad_exts_set or ext in self.file_name_exts_set) and file.stat().st_size <= config.CFG_MANIFEST_MAX_SIZE:
 
             # check if the file has a bad extension
-            ext = file.suffix.lower()
-            if ext in self.list_file_bad_exts:
+            if ext in self.file_bad_exts_set:
                 if self.verbose:
-                    print(f'-> Found bad extension in the file: {str(ext)}')
+                    print(f'-> Found bad extension in the file: {ext}')
                 res = CsvRow(file, "bad_ext", ext)
             else:
                 # Only the allowed extensions in the config are checked for the file name and the content
-                if ext in self.list_file_name_exts:
+                if ext in self.file_name_exts_set:
                     if self.verbose:
-                        print(f'-> Processing the file for the extension: {str(ext)}')
+                        print(f'-> Processing the file "{file.path}" for the extension "{ext}"')
                     res = self._search_in_file_name(file)
                     if not res:
                         if self.verbose:
-                            print('-> Processing the file for the content')
+                            print(f'-> Processing the file "{file.path}" for the content')
                         res = self._search_in_file_content(file)
 
         return res
@@ -148,12 +143,12 @@ class ScannerForFile(Scanner):
         :param file:
         :return:
         """
-        lfile = file.stem.lower()
-        for f in self.list_file_name_terms:
+        lfile = Path(file).stem.lower()
+        for f in self.file_name_terms_set:
             if lfile.startswith(f):
                 if self.verbose:
-                    print(f'==> Found a file name starting with: {str(f)}')
-                return CsvRow(file, None, f'file_name_start_with: "{str(f)}"')
+                    print(f'==> Found a file name starting with: {f}')
+                return CsvRow(file, None, f'file_name_start_with: "{f}"')
 
         return None
 
@@ -164,11 +159,11 @@ class ScannerForFile(Scanner):
         :return:
         """
         try:
-            with file.open(mode='r', errors='ignore') as handle:
+            with open(file.path, mode='r',  errors='ignore') as handle:
                 content = handle.read()
 
                 perc, list_found = 0, []
-                for k, v in self.list_file_text_terms:
+                for k, v in self.file_text_terms_set:
                     found = re.search(k, content, re.IGNORECASE | re.MULTILINE)
                     if found:
                         list_found.append((k, v))

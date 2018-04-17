@@ -86,7 +86,7 @@ class Scanner(metaclass=abc.ABCMeta):
         print(f'{Scanner.sep} Found items {Scanner.sep}')
         print(self.found)
 
-    def print_found_csv(self, file_name):
+    def print_found_csv(self, file_name, verbose=False):
         """
         Print the list of found items in the form of CSV file
         :param file_name:
@@ -104,9 +104,11 @@ class Scanner(metaclass=abc.ABCMeta):
                     handle.write(s)
 
                 df = pd.read_csv(file_name, sep=";", encoding="UTF8")
-                print(f'\n\n{Scanner.sep} {"Result in the CSV file"} {Scanner.sep}')
-                print(df.filter(df.columns[2:]))
-                print("*****************************************************")
+
+                if verbose:
+                    print(f'\n\n{Scanner.sep} Result in the CSV file: ({file_name}) {Scanner.sep}')
+                    print(df.filter(df.columns[2:]))
+                    print("*****************************************************")
                 return df
 
         return s

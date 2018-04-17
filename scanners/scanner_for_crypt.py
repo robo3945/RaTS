@@ -17,7 +17,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>
 """
-
+import os
 from pathlib import Path
 
 from config import config
@@ -71,29 +71,24 @@ class ScannerForCrypt(Scanner):
         :param path: starting path
         :return:
         """
-        p = Path(path)
+        with os.scandir(path) as it:
+            for f in it:
+                try:
+                    if not f.name.startswith('.') and f.is_file() and not f.is_symlink():
+                        found = self.search_for_crypted_content(f)
+                        if found:
+                            print(f'=====> Found crypto content in: {f.path}')
+                            self.found.append(found)
 
-        try:
-            file_list = [x for x in p.iterdir() if not x.is_symlink() and x.is_file()]
-            for f in file_list:
-                if self.verbose:
-                    print(f'- Searching for crypto content in the file: {str(f)}')
-                found = self.search_for_crypted_content(f)
-                if found:
-                    print(f'=====> Found crypto content in: {str(f)}')
-                    self.found.append(found)
+                    if recursive and f.is_dir():
+                        if self.verbose:
+                            print(f'+ Searching (for crypto) in the path: {f.path}')
+                        self._search(f, recursive)
 
-            if recursive:
-                dir_list = [x for x in p.iterdir() if not x.is_symlink() and x.is_dir()]
-                for x in dir_list:
-                    if self.verbose:
-                        print(f'+ Searching (for crypto) in the path: {str(x)}')
-                    self._search(x, recursive)
-
-        except PermissionError:
-            print(f'EEE => Permissions error for: {str(p)}')
-        except OSError as e:
-            print(f'EEE => OSError: {e.strerror}')
+                except PermissionError:
+                    print(f'EEE => Permissions error for: {f.path}')
+                except OSError as e:
+                    print(f'EEE(1) => OSError "{e.strerror}" for: {f.path}')
 
     def search_for_crypted_content(self, file):
         """
@@ -103,15 +98,17 @@ class ScannerForCrypt(Scanner):
         :return:
         """
         try:
-            with file.open(mode='rb') as handle:
-                content = handle.read(config.CFG_N_BYTES_2_RAND_CHECK)
-                lcontent = len(content)
-
-                # for the empty files
-                if lcontent == 0:
+            with open(file=file.path, mode='rb') as handle:
+                # read only the first part of the file to check the magic type
+                content = handle.read(config.CFG_MAX_FILE_SIGNATURE_LENGTH)
+                if len(content) == 0:
                     return None
 
                 if not utils.is_known_file_type(content, verbose=self.verbose):
+
+                    # read the size of the file set in the config
+                    content = handle.read(config.CFG_N_BYTES_2_RAND_CHECK)
+                    lcontent = len(content)
 
                     # First test is the Entropy
                     rnd_test_entropy = round(RandTest.calc_entropy_test(content, self.verbose), 2)
@@ -120,13 +117,12 @@ class ScannerForCrypt(Scanner):
                         # Second test is the Compression factor
                         rnd_test_compr = round(RandTest.calc_compression_test(content, self.verbose), 2)
                         if rnd_test_compr > config.CFG_COMPR_RAND_TH and lcontent > config.CFG_COMPRESSED_CONTENT_MIN_LEN:
-
-                            adesc = f'ent: {str(rnd_test_entropy)} ==> cmp: {rnd_test_compr}'
+                            adesc = f'Entropy: {str(rnd_test_entropy)} && Comp_Fact: {rnd_test_compr}'
                             return CsvRow(file, CRYPTO, adesc)
 
         except PermissionError:
-            print(f'EEE => Permissions error for: {str(file)}')
+            print(f'EEE => Permissions error for: {file.path}')
         except OSError as e:
-            print(f'EEE => OSError: {e.strerror}')
+            print(f'EEE(2) => OSError "{e.strerror}" for: {file.path}')
 
         return None

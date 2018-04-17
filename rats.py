@@ -97,31 +97,30 @@ usage: rats.py -i <inputdir> | -l <dirlistfile> -o <outcsv> [-k|-m] [-e <notify_
             config_file_path = arg
 
     if (inputdir or dirlistfile) and ana_type:
-        with utils.Timer(verbose=True):
-            print(output_start + "\n\nHere we are!\n\n")
+        print(output_start + "\n\nHere we are!\n\n")
 
-            # read the config file if it was specified
-            if config_file_path is not None:
-                read_config_file(config_file_path)
-            dirs = []
-            if dirlistfile:
-                with open(dirlistfile, 'r') as handle:
-                    content = handle.read()
-                    dirs = content.split(sep='\n')
-                    dirs = [dir.strip() for dir in dirs if dir and dir.strip()[0] != '#']
-            elif inputdir:
-                dirs.append(inputdir)
+        # read the config file if it was specified
+        if config_file_path is not None:
+            read_config_file(config_file_path)
+        dirs = []
+        if dirlistfile:
+            with open(dirlistfile, 'r') as handle:
+                content = handle.read()
+                dirs = content.split(sep='\n')
+                dirs = [dir.strip() for dir in dirs if dir and dir.strip()[0] != '#']
+        elif inputdir:
+            dirs.append(inputdir)
 
-            for adir in dirs:
-                if ana_type == "all":
-                    main_process(adir, outputcsv_prefix + "-manifest@", 'm', dst_email, verbose=verbose,
-                                 recursive=recursive)
-                    main_process(adir, outputcsv_prefix + "-crypto@", 'k', dst_email, verbose=verbose,
-                                 recursive=recursive)
-                else:
-                    d = {'k': 'crypto', 'm': 'manifest'}
-                    main_process(adir, outputcsv_prefix + "-" + d[ana_type] + "@", ana_type, dst_email, verbose=verbose,
-                                 recursive=recursive)
+        for adir in dirs:
+            if ana_type == "all":
+                main_process(adir, outputcsv_prefix + "-manifest@", 'm', dst_email, verbose=verbose,
+                             recursive=recursive)
+                main_process(adir, outputcsv_prefix + "-crypto@", 'k', dst_email, verbose=verbose,
+                             recursive=recursive)
+            else:
+                d = {'k': 'crypto', 'm': 'manifest'}
+                main_process(adir, outputcsv_prefix + "-" + d[ana_type] + "@", ana_type, dst_email, verbose=verbose,
+                             recursive=recursive)
     else:
         print(usage_sample)
 
@@ -141,27 +140,16 @@ def main_process(inputdir, prefix_output_file, ana_type, email, verbose=False, r
     :param prefix_output_file:
     :param inputdir:
     """
-
-    # Check the inputdir
-
-    p = Path(inputdir)
-    try:
-        [x for x in p.iterdir() if not x.is_symlink() and x.is_file()]
-    except PermissionError:
-        print(f"EEE => Permissions error for: {str(inputdir)}")
-        sys.exit(1)
-    except OSError as e:
-        print(f"EEE => OSError: {e.strerror}")
-        sys.exit(1)
-
     if ana_type == 'm':
         s = ScannerForFile(verbose)
     if ana_type == 'k':
         s = ScannerForCrypt(verbose)
 
-    s.search(inputdir, recursive=recursive)
-    suffix = re.sub(r"\W+", '_', inputdir, flags=re.IGNORECASE)
-    output_file = prefix_output_file + suffix + "." + rand_str(4) + '.csv'
+    with utils.Timer(verbose=True) as t:
+        s.search(inputdir, recursive=recursive)
+
+    path = re.sub(r"\W+", '_', inputdir, flags=re.IGNORECASE)
+    output_file = f'{prefix_output_file}{path}.t_{round(t.secs)}s.rnd_{rand_str(4)}.csv'
     msg = s.print_found_csv(output_file)
     if len(msg) == 0:
         print("Nothing detected!")

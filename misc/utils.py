@@ -32,7 +32,6 @@ try:
 except ImportError:
     pass
 
-
 def norm_percentage(f: float) -> str:
     """
     Normalize float in [0,1] to xxx% number with comma replacing dots
@@ -58,38 +57,6 @@ def print_mem_usage(s):
     except NameError:
         print('"Resource" package is not available on Windows')
         pass
-
-
-def is_known_file_type(content, verbose: bool = False) -> bool:
-    """
-    Check if the file has a compressed file signature
-    :param content:
-    :param verbose:
-    :return:
-    """
-
-    path = os.path.expanduser(CFG_PATH_FOR_SIGNATURES)
-    url = URL_FOR_SIGNATURES
-    try:
-        signatures = compile_sigs(path, url)
-    except HTTPError as err:
-        if err.code == 404:
-            print("File Signatures web site is not available. I am not able to dynamically recreate the file. Please drop a signatures file in the application directory.")
-            sys.exit()
-        else:
-            raise
-
-    results = check_sig_content(content, signatures)
-
-    if results and results[0][2] == 0:
-        # It returns only the first one
-        if verbose:
-            sig, desc, offset = results[0][0], results[0][1], results[0][2]
-            print(f"[+] {sig} : First type recogn. \"{desc}\" <- Offset: {str(offset)}")
-        return True
-
-    return False
-
 
 def check_configuration():
     """
@@ -125,3 +92,46 @@ class Timer(object):
                     self.secs, self.start_mem, self.delta_mem))
             else:
                 print('##T: elapsed time: %f sec' % self.secs)
+
+
+#  ----------------- SIGNATURES UTILITY ----------------------------------------
+
+def is_known_file_type(content, verbose: bool = False) -> bool:
+    """
+    Check if the file has a compressed file signature
+    :param content:
+    :param verbose:
+    :return:
+    """
+
+    results = check_sig_content(content, signatures)
+
+    if results and results[0][2] == 0:
+        # It returns only the first one
+
+        # commented for performance improvement
+        #if verbose:
+        #    sig, desc, offset = results[0][0], results[0][1], results[0][2]
+        #    print(f"[+] {sig} : First type recogn. \"{desc}\" <- Offset: {str(offset)}")
+        return True
+
+    return False
+
+
+def _check_compile_sigs():
+    path = os.path.expanduser(CFG_PATH_FOR_SIGNATURES)
+    url = URL_FOR_SIGNATURES
+    try:
+        signs = compile_sigs(path, url)
+    except HTTPError as err:
+        if err.code == 404:
+            print(
+                "File Signatures web site is not available. I am not able to dynamically recreate the file. Please drop a signatures file in the application directory.")
+            sys.exit()
+        else:
+            raise
+    return signs
+
+
+# builds the signatures (only the first time)
+signatures = _check_compile_sigs()

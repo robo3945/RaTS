@@ -18,6 +18,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>
 """
 import datetime
+from pathlib import Path
 
 import bitmath
 
@@ -35,14 +36,16 @@ class CsvRow(object):
         # time_t    st_ctime;   /* time of last status change */
 
         # file attributes
-        self.full_file_name = str(file)
-        self.file_path = file.parent
-        self.file_name = file.name
+
+        p = Path(file)
+        self.full_file_name = str(p)
+        self.file_path = p.parent
+        self.file_name = p.name
         self.adate = datetime.datetime.fromtimestamp(file.stat().st_atime).strftime(CsvRow._date_format)
         self.mdate = datetime.datetime.fromtimestamp(file.stat().st_mtime).strftime(CsvRow._date_format)
         self.cdate = datetime.datetime.fromtimestamp(file.stat().st_ctime).strftime(CsvRow._date_format)
         self.file_size = file.stat().st_size
-        self.file_extension = file.suffix.lower()
+        self.file_extension = p.suffix.lower()
 
         # other informations
         self.type = type
@@ -66,17 +69,7 @@ class CsvRow(object):
     def __repr__(self):
         file_size = bitmath.Byte(bytes=self.file_size).best_prefix()
         str_file_size = file_size.format("{value:.2f} {unit}")
-
-        return str(self.full_file_name) + ";" + \
-               str(self.file_path) + ";" + \
-               str(self.file_name) + ";" + \
-               str_file_size + ";" + \
-               str(self.file_extension) + ";" + \
-               str(self.type) + ";" + \
-               str(self.desc) + ";" + \
-               str(self.adate) + ";" + \
-               str(self.mdate) + ";" + \
-               str(self.cdate)
+        return f'{self.full_file_name};{self.file_path};{self.file_name};{str_file_size};{self.file_extension};{self.type};{self.desc};{self.adate};{str(self.mdate)};{str(self.cdate)}'
 
     def __str__(self):
         return self.__repr__()
