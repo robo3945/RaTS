@@ -40,6 +40,7 @@ def main(argv):
     """
 
     inputdir = ""
+    extfilesxd = ""
     dirlistfile = ""
     outputcsv_prefix = ""
     dst_email = ""
@@ -53,8 +54,9 @@ def main(argv):
     usage_sample = output_start + """
 usage: rats.py -i <inputdir> | -l <dirlistfile> -o <outcsv> [-k|-m] [-e <notify_email>] [-r] [-h]
 -i <inputdir>       : the starting directory
--l <dirlistfile>  : a txt file with the directories to scan
+-l <dirlistfile>    : a txt file with the directories to scan
 -o <outcsv>         : the CSV output file prefix (without the extension)
+-x <excl_ext_list>  : file extensions list to exclude from scanning (ex: "jpg,tiff") 
 [-e <notify_email>] : where to send the notification
 [-k]                : search for crypted files
 [-m]                : search for manifest files
@@ -65,7 +67,7 @@ usage: rats.py -i <inputdir> | -l <dirlistfile> -o <outcsv> [-k|-m] [-e <notify_
 """
 
     try:
-        opts, args = getopt.getopt(argv, "hkmrvi:o:e:l:c:")
+        opts, args = getopt.getopt(argv, "hkmrvi:x:o:e:l:c:")
     except getopt.GetoptError as error:
         print('************ arguments error ************', end='\n')
         print(f'error: {str(error)}')
@@ -87,6 +89,8 @@ usage: rats.py -i <inputdir> | -l <dirlistfile> -o <outcsv> [-k|-m] [-e <notify_
             recursive = True
         elif opt == "-i":
             inputdir = arg
+        elif opt == "-x":
+            extfilesxd = arg
         elif opt == "-l":
             dirlistfile = arg
         elif opt == "-o":
@@ -102,6 +106,10 @@ usage: rats.py -i <inputdir> | -l <dirlistfile> -o <outcsv> [-k|-m] [-e <notify_
         # read the config file if it was specified
         if config_file_path is not None:
             read_config_file(config_file_path)
+
+        # some cmd line parameters are passe to config to better manage them
+        config.EXT_FILES_LIST_TO_EXCLUDE = set([x.strip() for x in extfilesxd.lower().split(sep=',')])
+
         dirs = []
         if dirlistfile:
             with open(dirlistfile, 'r') as handle:

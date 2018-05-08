@@ -74,13 +74,15 @@ class ScannerForCrypt(Scanner):
         with os.scandir(path) as it:
             for f in it:
                 try:
-                    if not f.name.startswith('.') and f.is_file() and not f.is_symlink():
-                        found = self.search_for_crypted_content(f)
-                        if found:
-                            print(f'=====> Found crypto content in: {f.path}')
-                            self.found.append(found)
+                    if f.is_file() and not f.is_symlink() and not f.name.startswith('.'):
+                        ext = Path(f).suffix.lower().replace('.', '')
+                        if ext not in config.EXT_FILES_LIST_TO_EXCLUDE:
+                            found = self.search_for_crypted_content(f)
+                            if found:
+                                print(f'=====> Found crypto content in: {f.path}')
+                                self.found.append(found)
 
-                    if recursive and f.is_dir():
+                    elif f.is_dir() and recursive:
                         if self.verbose:
                             print(f'+ Searching (for crypto) in the path: {f.path}')
                         self._search(f, recursive)
@@ -104,7 +106,7 @@ class ScannerForCrypt(Scanner):
                 if len(content) == 0:
                     return None
 
-                if not utils.is_known_file_type(content, verbose=self.verbose):
+                if not utils.is_known_file_type(file.name, content, verbose=self.verbose):
 
                     # read the size of the file set in the config
                     content = handle.read(config.CFG_N_BYTES_2_RAND_CHECK)

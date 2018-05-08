@@ -32,6 +32,9 @@ RATS_VERSION = '1.1'
 
 # ------ Rules file -------
 
+# files to exclude from scanning
+EXT_FILES_LIST_TO_EXCLUDE = set()
+
 # ======================> File name test
 
 # ==> Bad file name extensions that reveal the high probability of ransomware presence
@@ -129,7 +132,6 @@ CFG_SMTP_PWD = 'an.email.password'
         b'\x37\x7A\xBC\xAF\x27\x1C': "7Z: 7-Zip compressed file",
         b'\x25\x50\x44\x46': "PDF",
         b'\x30\x26\xB2\x75\x8E\x66\xCF\x11\xA6\xD9\x00\xAA\x00\x62\xCE\x6C': "asf, wma, wmv"
-
 """
 
 # https://en.wikipedia.org/wiki/List_of_file_signatures

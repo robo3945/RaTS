@@ -84,13 +84,15 @@ class ScannerForFile(Scanner):
         with os.scandir(path) as it:
             for f in it:
                 try:
-                    if not f.name.startswith('.') and f.is_file() and not f.is_symlink():
-                        found = self.__search_in_file(f)
-                        if found:
-                            print(f'=====> Found matches in: {f.path}')
-                            self.found.append(found)
+                    if f.is_file() and not f.is_symlink() and not f.name.startswith('.'):
+                        ext = Path(f).suffix.lower().replace('.', '')
+                        if ext not in config.EXT_FILES_LIST_TO_EXCLUDE:
+                            found = self.__search_in_file(f)
+                            if found:
+                                print(f'=====> Found matches in: {f.path}')
+                                self.found.append(found)
 
-                    if recursive and f.is_dir():
+                    elif f.is_dir() and recursive:
                         if self.verbose:
                             print(f'+ Searching in the path: {f.path}')
                         self._search(f, recursive)
