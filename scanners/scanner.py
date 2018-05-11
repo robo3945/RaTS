@@ -109,6 +109,6 @@ class Scanner(metaclass=abc.ABCMeta):
                     print(f'\n\n{Scanner.sep} Result in the CSV file: ({file_name}) {Scanner.sep}')
                     print(df.filter(df.columns[2:]))
                     print("*****************************************************")
-                return df
+                # return df
 
         return s
