@@ -162,7 +162,7 @@ def main_process(inputdir, prefix_output_file, ana_type, email, verbose=False, r
     if len(msg) == 0:
         print("Nothing detected!")
     elif email:
-        from_part = config.RATS_NAME
+        from_part = config.CFG_SMTP_USER
         to_part = email
         ms = MailSender()
         subject = config.RATS_NAME + ": notify"

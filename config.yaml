@@ -30,6 +30,7 @@ random_sec:
 
 # configuration for mail notifications
 mail_sec:
+  CFG_SMTP_SSL: false
   CFG_SMTP_HOST: smtp.gmail.com
   CFG_SMTP_PORT: 465
   CFG_SMTP_USER: an.email@something.com

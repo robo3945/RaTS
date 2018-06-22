@@ -18,12 +18,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>
 """
 
-# Import smtplib for the actual sending function
 import smtplib
-
-# Import the email modules we'll need
 from email.mime.text import MIMEText
-
 from config import config
 
 
@@ -33,28 +29,21 @@ class MailSender(object):
         self.smtp_port = config.CFG_SMTP_PORT
         self.smtp_user = config.CFG_SMTP_USER
         self.smtp_passwd = config.CFG_SMTP_PWD
+        self.smtp_ssl = config.CFG_SMTP_SSL
 
     def send_email(self, from_part, to_part, subject, content):
-        """
-        Send utils from the Python docs...
-        :param from_part:
-        :param to_part:
-        :param subject:
-        :param content:
-        :return:
-        """
-        # Open a plain text file for reading.  For this example, assume that
-        # the text file contains only ASCII characters.
-        msg = MIMEText(content)
+        msg = MIMEText(content, _charset='utf-8')
 
-        # me == the sender's email address
-        # you == the recipient's email address
         msg['Subject'] = subject
         msg['From'] = from_part
         msg['To'] = to_part
 
-        # Send the message via our own SMTP server.
-        s = smtplib.SMTP_SSL(host=self.smtp_host, port=self.smtp_port)
+        if self.smtp_ssl:
+            s = smtplib.SMTP_SSL(host=self.smtp_host, port=self.smtp_port)
+        else:
+            s = smtplib.SMTP(host=self.smtp_host, port=self.smtp_port)
+
+        #s.set_debuglevel(2)
         s.login(user=self.smtp_user, password=self.smtp_passwd)
         s.send_message(msg)
         s.quit()

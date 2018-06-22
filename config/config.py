@@ -110,6 +110,7 @@ CFG_N_BYTES_2_RAND_CHECK = None
 # ----------------------------------------------------------
 
 # notification settings
+CFG_SMTP_SSL = True
 CFG_SMTP_HOST = 'smtp.gmail.com'
 CFG_SMTP_PORT = 465
 CFG_SMTP_USER = 'an.email@something.com'

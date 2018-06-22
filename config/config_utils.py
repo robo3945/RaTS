@@ -38,6 +38,7 @@ def read_config_file(path: str):
             config.CFG_MAX_FILE_SIGNATURE_LENGTH = int(cfg_dict['random_sec']['magic_n_sec']['CFG_MAX_FILE_SIGNATURE_LENGTH'])
 
             # mail_sec
+            config.CFG_SMTP_SSL = cfg_dict['mail_sec']['CFG_SMTP_SSL']
             config.CFG_SMTP_HOST = cfg_dict['mail_sec']['CFG_SMTP_HOST']
             config.CFG_SMTP_PORT = cfg_dict['mail_sec']['CFG_SMTP_PORT']
             config.CFG_SMTP_USER = cfg_dict['mail_sec']['CFG_SMTP_USER']
