@@ -88,10 +88,10 @@ class Timer(object):
         self.msecs = self.secs * 1000  # millisecs
         if self.verbose:
             if self.mem:
-                print('##T: elapsed time: %f sec | M: start mem: %f MB delta_mem: %f MB' % (
+                print('#Timing: elapsed time: %f sec | M: start mem: %f MB delta_mem: %f MB' % (
                     self.secs, self.start_mem, self.delta_mem))
             else:
-                print('##T: elapsed time: %f sec' % self.secs)
+                print('#Timing: elapsed time: %f sec' % self.secs)
 
 
 #  ----------------- SIGNATURES UTILITY ----------------------------------------

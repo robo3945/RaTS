@@ -16,7 +16,9 @@ def read_config_file(path: str):
     print("---***--- Read configuration file {0} ---***---".format(path))
     try:
         with open(path, 'r') as cfg_file:
-            cfg_dict = yaml.load(cfg_file)
+            #cfg_dict = yaml.load(cfg_file) ==> deprecated with new version of the lib
+            cfg_dict = yaml.load(cfg_file, Loader=yaml.BaseLoader)
+
             # print(cfg_dict)
         if cfg_dict is not None:
             # manifest_sec

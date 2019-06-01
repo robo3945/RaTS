@@ -89,7 +89,7 @@ class ScannerForFile(Scanner):
                         if ext not in config.EXT_FILES_LIST_TO_EXCLUDE:
                             found = self.__search_in_file(f)
                             if found:
-                                print(f'=====> Found matches in: {f.path}')
+                                print(f'=====> Matches found: {f.path}')
                                 self.found.append(found)
 
                     elif f.is_dir() and recursive:

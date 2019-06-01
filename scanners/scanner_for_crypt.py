@@ -79,7 +79,7 @@ class ScannerForCrypt(Scanner):
                         if ext not in config.EXT_FILES_LIST_TO_EXCLUDE:
                             found = self.search_for_crypted_content(f)
                             if found:
-                                print(f'=====> Found crypto content in: {f.path}')
+                                print(f'=====> Encrypted content found: {f.path}')
                                 self.found.append(found)
 
                     elif f.is_dir() and recursive:
