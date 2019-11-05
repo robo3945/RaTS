@@ -10,15 +10,15 @@ manifest_sec:
   # threshold for the notifications
   CFG_TERM_PERC_TH: 100
 
-# Configuration for random check
+# Configuration for randomness check
 random_sec:
   # compression percentage threshold
   CFG_COMPR_RAND_TH: 0.70
   # binary entropy threshold [0,8]
   CFG_ENTR_RAND_TH: 7.80
-  # bytes content limit to check (None is for no limit)
+  # bytes content limit to check (-1 is for no limit)
   CFG_N_BYTES_2_RAND_CHECK: -1
-  # minimum bytes to check a compressed content
+  # minimum bytes for a compressed content to check
   CFG_COMPRESSED_CONTENT_MIN_LEN: 100
 
   # configuration for magic number exclusion euristic
