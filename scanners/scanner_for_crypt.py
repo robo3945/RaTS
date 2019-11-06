@@ -79,7 +79,7 @@ class ScannerForCrypt(Scanner):
                         if ext not in config.EXT_FILES_LIST_TO_EXCLUDE:
                             found = self.search_for_crypted_content(f)
                             if found:
-                                print(f'=====> Encrypted content found: {f.path}')
+                                print(f'===> Encrypted content found: {f.path}')
                                 self.found.append(found)
 
                     elif f.is_dir() and recursive:
@@ -106,6 +106,8 @@ class ScannerForCrypt(Scanner):
                 if len(content) == 0:
                     return None
 
+                # well known file are not checked
+                # TODO: add a cmdline option to implement the check regardless of the file signature
                 if not utils.is_known_file_type(file.name, content, verbose=self.verbose):
 
                     # read the size of the file set in the config

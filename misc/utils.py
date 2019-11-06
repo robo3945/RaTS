@@ -32,6 +32,7 @@ try:
 except ImportError:
     pass
 
+
 def norm_percentage(f: float) -> str:
     """
     Normalize float in [0,1] to xxx% number with comma replacing dots
@@ -57,6 +58,7 @@ def print_mem_usage(s):
     except NameError:
         print('"Resource" package is not available on Windows')
         pass
+
 
 def check_configuration():
     """
@@ -109,12 +111,13 @@ def is_known_file_type(file, content, verbose: bool = False) -> bool:
 
     if results and results[0][2] == 0:
         # It returns only the first one
-
         if verbose:
             sig, desc, offset = results[0][0], results[0][1], results[0][2]
             print(f"[+] filename: '{file}' - sig: '{sig}' : First type recogn. \"{desc}\" <- Offset: {str(offset)}")
         return True
 
+    if verbose:
+        print(f"[+] filename: '{file}'")
     return False
 
 

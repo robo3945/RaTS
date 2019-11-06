@@ -47,6 +47,7 @@ def read_config_file(path: str):
             config.CFG_SMTP_PWD = cfg_dict['mail_sec']['CFG_SMTP_PWD']
 
             pprint(cfg_dict)
+            print(end="\n")
         else:
             print("Problem with configuration file!")
     except FileNotFoundError:
