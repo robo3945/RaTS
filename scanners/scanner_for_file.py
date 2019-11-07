@@ -97,10 +97,10 @@ class ScannerForFile(Scanner):
                             print(f'+ Searching in the path: {f.path}')
                         self._search(f, recursive)
 
-                except PermissionError:
-                    print(f'EEE => Permissions error for: {f.path}')
+                except PermissionError as e:
+                    print(f'EEE => Permissions error: {e}')
                 except OSError as e:
-                    print(f'EEE => OSError "{e.strerror}" for: {f.path}')
+                    print(f'EEE => OSError {e.errno}-{e}')
 
     def __search_in_file(self, file) -> Optional[CsvRow]:
         """
@@ -175,9 +175,9 @@ class ScannerForFile(Scanner):
                                 print(f'==> Found patterns in the file content: {str(list_found)}')
                             return CsvRow(file, "ptrn_in_file_content", f'\"{str(list_found)}\"')
 
-        except PermissionError:
-            print(f'EEE => Permissions error for: {str(file)}')
+        except PermissionError as e:
+            print(f'EEE => Permissions error: {e}')
         except OSError as e:
-            print(f'EEE => OSError: {e.strerror}')
+            print(f'EEE => OSError: {e.errno}-{e}')
 
         return None

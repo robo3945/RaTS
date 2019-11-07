@@ -28,6 +28,7 @@ from scanners.scanner import Scanner
 
 IMAGE = "Image"
 CRYPTO = "Crypto"
+CRYPTO_NOTPROC = "NotProcessed"
 
 
 class ScannerForCrypt(Scanner):
@@ -87,10 +88,10 @@ class ScannerForCrypt(Scanner):
                             print(f'+ Searching (for crypto) in the path: {f.path}')
                         self._search(f, recursive)
 
-                except PermissionError:
-                    print(f'EEE => Permissions error for: {f.path}')
+                except PermissionError as e:
+                    print(f'EEE => Permissions error: {e}')
                 except OSError as e:
-                    print(f'EEE(1) => OSError "{e.strerror}" for: {f.path}')
+                    print(f'EEE(1) => OSError "{e.errno}-{e.strerror}" for: {f.path}')
 
     def search_for_crypted_content(self, file):
         """
@@ -107,8 +108,8 @@ class ScannerForCrypt(Scanner):
                     return None
 
                 # well known file are not checked
-                # TODO: add a cmdline option to implement the check regardless of the file signature
-                if not utils.is_known_file_type(file.name, content, verbose=self.verbose):
+                ret, sig, desc, offset = utils.is_known_file_type(file.name, content, verbose=self.verbose)
+                if not ret:
 
                     # read the size of the file set in the config
                     content = handle.read(config.CFG_N_BYTES_2_RAND_CHECK)
@@ -123,10 +124,13 @@ class ScannerForCrypt(Scanner):
                         if rnd_test_compr > config.CFG_COMPR_RAND_TH and lcontent > config.CFG_COMPRESSED_CONTENT_MIN_LEN:
                             adesc = f'Entropy: {str(rnd_test_entropy)} && Comp_Fact: {rnd_test_compr}'
                             return CsvRow(file, CRYPTO, adesc)
+                else:
+                    adesc = f"sig: '{sig}' : first type recogn. \"{desc}\" <- offset: {str(offset)}"
+                    return CsvRow(file, CRYPTO_NOTPROC, adesc)
 
-        except PermissionError:
+        except PermissionError as e:
             print(f'EEE => Permissions error for: {file.path}')
         except OSError as e:
-            print(f'EEE(2) => OSError "{e.strerror}" for: {file.path}')
+            print(f'EEE(2) => OSError {e.errno}-{e}')
 
         return None

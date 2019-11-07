@@ -98,7 +98,7 @@ class Timer(object):
 
 #  ----------------- SIGNATURES UTILITY ----------------------------------------
 
-def is_known_file_type(file, content, verbose: bool = False) -> bool:
+def is_known_file_type(file, content, verbose: bool = False):
     """
     Check if the file has a compressed file signature
     :param file: the filename
@@ -111,14 +111,14 @@ def is_known_file_type(file, content, verbose: bool = False) -> bool:
 
     if results and results[0][2] == 0:
         # It returns only the first one
+        sig, desc, offset = results[0][0], results[0][1], results[0][2]
         if verbose:
-            sig, desc, offset = results[0][0], results[0][1], results[0][2]
             print(f"[+] filename: '{file}' - sig: '{sig}' : First type recogn. \"{desc}\" <- Offset: {str(offset)}")
-        return True
+        return True, sig, desc, offset
 
     if verbose:
         print(f"[+] filename: '{file}'")
-    return False
+    return False, None, None, None
 
 
 def _check_compile_sigs():
