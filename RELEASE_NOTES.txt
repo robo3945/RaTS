@@ -17,6 +17,15 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>
 
+
+======================================================================================
+RELEASE NOTES for 1.1.2
+======================================================================================
+NEW FEATURES:
+
+- files not processed are now included in the crypto output to evaluate the False Positives yet
+- CSV for the Crypto output was improved with various information
+
 ======================================================================================
 RELEASE NOTES for 1.0b
 ======================================================================================
