@@ -4,7 +4,7 @@
 
 RaTS does not prevent the Ransomware to do its bad work, but it can **help to find evidences of the existence of Ransomware in your environment** (filesystems).
 
-RaTS is especially useful to periodically monitor network share or external drive to find evidences of the presence of Ransomware. You can run RaTS as a cmd line application or a batch for servers. RaTS does not have a GUI yet...
+RaTS is especially useful to periodically monitor network share or external drive to find evidences of the presence of Ransomware. You can run RaTS as a cmd line application or a batch for servers.
 
 ## What RaTS can do ##
 
@@ -19,7 +19,7 @@ RaTS is especially useful to periodically monitor network share or external driv
 
 ## Platform ##
 
-RaTS is written for Python 3 (> 3.6) and it works fine in a compiled way for Windows, MacOSX and Linux. We have tested it with PYINSTALLER. 
+RaTS is written for Python 3 (>= 3.6) and it works fine in a compiled way for Windows, MacOSX and Linux. We have tested it with PYINSTALLER. 
 
 - Cmd line: *pyinstaller –-onefile rats.[osx|win32].pyinstaller* (update the path of the binary in the *.pyinstaller)
 
