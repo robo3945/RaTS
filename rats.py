@@ -2,7 +2,7 @@
 
 """
 RaTS: Ransomware Traces Scanner
-Copyright (C) 2015 --> 2019 Roberto Battistoni (r.battistoni@gmail.com)
+Copyright (C) 2015 -> 2020 Roberto Battistoni (r.battistoni@gmail.com)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
