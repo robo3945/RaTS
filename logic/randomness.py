@@ -26,10 +26,10 @@ import math
 
 class RandTest:
     @staticmethod
-    def calc_entropy_test(text: str, verbose: bool) -> float:
+    def calc_entropy_test(content: bytes, verbose: bool) -> float:
         """
         Entropy randomness test
-        :param text:
+        :param content:
         :param verbose:
         :return:
         """
@@ -43,7 +43,7 @@ class RandTest:
             p, lns = Counter(content), float(len(content))
             return -sum(count / lns * math.log(count / lns, 2) for count in p.values())
 
-        H = entropy(text)
+        H = entropy(content)
 
         if verbose:
             print("-> [Entropy Test] crypto values: H: %s" % H)
@@ -51,7 +51,7 @@ class RandTest:
         return H
 
     @staticmethod
-    def calc_compression_test(bcontent: bytearray, verbose: bool) -> float:
+    def calc_compression_test(bcontent: bytes, verbose: bool) -> float:
         """
         Calculates the randomness of the content using the Kolmogorov complexity
 

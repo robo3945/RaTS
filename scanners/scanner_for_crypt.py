@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 """
 import os
 from pathlib import Path
+from typing import Optional
 
 from config import config
 from logic.csv_row import CsvRow
@@ -80,7 +81,7 @@ class ScannerForCrypt(Scanner):
                         if ext not in config.EXT_FILES_LIST_TO_EXCLUDE:
                             found = self.search_for_crypted_content(f)
                             if found:
-                                print(f'===> Encrypted content found: {f.path}')
+                                print(f'===> Possible encrypted content analysed: {found}')
                                 self.found.append(found)
 
                     elif f.is_dir() and recursive:
@@ -93,7 +94,7 @@ class ScannerForCrypt(Scanner):
                 except OSError as e:
                     print(f'EEE(1) => OSError "{e.errno}-{e.strerror}" for: {f.path}')
 
-    def search_for_crypted_content(self, file):
+    def search_for_crypted_content(self, file) -> Optional[CsvRow]:
         """
         Calculate randomness of the crypto content
 
@@ -115,11 +116,11 @@ class ScannerForCrypt(Scanner):
                     content = handle.read(config.CFG_N_BYTES_2_RAND_CHECK)
                     lcontent = len(content)
 
-                    # First test is the Entropy
+                    # First test: entropy
                     rnd_test_entropy = round(RandTest.calc_entropy_test(content, self.verbose), 2)
                     if rnd_test_entropy > config.CFG_ENTR_RAND_TH:
 
-                        # Second test is the Compression factor
+                        # Second test: compression factor
                         rnd_test_compr = round(RandTest.calc_compression_test(content, self.verbose), 2)
                         if rnd_test_compr > config.CFG_COMPR_RAND_TH and lcontent > config.CFG_COMPRESSED_CONTENT_MIN_LEN:
                             adesc = f'Entropy: {str(rnd_test_entropy)} && Comp_Fact: {rnd_test_compr}'

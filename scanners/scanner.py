@@ -68,16 +68,6 @@ class Scanner(metaclass=abc.ABCMeta):
         """
         raise NotImplementedError
 
-    # TODO: implement in the subclasses the method
-    # @abc.abstractmethod
-    def print_found_csv_report(self, file_name=None):
-        """
-        Print a report of the outcomes
-        :param file_name:
-        :return:
-        """
-        raise NotImplementedError
-
     def print_found_list(self):
         """
         Print the list of found items
