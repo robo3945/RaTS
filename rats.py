@@ -107,7 +107,7 @@ usage: rats.py -i <inputdir> | -l <dirlistfile> -o <outcsv> [-k|-m] [-e <notify_
         if config_file_path is not None:
             read_config_file(config_file_path)
 
-        # some cmd line parameters are passe to config to better manage them
+        # some cmd line parameters are passed to config to better manage them
         config.EXT_FILES_LIST_TO_EXCLUDE = set([x.strip() for x in extfilesxd.lower().split(sep=',')])
 
         dirs = []
