@@ -43,7 +43,7 @@ class MailSender(object):
         else:
             s = smtplib.SMTP(host=self.smtp_host, port=self.smtp_port)
 
-        #s.set_debuglevel(2)
+        # s.set_debuglevel(2)
         s.login(user=self.smtp_user, password=self.smtp_passwd)
         s.send_message(msg)
         s.quit()

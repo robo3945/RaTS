@@ -16,7 +16,7 @@ def read_config_file(path: str):
     print("---***--- Read configuration file {0} ---***---".format(path))
     try:
         with open(path, 'r') as cfg_file:
-            #cfg_dict = yaml.load(cfg_file) ==> deprecated with new version of the lib
+            # cfg_dict = yaml.load(cfg_file) ==> deprecated with new version of the lib
             cfg_dict = yaml.load(cfg_file, Loader=yaml.BaseLoader)
 
             # print(cfg_dict)
@@ -37,7 +37,8 @@ def read_config_file(path: str):
 
             # random_sec
             config.CFG_PATH_FOR_SIGNATURES = cfg_dict['random_sec']['magic_n_sec']['CFG_PATH_FOR_SIGNATURES']
-            config.CFG_MAX_FILE_SIGNATURE_LENGTH = int(cfg_dict['random_sec']['magic_n_sec']['CFG_MAX_FILE_SIGNATURE_LENGTH'])
+            config.CFG_MAX_FILE_SIGNATURE_LENGTH = int(
+                cfg_dict['random_sec']['magic_n_sec']['CFG_MAX_FILE_SIGNATURE_LENGTH'])
 
             # mail_sec
             config.CFG_SMTP_SSL = cfg_dict['mail_sec']['CFG_SMTP_SSL']

@@ -73,3 +73,11 @@ class CsvRow(object):
 
     def __str__(self):
         return self.__repr__()
+
+    def min_print(self):
+        """
+        string for console logging purpose
+        :return:
+        """
+
+        return f'{self.file_path}|{self.file_name}|{self.type}|{self.desc}'

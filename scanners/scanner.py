@@ -79,6 +79,7 @@ class Scanner(metaclass=abc.ABCMeta):
     def print_found_csv(self, file_name, verbose=False):
         """
         Print the list of found items in the form of CSV file
+        :param verbose:
         :param file_name:
         :return:
         """

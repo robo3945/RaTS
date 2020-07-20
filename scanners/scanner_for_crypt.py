@@ -81,7 +81,7 @@ class ScannerForCrypt(Scanner):
                         if ext not in config.EXT_FILES_LIST_TO_EXCLUDE:
                             found = self.search_for_crypted_content(f)
                             if found:
-                                print(f'===> Possible encrypted content analysed: {found}')
+                                print(f'===> Content analysed: {found.min_print()}')
                                 self.found.append(found)
 
                     elif f.is_dir() and recursive:
@@ -129,7 +129,7 @@ class ScannerForCrypt(Scanner):
                     adesc = f"sig: '{sig}' : first type recogn. \"{desc}\" <- offset: {str(offset)}"
                     return CsvRow(file, CRYPTO_NOTPROC, adesc)
 
-        except PermissionError as e:
+        except PermissionError:
             print(f'EEE => Permissions error for: {file.path}')
         except OSError as e:
             print(f'EEE(2) => OSError {e.errno}-{e}')
