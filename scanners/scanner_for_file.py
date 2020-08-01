@@ -69,8 +69,8 @@ class ScannerForFile(Scanner):
         :return:
         """
 
-        if self.verbose:
-            self.print_config()
+        # if self.verbose:
+        self.print_config()
         print(f'{Scanner.sep} Starting search Ransomware manifest traces in: {str(path)} {Scanner.sep}')
         self._search(path, recursive)
 

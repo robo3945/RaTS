@@ -61,8 +61,8 @@ class ScannerForCrypt(Scanner):
         :param recursive:
         :return:
         """
-        if self.verbose:
-            self.print_config()
+        # if self.verbose:
+        self.print_config()
         print(f'{Scanner.sep} Starting search Crypto content in: {str(path)} {Scanner.sep}')
         self._search(path, recursive)
 
