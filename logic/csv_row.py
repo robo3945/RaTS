@@ -38,9 +38,9 @@ class CsvRow(object):
         # file attributes
 
         p = Path(file)
-        self.full_file_name = str(p)
-        self.file_path = p.parent
-        self.file_name = p.name
+        self.full_file_name = str(p).replace(';','#')
+        self.file_path = str(p.parent).replace(';','#')
+        self.file_name = str(p.name).replace(';','#')
         self.adate = datetime.datetime.fromtimestamp(file.stat().st_atime).strftime(CsvRow._date_format)
         self.mdate = datetime.datetime.fromtimestamp(file.stat().st_mtime).strftime(CsvRow._date_format)
         self.cdate = datetime.datetime.fromtimestamp(file.stat().st_ctime).strftime(CsvRow._date_format)
