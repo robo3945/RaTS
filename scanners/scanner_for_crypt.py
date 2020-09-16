@@ -29,7 +29,7 @@ from scanners.scanner import Scanner
 
 IMAGE = "Image"
 CRYPTO = "Crypto"
-CRYPTO_NOTPROC = "NotProcessed"
+CRYPTO_NOTPROC = "CryptoNotProcessed"
 
 
 class ScannerForCrypt(Scanner):
@@ -120,6 +120,7 @@ class ScannerForCrypt(Scanner):
                     rnd_test_entropy = round(RandTest.calc_entropy_test(content, self.verbose), 2)
                     if rnd_test_entropy > config.CFG_ENTR_RAND_TH:
 
+                        # TODO: add a cmdline config param to use entropy & compression or only the one of them (useful to reduce scan time)
                         # Second test: compression factor
                         rnd_test_compr = round(RandTest.calc_compression_test(content, self.verbose), 2)
                         if rnd_test_compr > config.CFG_COMPR_RAND_TH and lcontent > config.CFG_COMPRESSED_CONTENT_MIN_LEN:

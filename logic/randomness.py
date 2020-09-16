@@ -57,6 +57,9 @@ class RandTest:
 
         We compress the content and evaluate the grade of the compression:
         - lesser the compression is, higher the randomness is: len(zipped)/len(content)
+        - upperbound for randomness is 1, lowerbound is > 0
+        - upperbound for compression is > 0, lowerbound is 1
+
         :param bcontent: byte content
         :param verbose:
         :return: [0,1]
@@ -76,7 +79,7 @@ class RandTest:
                 print("Empty string, nothing to do!")
             return 0
 
-        len_compr_cnt = len(gzip.compress(bcontent, 9))
+        len_compr_cnt = len(compress(bcontent))
         # deleting the footprint for the compression
         len_compr_cnt_1 = (len_compr_cnt - get_compressed_footprint()) * 1.0
         rand = len_compr_cnt_1 / len_bcontent
