@@ -62,7 +62,7 @@ usage: rats.py -i <inputdir> | -l <dirlistfile> -o <outcsv> [-k|-m] [-e <notify_
 [-m]                : search for manifest files
 [-r]                : recursive search
 [-c]                : path for the configuration YAML file
-[-v]                : verbose mode
+[-v]                : verbose mode (outcome files include all the items detected)
 [-h]                : print this help
 """
 

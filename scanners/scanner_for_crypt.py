@@ -109,26 +109,27 @@ class ScannerForCrypt(Scanner):
                     return None
 
                 # well known file are not checked
-                ret, sig, desc, offset = utils.is_known_file_type(file.name, content, verbose=self.verbose)
-                if not ret:
+                is_well_known, sig, desc, offset = utils.is_known_file_type(file.name, content, verbose=self.verbose)
+                if not is_well_known:
 
                     # read the size of the file set in the config
+                    handle.seek(0)
                     content = handle.read(config.CFG_N_BYTES_2_RAND_CHECK)
                     lcontent = len(content)
 
-                    # First test: entropy
                     rnd_test_entropy = round(RandTest.calc_entropy_test(content, self.verbose), 2)
-                    if rnd_test_entropy > config.CFG_ENTR_RAND_TH:
+                    rnd_test_compr = round(RandTest.calc_compression_test(content, self.verbose), 2)
+                    adesc = f'Entropy: {str(rnd_test_entropy)} && Comp_Fact: {rnd_test_compr}'
 
-                        # TODO: add a cmdline config param to use entropy & compression or only the one of them (useful to reduce scan time)
-                        # Second test: compression factor
-                        rnd_test_compr = round(RandTest.calc_compression_test(content, self.verbose), 2)
-                        if rnd_test_compr > config.CFG_COMPR_RAND_TH and lcontent > config.CFG_COMPRESSED_CONTENT_MIN_LEN:
-                            adesc = f'Entropy: {str(rnd_test_entropy)} && Comp_Fact: {rnd_test_compr}'
-                            return CsvRow(file, CRYPTO, adesc)
-                else:
-                    adesc = f"sig: '{sig}' : first type recogn. \"{desc}\" <- offset: {str(offset)}"
-                    return CsvRow(file, CRYPTO_NOTPROC, adesc)
+                    # First test: entropy & compression factor
+                    if (rnd_test_entropy > config.CFG_ENTR_RAND_TH)\
+                            and (rnd_test_compr > config.CFG_COMPR_RAND_TH and lcontent > config.CFG_COMPRESSED_CONTENT_MIN_LEN):
+                        return CsvRow(file, CRYPTO, adesc)
+
+                # with verbose flag all the items are put into the outcome to evaluate also the excluded items
+                if self.verbose:
+                    adesc2 = f"sig: '{sig}', first type recogn: \"{desc}\" <- offset: {str(offset)} - {adesc}"
+                    return CsvRow(file, CRYPTO_NOTPROC, adesc2)
 
         except PermissionError:
             print(f'EEE => Permissions error for: {file.path}')
