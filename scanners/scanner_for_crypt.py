@@ -121,9 +121,9 @@ class ScannerForCrypt(Scanner):
                     rnd_test_compr = round(RandTest.calc_compression_test(content, self.verbose), 2)
                     adesc = f'Entropy: {str(rnd_test_entropy)} && Comp_Fact: {rnd_test_compr}'
 
-                    # First test: entropy & compression factor
+                    # Tests: entropy || compression factor
                     if (rnd_test_entropy > config.CFG_ENTR_RAND_TH)\
-                            and (rnd_test_compr > config.CFG_COMPR_RAND_TH and lcontent > config.CFG_COMPRESSED_CONTENT_MIN_LEN):
+                            or (rnd_test_compr > config.CFG_COMPR_RAND_TH and lcontent > config.CFG_COMPRESSED_CONTENT_MIN_LEN):
                         return CsvRow(file, CRYPTO, adesc)
 
                 # with verbose flag all the items are put into the outcome to evaluate also the excluded items
