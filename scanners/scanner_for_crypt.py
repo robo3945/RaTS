@@ -78,7 +78,7 @@ class ScannerForCrypt(Scanner):
                 try:
                     if f.is_file() and not f.is_symlink() and not f.name.startswith('.'):
                         ext = Path(f).suffix.lower().replace('.', '')
-                        if ext not in config.EXT_FILES_LIST_TO_EXCLUDE:
+                        if len(ext) == 0 or ext not in config.EXT_FILES_LIST_TO_EXCLUDE:
                             found = self.search_for_crypted_content(f)
                             if found:
                                 print(f'===> Content analysed: {found.min_print()}')
