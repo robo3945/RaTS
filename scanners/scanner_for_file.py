@@ -116,7 +116,7 @@ class ScannerForFile(Scanner):
         :return: None or the file detected
         """
 
-        res = None
+        csv_row = None
         ext = Path(file).suffix.lower()
         # check only the files with the max size in the configuration
         if (ext in self.file_bad_exts_set or ext in self.file_name_exts_set) and file.stat().st_size <= config.CFG_MANIFEST_MAX_SIZE:
@@ -125,19 +125,19 @@ class ScannerForFile(Scanner):
             if ext in self.file_bad_exts_set:
                 if self.verbose:
                     print(f'-> Found bad extension in the file: {ext}')
-                res = CsvRow(file, "bad_ext", ext)
+                csv_row = CsvRow(file, "bad_ext", ext)
             else:
                 # Only the allowed extensions in the config are checked for the file name and the content
                 if ext in self.file_name_exts_set:
                     if self.verbose:
                         print(f'-> Processing the file "{file.path}" for the extension "{ext}"')
-                    res = self._search_in_file_name(file)
-                    if not res:
+                    csv_row = self._search_in_file_name(file)
+                    if not csv_row:
                         if self.verbose:
                             print(f'-> Processing the file "{file.path}" for the content')
-                        res = self._search_in_file_content(file)
+                        csv_row = self._search_in_file_content(file)
 
-        return res
+        return csv_row
 
     def _search_in_file_name(self, file) -> Optional[CsvRow]:
         """
