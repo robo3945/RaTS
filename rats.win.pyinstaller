@@ -9,7 +9,7 @@ def get_pandas_path():
 
 
 a = Analysis(['rats.py'],
-             pathex=['.\'],
+             pathex=['.\\'],
              binaries=None,
              datas=None,
              hiddenimports=[],
