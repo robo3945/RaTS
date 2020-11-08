@@ -86,7 +86,7 @@ class ScannerForFile(Scanner):
                 try:
                     if f.is_file() and not f.is_symlink() and not f.name.startswith('.'):
                         ext = Path(f).suffix.lower().replace('.', '')
-                        if ext not in config.EXT_FILES_LIST_TO_EXCLUDE:
+                        if len(ext) == 0 or ext not in config.EXT_FILES_LIST_TO_EXCLUDE:
                             found = self.__search_in_file(f)
                             if found:
                                 print(f'===> Matches found: {f.path}')
