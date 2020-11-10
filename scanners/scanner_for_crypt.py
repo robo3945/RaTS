@@ -109,6 +109,7 @@ class ScannerForCrypt(Scanner):
                     return None
 
                 # well known file are not checked
+                adesc = None
                 is_well_known, sig, desc, offset = utils.is_known_file_type(file.name, content, verbose=self.verbose)
                 if not is_well_known:
 
