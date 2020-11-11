@@ -22,7 +22,4 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 
 DESIDERATA:
 
-1) improve the "scanner for file" to dynamically retrieve the ransomware extensions and
-manifests from site like that: https://id-ransomware.malwarehunterteam.com/api/documentation.php
-
-2) Refine the OSX spec and Linux spec
+- include more extensive file extension list for ransomware crypted file
