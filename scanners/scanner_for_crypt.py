@@ -120,7 +120,7 @@ class ScannerForCrypt(Scanner):
 
                     rnd_test_entropy = round(RandTest.calc_entropy_test(content, self.verbose), 2)
                     rnd_test_compr = round(RandTest.calc_compression_test(content, self.verbose), 2)
-                    adesc = f'Entropy: {str(rnd_test_entropy)} && Comp_Fact: {rnd_test_compr}'
+                    adesc = f'entropy: {str(rnd_test_entropy)} OR comp: {rnd_test_compr}'
 
                     # Tests: entropy || compression factor
                     if (rnd_test_entropy > config.CFG_ENTR_RAND_TH)\

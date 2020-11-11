@@ -19,6 +19,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 
 
 ======================================================================================
+RELEASE NOTES for 1.1.4
+======================================================================================
+NEW FEATURES:
+
+- "verbose" cmd line option includes all the processed items in the outcomes file
+- Entropy and Compression factors are now evaluated in OR
+
+======================================================================================
+BUG FIXES:
+
+- small files and files without extension were not evaluated for crypto content
+
+======================================================================================
 RELEASE NOTES for 1.1.2
 ======================================================================================
 NEW FEATURES:
