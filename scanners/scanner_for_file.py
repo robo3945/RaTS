@@ -119,23 +119,21 @@ class ScannerForFile(Scanner):
         csv_row = None
         ext = Path(file).suffix.lower()
         # check only the files with the max size in the configuration
-        if (ext in self.file_bad_exts_set or ext in self.file_name_exts_set) and file.stat().st_size <= config.CFG_MANIFEST_MAX_SIZE:
-
+        if file.stat().st_size <= config.CFG_MANIFEST_MAX_SIZE:
             # check if the file has a bad extension
             if ext in self.file_bad_exts_set:
                 if self.verbose:
-                    print(f'-> Found bad extension in the file: {ext}')
+                    print(f'-> Found bad extension for the file: {ext}')
                 csv_row = CsvRow(file, "bad_ext", ext)
-            else:
-                # Only the allowed extensions in the config are checked for the file name and the content
-                if ext in self.file_name_exts_set:
+            # Only the allowed extensions in the config are checked for the file name and the content
+            elif ext in self.file_name_exts_set:
+                if self.verbose:
+                    print(f'-> Processing the file "{file.path}" for the extension "{ext}"')
+                csv_row = self._search_in_file_name(file)
+                if not csv_row:
                     if self.verbose:
-                        print(f'-> Processing the file "{file.path}" for the extension "{ext}"')
-                    csv_row = self._search_in_file_name(file)
-                    if not csv_row:
-                        if self.verbose:
-                            print(f'-> Processing the file "{file.path}" for the content')
-                        csv_row = self._search_in_file_content(file)
+                        print(f'-> Processing the file "{file.path}" for the content')
+                    csv_row = self._search_in_file_content(file)
 
         return csv_row
 
