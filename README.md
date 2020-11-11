@@ -35,7 +35,7 @@ To execute the binaries in Windows 64bit run this command line:
 
 ## Version history ##
 
-- current version: 1.1
+- current version: 1.4
 
 - 3rd version: 1.0b
 - second version: 0.9a
