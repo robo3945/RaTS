@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+signatures = None
+
 RATS_NAME = 'RaTS'
 RATS_LOGO = \
 """
@@ -10,7 +12,7 @@ ______    _____ _____
 | |\ \ (_| | | /\__/ /
 \_| \_\__,_\_/ \____/ 
 """
-RATS_VERSION = '1.1.4'
+RATS_VERSION = '1.1.5'
 
 # ------ Rules file -------
 
@@ -97,25 +99,6 @@ CFG_SMTP_HOST = 'smtp.gmail.com'
 CFG_SMTP_PORT = 465
 CFG_SMTP_USER = 'an.email@something.com'
 CFG_SMTP_PWD = 'an.email.password'
-
-# ----------------------------------------------------------
-# file type signatures
-
-"""
-        b'\x50\x4B\x03\x04': "zip,jar,odt,ods,odp,docx,xlsx,pptx,vsdx,apk,aar" ,
-        b'\x50\x4B\x05\x06': "zip,jar,odt,ods,odp,docx,xlsx,pptx,vsdx,apk,aar",
-        b'\x50\x4B\x07\x08': "zip,jar,odt,ods,odp,docx,xlsx,pptx,vsdx,apk,aar",
-        b'\x1F\x8B\x08': "GZ",
-        b'\x52\x61\x72\x21\x1A\x07\x00': "RAR1.5",
-        b'\x52\x61\x72\x21\x1A\x07\x10\x00': "RAR5.0",
-        b'\x43\x57\x53': "SWF:flash file",
-        b'\x46\x57\x53': "SWF:flash player",
-        b'\x49\x53\x63\x28': "CAB: Install Shield compressed file",
-        b'\x4D\x53\x43\x46': "CAB: Microsoft cabinet file",
-        b'\x37\x7A\xBC\xAF\x27\x1C': "7Z: 7-Zip compressed file",
-        b'\x25\x50\x44\x46': "PDF",
-        b'\x30\x26\xB2\x75\x8E\x66\xCF\x11\xA6\xD9\x00\xAA\x00\x62\xCE\x6C': "asf, wma, wmv"
-"""
 
 # https://en.wikipedia.org/wiki/List_of_file_signatures
 KNOWN_FILE_SIGS = \
