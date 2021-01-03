@@ -33,7 +33,7 @@ class ScannerForCrypt(Scanner):
         print(
             f'Compression Randomness threshold (strictly greater than): {str(config.CFG_COMPR_RAND_TH)}')
         print(f'Entropy Randomness threshold (strictly greater than): {str(config.CFG_ENTR_RAND_TH)}')
-        print(f'Number of first bytes of the content to elaborate: {str(config.CFG_N_BYTES_2_RAND_CHECK)}')
+        print(f'Number of first bytes of the content to elaborate: {"All" if config.CFG_N_BYTES_2_RAND_CHECK is None else str(config.CFG_N_BYTES_2_RAND_CHECK)}')
         print()
 
     def search(self, path, recursive=True):
