@@ -109,11 +109,13 @@ class ScannerForCrypt(Scanner):
                     if (rnd_test_entropy > config.CFG_ENTR_RAND_TH)\
                             or (rnd_test_compr > config.CFG_COMPR_RAND_TH and lcontent > config.CFG_COMPRESSED_CONTENT_MIN_LEN):
                         return CsvRow(file, CRYPTO, adesc)
-
-                # with verbose flag all the items are put into the outcome to evaluate also the excluded items
-                if self.verbose:
-                    adesc2 = f"sig: '{sig}', first type recogn: \"{desc}\" <- offset: {str(offset)} - {adesc}"
-                    return CsvRow(file, CRYPTO_NOTPROC, adesc2)
+                    else:
+                        if self.verbose:
+                            return CsvRow(file, CRYPTO_NOTPROC, f"{adesc} - min content length: '{lcontent}'")
+                else:
+                    # with verbose flag all the items are put into the outcome to evaluate also the excluded items
+                    if self.verbose:
+                        return CsvRow(file, CRYPTO_NOTPROC, f"Well Known filetype - sig: '{sig}', first type recogn: \"{desc}\" <- offset: {str(offset)} - {adesc}")
 
         except PermissionError:
             print(f'EEE => Permissions error for: {file.path}')
