@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # check_sigs.py - EnergyWolf 2016
 # Take a file path as argument, and check it for known file
 # signatures using www.filesignatures.net
@@ -25,8 +24,11 @@ def compile_sigs(path_file_signs: str, url: str):
     signatures = []
 
     if not os.path.exists(path_file_signs):
-        # TODO: modify the 19 number and adopt a better strategy
-        for i in range(19):  # 19 pages of signatures on the site
+
+        print("--- Signature Pickle Pack building ---")
+
+        # look at every page: maximum 50
+        for i in range(25):
             response = urlopen(url.format(i))
             html = response.read()  # get the html as a string
 
@@ -37,7 +39,9 @@ def compile_sigs(path_file_signs: str, url: str):
                 # append (signature, description) to signatures
                 sig = str(td.get_text()).replace(' ', '').lower()  # strip spaces, lowercase
                 desc = str(td.find_next_sibling("td").get_text())
-                signatures.append([sig, desc])
+
+                if [sig, desc] not in signatures:
+                    signatures.append([sig, desc])
 
         # Add the signatures in config.py
         for sig, desc in config.KNOWN_FILE_SIGS.items():
@@ -46,9 +50,15 @@ def compile_sigs(path_file_signs: str, url: str):
         # pickle them sigs
         with open(path_file_signs, 'wb') as f:
             Pickle.dump(signatures, f)
+            print(f"Signatures: {signatures}")
+
+        print(f"Signatures list size: {len(signatures)}")
+        print("--- // Signature Pickle Pack building ---")
+
     else:
         with open(path_file_signs, 'rb') as f:
             signatures = Pickle.load(f)
+
 
     return signatures
 

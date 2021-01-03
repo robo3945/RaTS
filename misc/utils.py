@@ -6,6 +6,7 @@ import time
 import sys
 from urllib.error import HTTPError
 
+from config import config
 from config.config import CFG_PATH_FOR_SIGNATURES, URL_FOR_SIGNATURES
 from logic.check_sigs import compile_sigs, check_sig_content
 
@@ -89,7 +90,7 @@ def is_known_file_type(file, content, verbose: bool = False):
     :return:
     """
 
-    results = check_sig_content(content, signatures)
+    results = check_sig_content(content, config.signatures)
 
     if results and results[0][2] == 0:
         # It returns only the first one
@@ -103,7 +104,7 @@ def is_known_file_type(file, content, verbose: bool = False):
     return False, None, None, None
 
 
-def _check_compile_sigs():
+def check_compile_sigs():
     path = os.path.expanduser(CFG_PATH_FOR_SIGNATURES)
     url = URL_FOR_SIGNATURES
     try:
@@ -116,7 +117,3 @@ def _check_compile_sigs():
         else:
             raise
     return signs
-
-
-# builds the signatures (only the first time)
-signatures = _check_compile_sigs()
