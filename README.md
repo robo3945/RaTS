@@ -1,4 +1,7 @@
-# RaTS: Ransomware Traces Scanner #
+## RaTS: Ransomware Traces Scanner ##
+
+[![License](https://img.shields.io/badge/license-GPL3-green)](https://github.com/robo3945/RaTS/blob/master/LICENSE)
+[![Latest Release](https://img.shields.io/badge/release-v1.1.4-blue)](https://github.com/robo3945/RaTS/releases)
 
 **RaTS** is a **Ransomware Traces Scanner** licensed with **GPL3**.
 
@@ -6,22 +9,25 @@ RaTS does not prevent the Ransomware to do its bad work, but it can **help to fi
 
 RaTS is especially useful to periodically monitor network share or external drive to find evidences of the presence of Ransomware. You can run RaTS as a cmd line application or a batch for servers.
 
-## What RaTS can do ##
+### What RaTS can do ###
 
-- find traces of the manifests (TXT or HTML) that Ransomware leaves in the filesystem: around the manifest you can find some crypto stuff...
-- find crypto stuff in the file system
-- produce outcome CSV files that allow you to analyze the state of your drives (network, NAS, external)
-- send the outcome to a configured email
+- it finds traces of the manifests (TXT or HTML) that Ransomware leaves in the filesystem: around the manifest you can find some crypto stuff.
+- it finds crypto stuff in the file system
+- it makes an outcome CSV file that allow you to analyze the state of your drives (network, NAS, external)
+- it sends the outcome to a configured email
 
-## What RaTS cannot do ##
+### What RaTS cannot do ###
 
-- prevent the Ransomware encryption
+- it does not prevent the Ransomware encryption
+- it does not make a live analysis
 
 ## Platform ##
 
-RaTS is written for Python 3 (>= 3.6) and it works fine in a compiled way for Windows, MacOSX and Linux. We have tested it with PYINSTALLER. 
+RaTS is written for Python 3 (>= 3.8) and it works fine in a compiled way for Windows, MacOSX and Linux. We have tested it with PYINSTALLER. 
 
-- Cmd line: *pyinstaller --onefile rats.[osx|win32].pyinstaller* (update the path of the binary in the *.pyinstaller)
+- Cmd line: `pyinstaller --onefile rats.[osx|win32].pyinstaller`
+
+Note: update the path of the binary in the *.pyinstaller
 
 ## Configuration ##
 
@@ -31,12 +37,14 @@ Configuration of RaTS is made through the config.py and the config.yaml. The for
 
 To execute the binaries in Windows 64bit run this command line:
 
-- *rats.win.exe -i  "\\myserver\myshare" -o "./out/fileprefix" -r -v -c ./config.yaml*
+- `rats.win.exe -i  "myshare" -o "./out/fileprefix" -r -v -c ./config.yaml`
 
-## Version history ##
+To execute the sources run this command line:
 
-- current version: 1.4
-
-- 3rd version: 1.0b
-- second version: 0.9a
-- first version: 0.1a
+1. Make sure you have Python3
+2. Checkout the project
+    `git clone https://github.com/robo3945/RaTS.git && cd RaTS`
+3. Install the requirements with pip for Python3
+    `pip3 install -r requirements.txt`
+4. Execute the script with **Python3**
+    `python3 rats.py -h`
