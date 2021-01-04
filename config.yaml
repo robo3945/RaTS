@@ -4,9 +4,9 @@
 # Configuration for manifest check
 manifest_sec:
   # Manifest max size to check
-  CFG_MANIFEST_MAX_SIZE: 40000
+  CFG_MANIFEST_MAX_SIZE: 10_000_000
   # Manifest extensions to check
-  CFG_FILE_NAME_EXTS: .html, .txt
+  CFG_FILE_NAME_EXTS: .html, .htm, .txt, .bmp, .jpg, .gif, .png
   # threshold for the notifications
   CFG_TERM_PERC_TH: 100
 

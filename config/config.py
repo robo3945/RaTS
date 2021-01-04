@@ -22,14 +22,14 @@ EXT_FILES_LIST_TO_EXCLUDE = set()
 # ======================> File name test
 
 # ==> Bad file name extensions that reveal the high probability of ransomware presence
-# check this project: https://gist.github.com/CHEF-KOCH/6ccf6143b567685dab9ccd2286ee4db0
+# TODO: expand this section
 FILE_BAS_EXTS = """.ecc, .ezz, .exx, .zzz, .xyz, .aaa, *.cryp1, .abc, .ccc, .vvv, *.zepto, .xxx, .ttt, .micro, 
 .encrypted, .locked, .crypto, _crypt, .crinf, .r5a, .XRNT, .XTBL, .crypt, .R16M01D05, .pzdc, .good, .LOL!, .OMG!, 
 .RDM, .RRK, .encryptedRSA, .crjoker, .EnCiPhErEd, .LeChiffre, .keybtc@inbox_com, .0x0, .bleep, .1999, .vault, .HA3, 
 .toxcrypt, .magic, .SUPERCRYPT, .CTBL, .CTB2, .diablo6, .Lukitus, .locky """
 
-
 # ==> File name prefixes that reveal the malware
+# TODO: expand this section
 MANIFEST_FILE_NAME_TERMS = """
 cryptolocker,
 !Decrypt-All-Files-,
@@ -59,12 +59,13 @@ vault,
 # ==> terms inside the content of the found manifest files
 
 # The maximum size of the file to be analyzed: ransomware disclaimer are little
-CFG_MANIFEST_MAX_SIZE = 40_000  # bytes
+CFG_MANIFEST_MAX_SIZE = 10_000_000  # bytes
 
 # extension of file name to analyze to check the evidence of terms
-CFG_FILE_NAME_EXTS = ".html, .txt"
+CFG_FILE_NAME_EXTS = ".html, .htm, .txt, .bmp, .jpg, .gif, .png"
 
 # RegEx pattern for searching into the text: tuples with: (regex ptrn, percentage_weight)
+# TODO: expand this section
 FILE_TEXT_TERMS_DIC = [(r'\bcryptowall\b', 99),
                        (r'\bcryptolocker\b', 99),
                        (r'\bCryptoDefense\b', 99),
