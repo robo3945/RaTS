@@ -37,10 +37,10 @@ class RandTest:
         """
         Calculates the randomness of the content using the Kolmogorov complexity
 
-        We compress the content and evaluate the grade of the compression:
-        - lesser the compression is, higher the randomness is: len(zipped)/len(content)
-        - upperbound for randomness is 1, lowerbound is > 0
-        - upperbound for compression is > 0, lowerbound is 1
+        - more is the compression/randomness, lesser the randomness/compression is
+        - def: ratio = len(zipped_content)/len(content)
+        -   ratio close to 1 means high randomness and low compression
+        -   ratio close to 0 means high compression and low randomness
 
         :param bcontent: byte content
         :param verbose:
