@@ -8,7 +8,10 @@ from typing import Optional
 
 from config import config
 from logic.csv_row import CsvRow
+from misc import utils
 from scanners.scanner import Scanner
+
+IGNORED_FILE = "Ignored file"
 
 
 class ScannerForFile(Scanner):
@@ -72,7 +75,7 @@ class ScannerForFile(Scanner):
                         if len(ext) == 0 or ext not in config.EXT_FILES_LIST_TO_EXCLUDE:
                             found = self.__search_in_file(f)
                             if found:
-                                print(f"---> Matches found: '{f.path}'")
+                                print(f'---> Filename analysed: {f.path}')
                                 self.found.append(found)
 
                     elif f.is_dir() and recursive:
@@ -119,10 +122,10 @@ class ScannerForFile(Scanner):
                     csv_row = self._search_in_file_content(file)
             else:
                 if self.verbose:
-                    csv_row = CsvRow(file, "Ignored file" , f"File size <{config.CFG_MANIFEST_MAX_SIZE}")
+                    csv_row = CsvRow(file, IGNORED_FILE, f"File size < {config.CFG_MANIFEST_MAX_SIZE}")
         else:
             if self.verbose:
-                csv_row = CsvRow(file, "Ignored file", f"File size >{config.CFG_MANIFEST_MAX_SIZE}")
+                csv_row = CsvRow(file, IGNORED_FILE, f"File size > {config.CFG_MANIFEST_MAX_SIZE}")
 
         return csv_row
 
@@ -148,19 +151,40 @@ class ScannerForFile(Scanner):
         :return:
         """
         try:
-            with open(file.path, mode='r',  errors='ignore') as handle:
-                content = handle.read()
 
-                perc, list_found = 0, []
-                for k, v in self.file_text_terms_set:
-                    found = re.search(k, content, re.IGNORECASE | re.MULTILINE)
-                    if found:
-                        list_found.append((k, v))
-                        perc += v
-                        if perc >= config.CFG_TERM_PERC_TH:
-                            if self.verbose:
-                                print(f"--> Found patterns in the file content: '{str(list_found)}'")
-                            return CsvRow(file, "ptrn_in_file_content", f'\"{str(list_found)}\"')
+            # Test if the file is a well known binary, in this case it skips the content analysis
+            with open(file=file.path, mode='rb') as handle:
+                # read only the first part of the file to check the magic type
+                content = handle.read(config.CFG_MAX_FILE_SIGNATURE_LENGTH)
+                if len(content) == 0:
+                    return None
+
+                # well known file are not checked
+                adesc = None
+                is_well_known, sig, desc, offset = utils.is_known_file_type(file.name, content, verbose=self.verbose)
+
+            if is_well_known:
+                if self.verbose:
+                    return CsvRow(file, IGNORED_FILE,
+                                  f"Well Known filetype - sig: '{sig}', first type recogn: \"{desc}\" <- offset: {str(offset)} - {adesc}")
+
+                return None
+
+            else:
+
+                with open(file.path, mode='r', errors='ignore') as handle:
+                    content = handle.read()
+
+                    perc, list_found = 0, []
+                    for k, v in self.file_text_terms_set:
+                        found = re.search(k, content, re.IGNORECASE | re.MULTILINE)
+                        if found:
+                            list_found.append((k, v))
+                            perc += v
+                            if perc >= config.CFG_TERM_PERC_TH:
+                                if self.verbose:
+                                    print(f"--> Found patterns in the file content: '{str(list_found)}'")
+                                return CsvRow(file, "ptrn_in_file_content", f'\"{str(list_found)}\"')
 
         except PermissionError as e:
             print(f'EEE => Permissions error: {e}')
