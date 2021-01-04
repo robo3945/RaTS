@@ -96,7 +96,7 @@ def is_known_file_type(file, content, verbose: bool = False):
         # It returns only the first one
         sig, desc, offset = results[0][0], results[0][1], results[0][2]
         if verbose:
-            print(f"[+] filename: '{file}' - sig: '{sig}' : First type recogn. \"{desc}\" <- Offset: {str(offset)}")
+            print(f"[+] filename: '{file}' - sig: '{sig}' : First type recogn. '{desc}' <- Offset: {str(offset)}")
         return True, sig, desc, offset
 
     if verbose:

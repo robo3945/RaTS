@@ -85,7 +85,7 @@ usage: rats.py -i <inputdir> | -l <dirlistfile> -o <outcsv> [-k|-m] [-e <notify_
             config_file_path = arg
 
     if (inputdir or dirlistfile) and ana_type:
-        print(output_start + "\n\nHere we are!\n\n")
+        print(output_start + "\n\nHere we are!\n")
 
         # read the config file if it was specified
         if config_file_path is not None:
@@ -153,7 +153,7 @@ def main_process(inputdir, prefix_output_file, ana_type, email, verbose=False, r
         to_part = email
         ms = MailSender()
         subject = config.RATS_NAME + ": notify"
-        print(f'Send the notification e-mail to: {to_part}')
+        print(f"Send the notification e-mail to: '{to_part}'")
         ms.send_email(from_part, to_part, subject, msg)
 
 
