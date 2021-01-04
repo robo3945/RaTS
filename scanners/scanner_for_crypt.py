@@ -26,6 +26,7 @@ class ScannerForCrypt(Scanner):
         :return:
         """
         super().__init__(verbose)
+        self.rand = RandTest()
 
     def print_config(self):
         print(f"{Scanner.sep} Config elements for '{__name__}' {Scanner.sep}")
@@ -102,7 +103,7 @@ class ScannerForCrypt(Scanner):
                     lcontent = len(content)
 
                     rnd_test_entropy = round(RandTest.calc_entropy_test(content, self.verbose), 5)
-                    rnd_test_compr = round(RandTest.calc_compression_test(content, self.verbose), 5)
+                    rnd_test_compr = round(self.rand.calc_compression_test(content, self.verbose), 5)
                     adesc = f'entropy: {str(rnd_test_entropy)} OR comp: {rnd_test_compr}'
 
                     # Tests: entropy || compression factor

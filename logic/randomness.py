@@ -7,6 +7,10 @@ import math
 
 
 class RandTest:
+    """
+    Class for randomness tests
+    """
+
     @staticmethod
     def calc_entropy_test(content: bytes, verbose: bool) -> float:
         """
@@ -33,7 +37,13 @@ class RandTest:
         return H
 
     @staticmethod
-    def calc_compression_test(bcontent: bytes, verbose: bool) -> float:
+    def _compress(data) -> bytes:
+        return gzip.compress(data, 9)
+
+    def __init__(self):
+        self._compression_footprint_length = len(RandTest._compress(bytes([0x0])))
+
+    def calc_compression_test(self, bcontent: bytes, verbose: bool) -> float:
         """
         Calculates the randomness of the content using the Kolmogorov complexity
 
@@ -47,12 +57,6 @@ class RandTest:
         :return: [0,1]
         """
 
-        def compress(data):
-            return gzip.compress(data, 9)
-
-        def get_compressed_footprint():
-            return len(compress(bytes([0x0])))
-
         # if print_path:
         #    print("The content is: %s" % content)
         len_bcontent = len(bcontent)
@@ -61,13 +65,11 @@ class RandTest:
                 print("Empty string, nothing to do!")
             return 0
 
-        len_compr_cnt = len(compress(bcontent))
-        # deleting the footprint for the compression
-        len_compr_cnt_1 = (len_compr_cnt - get_compressed_footprint()) * 1.0
-        rand = len_compr_cnt_1 / len_bcontent
+        len_compr_cnt = (len(self._compress(bcontent)) - self._compression_footprint_length) * 1.0
+        rand = len_compr_cnt / len_bcontent
 
         if verbose:
             print("-> [Compression Test] crypto values: n: %s, d: %s, l0: %s, rand ratio: %s " % (
-                len_compr_cnt_1, len_bcontent, get_compressed_footprint(), rand))
+                len_compr_cnt, len_bcontent, self._compression_footprint_length, rand))
 
         return rand
