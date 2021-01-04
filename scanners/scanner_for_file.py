@@ -72,12 +72,12 @@ class ScannerForFile(Scanner):
                         if len(ext) == 0 or ext not in config.EXT_FILES_LIST_TO_EXCLUDE:
                             found = self.__search_in_file(f)
                             if found:
-                                print(f'===> Matches found: {f.path}')
+                                print(f"---> Matches found: '{f.path}'")
                                 self.found.append(found)
 
                     elif f.is_dir() and recursive:
                         if self.verbose:
-                            print(f'+ Searching in the path: {f.path}')
+                            print(f"+ Searching in the path: '{f.path}'")
                         self._search(f, recursive)
 
                 except PermissionError as e:
@@ -107,16 +107,22 @@ class ScannerForFile(Scanner):
             if ext in self.file_bad_exts_set:
                 if self.verbose:
                     print(f'-> Found bad extension for the file: {ext}')
-                csv_row = CsvRow(file, "bad_ext", ext)
+                csv_row = CsvRow(file, "Bad filename extension", f"extension: {ext}")
             # Only the allowed extensions in the config are checked for the file name and the content
             elif ext in self.file_name_exts_set:
                 if self.verbose:
-                    print(f'-> Processing the file "{file.path}" for the extension "{ext}"')
+                    print(f"-> Processing the file '{file.path}' for the extension '{ext}'")
                 csv_row = self._search_in_file_name(file)
                 if not csv_row:
                     if self.verbose:
-                        print(f'-> Processing the file "{file.path}" for the content')
+                        print(f"-> Processing the file '{file.path}' for the content")
                     csv_row = self._search_in_file_content(file)
+            else:
+                if self.verbose:
+                    csv_row = CsvRow(file, "Ignored file" , f"File size <{config.CFG_MANIFEST_MAX_SIZE}")
+        else:
+            if self.verbose:
+                csv_row = CsvRow(file, "Ignored file", f"File size >{config.CFG_MANIFEST_MAX_SIZE}")
 
         return csv_row
 
@@ -130,8 +136,8 @@ class ScannerForFile(Scanner):
         for f in self.file_name_terms_set:
             if lfile.startswith(f):
                 if self.verbose:
-                    print(f'==> Found a file name starting with: {f}')
-                return CsvRow(file, None, f'file_name_start_with: "{f}"')
+                    print(f"--> Found a file name starting with: '{f}'")
+                return CsvRow(file, "Bad filename prefix", f"file_name_start_with: '{f}'")
 
         return None
 
@@ -153,7 +159,7 @@ class ScannerForFile(Scanner):
                         perc += v
                         if perc >= config.CFG_TERM_PERC_TH:
                             if self.verbose:
-                                print(f'==> Found patterns in the file content: {str(list_found)}')
+                                print(f"--> Found patterns in the file content: '{str(list_found)}'")
                             return CsvRow(file, "ptrn_in_file_content", f'\"{str(list_found)}\"')
 
         except PermissionError as e:

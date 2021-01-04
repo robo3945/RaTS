@@ -28,7 +28,7 @@ class ScannerForCrypt(Scanner):
         super().__init__(verbose)
 
     def print_config(self):
-        print(f'{Scanner.sep} Config elements for \"{__name__}\" {Scanner.sep}')
+        print(f"{Scanner.sep} Config elements for '{__name__}' {Scanner.sep}")
         print()
         print(
             f'Compression Randomness threshold (strictly greater than): {str(config.CFG_COMPR_RAND_TH)}')
@@ -64,18 +64,18 @@ class ScannerForCrypt(Scanner):
                         if len(ext) == 0 or ext not in config.EXT_FILES_LIST_TO_EXCLUDE:
                             found = self.search_for_crypted_content(f)
                             if found:
-                                print(f'===> Content analysed: {found.min_print()}')
+                                print(f'---> Content analysed: {found.min_print()}')
                                 self.found.append(found)
 
                     elif f.is_dir() and recursive:
                         if self.verbose:
-                            print(f'+ Searching (for crypto) in the path: {f.path}')
+                            print(f"+ Searching (for crypto) in the path: '{f.path}'")
                         self._search(f, recursive)
 
                 except PermissionError as e:
                     print(f'EEE => Permissions error: {e}')
                 except OSError as e:
-                    print(f'EEE(1) => OSError "{e.errno}-{e.strerror}" for: {f.path}')
+                    print(f"EEE(1) => OSError '{e.errno}-{e.strerror}' for: '{f.path}'")
 
     def search_for_crypted_content(self, file) -> Optional[CsvRow]:
         """
@@ -101,8 +101,8 @@ class ScannerForCrypt(Scanner):
                     content = handle.read(config.CFG_N_BYTES_2_RAND_CHECK)
                     lcontent = len(content)
 
-                    rnd_test_entropy = round(RandTest.calc_entropy_test(content, self.verbose), 2)
-                    rnd_test_compr = round(RandTest.calc_compression_test(content, self.verbose), 2)
+                    rnd_test_entropy = round(RandTest.calc_entropy_test(content, self.verbose), 5)
+                    rnd_test_compr = round(RandTest.calc_compression_test(content, self.verbose), 5)
                     adesc = f'entropy: {str(rnd_test_entropy)} OR comp: {rnd_test_compr}'
 
                     # Tests: entropy || compression factor
@@ -111,14 +111,14 @@ class ScannerForCrypt(Scanner):
                         return CsvRow(file, CRYPTO, adesc)
                     else:
                         if self.verbose:
-                            return CsvRow(file, CRYPTO_NOTPROC, f"{adesc} - min content length: '{lcontent}'")
+                            return CsvRow(file, CRYPTO_NOTPROC, f"{adesc} - content length: {lcontent}")
                 else:
                     # with verbose flag all the items are put into the outcome to evaluate also the excluded items
                     if self.verbose:
                         return CsvRow(file, CRYPTO_NOTPROC, f"Well Known filetype - sig: '{sig}', first type recogn: \"{desc}\" <- offset: {str(offset)} - {adesc}")
 
         except PermissionError:
-            print(f'EEE => Permissions error for: {file.path}')
+            print(f"EEE => Permissions error for: '{file.path}'")
         except OSError as e:
             print(f'EEE(2) => OSError {e.errno}-{e}')
 
