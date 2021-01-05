@@ -122,10 +122,10 @@ class ScannerForFile(Scanner):
                     csv_row = self._search_in_file_content(file)
             else:
                 if self.verbose:
-                    csv_row = CsvRow(file, IGNORED_FILE, f"File size < {config.CFG_MANIFEST_MAX_SIZE}")
+                    csv_row = CsvRow(file, IGNORED_FILE, f"Ext not in bad exts - manifest file size < {config.CFG_MANIFEST_MAX_SIZE}")
         else:
             if self.verbose:
-                csv_row = CsvRow(file, IGNORED_FILE, f"File size > {config.CFG_MANIFEST_MAX_SIZE}")
+                csv_row = CsvRow(file, IGNORED_FILE, f"Manifest file size > {config.CFG_MANIFEST_MAX_SIZE}")
 
         return csv_row
 
