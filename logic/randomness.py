@@ -15,21 +15,21 @@ class RandTest:
     def calc_entropy_test(content: bytes, verbose: bool) -> float:
         """
         Entropy randomness test
+
+        Binary Entropy from: http://rosettacode.org/wiki/Entropy#Python:_More_succinct_version
+
+        For every byte we have 8 bits, so 256 different characters. Maximum entropy is for a string
+        that contains an equal distribution on every character:
+
+        H(X) = 256 * 1/256 * -log2(1/256) = 1 * log2(256) = 8
+
         :param content:
         :param verbose:
         :return:
         """
 
-        def entropy(content) -> float:
-            """
-            Binary Entropy from: http://rosettacode.org/wiki/Entropy#Python:_More_succinct_version
-            :param content: content (string or byte array)
-            :return:
-            """
-            p, lns = Counter(content), float(len(content))
-            return -sum(count / lns * math.log(count / lns, 2) for count in p.values())
-
-        H = entropy(content)
+        p, lns = Counter(content), float(len(content))
+        H = -sum(count / lns * math.log(count / lns, 2) for count in p.values())
 
         if verbose:
             print("-> [Entropy Test] crypto values: H: %s" % H)

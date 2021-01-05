@@ -12,7 +12,7 @@ from scanners.scanner import Scanner
 
 IMAGE = "Image"
 CRYPTO = "Crypto"
-CRYPTO_NOTPROC = "CryptoNotProcessed"
+CRYPTO_NOTPROC = "Ignored"
 
 
 class ScannerForCrypt(Scanner):
