@@ -24,7 +24,7 @@ random_sec:
   # configuration for magic number exclusion euristic
   magic_n_sec:
     # file path for the stored signatures and magic numbers
-    CFG_PATH_FOR_SIGNATURES: ./file_sigs.pickle
+    CFG_PATH_FOR_SIGNATURES: ./file_sigs.json
     # the maximum length to check for the magic number
     CFG_MAX_FILE_SIGNATURE_LENGTH: 60
 

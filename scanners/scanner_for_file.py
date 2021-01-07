@@ -122,7 +122,8 @@ class ScannerForFile(Scanner):
                     csv_row = self._search_in_file_content(file)
             else:
                 if self.verbose:
-                    csv_row = CsvRow(file, IGNORED_FILE, f"Ext not in bad exts - manifest file size < {config.CFG_MANIFEST_MAX_SIZE}")
+                    csv_row = CsvRow(file, IGNORED_FILE,
+                                     f"Ext not in bad exts - manifest file size < {config.CFG_MANIFEST_MAX_SIZE}")
         else:
             if self.verbose:
                 csv_row = CsvRow(file, IGNORED_FILE, f"Manifest file size > {config.CFG_MANIFEST_MAX_SIZE}")
@@ -185,6 +186,9 @@ class ScannerForFile(Scanner):
                                 if self.verbose:
                                     print(f"--> Found patterns in the file content: '{str(list_found)}'")
                                 return CsvRow(file, "ptrn_in_file_content", f'\"{str(list_found)}\"')
+
+                    if len(list_found) == 0 and self.verbose:
+                        return CsvRow(file, IGNORED_FILE, f"No patterns found")
 
         except PermissionError as e:
             print(f'EEE => Permissions error: {e}')

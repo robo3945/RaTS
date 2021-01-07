@@ -110,7 +110,7 @@ KNOWN_FILE_SIGS = \
     }
 
 URL_FOR_SIGNATURES = "http://www.filesignatures.net/index.php?page=all&currentpage={}"
-CFG_PATH_FOR_SIGNATURES = './file_sigs.pickle'
+CFG_PATH_FOR_SIGNATURES = './file_sigs.json'
 # the maximum lenght of the signature to find in the Dump file
 CFG_MAX_FILE_SIGNATURE_LENGTH = 60
 # the minimum bytes length for checking the compressed item
