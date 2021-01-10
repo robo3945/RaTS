@@ -22,11 +22,8 @@ EXT_FILES_LIST_TO_EXCLUDE = set()
 # ======================> File name test
 
 # ==> Bad file name extensions that reveal the high probability of ransomware presence
-# TODO: expand this section
-FILE_BAS_EXTS = """.ecc, .ezz, .exx, .zzz, .xyz, .aaa, *.cryp1, .abc, .ccc, .vvv, *.zepto, .xxx, .ttt, .micro, 
-.encrypted, .locked, .crypto, _crypt, .crinf, .r5a, .XRNT, .XTBL, .crypt, .R16M01D05, .pzdc, .good, .LOL!, .OMG!, 
-.RDM, .RRK, .encryptedRSA, .crjoker, .EnCiPhErEd, .LeChiffre, .keybtc@inbox_com, .0x0, .bleep, .1999, .vault, .HA3, 
-.toxcrypt, .magic, .SUPERCRYPT, .CTBL, .CTB2, .diablo6, .Lukitus, .locky """
+
+BAD_FILE_EXTS = None
 
 # ==> File name prefixes that reveal the malware
 # TODO: expand this section

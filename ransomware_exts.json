@@ -1,0 +1,829 @@
+[
+    {
+        "Description": "crypto ext",
+        "File Extension": "crypto"
+    },
+    {
+        "Description": "xrnt ext",
+        "File Extension": "xrnt"
+    },
+    {
+        "Description": "xtbl ext",
+        "File Extension": "xtbl"
+    },
+    {
+        "Description": "omg! ext",
+        "File Extension": "omg!"
+    },
+    {
+        "Description": "encryptedRSA ext",
+        "File Extension": "encryptedRSA"
+    },
+    {
+        "Description": "0x0 ext",
+        "File Extension": "0x0"
+    },
+    {
+        "Description": "bleep ext",
+        "File Extension": "bleep"
+    },
+    {
+        "Description": "1999 ext",
+        "File Extension": "1999"
+    },
+    {
+        "Description": "vault ext",
+        "File Extension": "vault"
+    },
+    {
+        "Description": "toxcrypt ext",
+        "File Extension": "toxcrypt"
+    },
+    {
+        "Description": "SUPERCRYPT ext",
+        "File Extension": "SUPERCRYPT"
+    },
+    {
+        "Description": "CTBL ext",
+        "File Extension": "CTBL"
+    },
+    {
+        "Description": "CTB2 ext",
+        "File Extension": "CTB2"
+    },
+    {
+        "Description": "diablo6 ext",
+        "File Extension": "diablo6"
+    },
+    {
+        "Description": "Lukitus ext",
+        "File Extension": "Lukitus"
+    },
+
+
+
+    {
+        "Description": "7ev3n ransomware affected file",
+        "File Extension": "r5a"
+    },
+    {
+        "Description": "AiraCrop Ransomware affecte file",
+        "File Extension": "_AiraCropEncrypted"
+    },
+    {
+        "Description": "Al-Namrood ransomware affected file",
+        "File Extension": "unavailable"
+    },
+    {
+        "Description": "Alcatraz Locker ransomware affected file",
+        "File Extension": "alcatraz"
+    },
+    {
+        "Description": "Alma Locker ransomware affected file",
+        "File Extension": "a5zfn"
+    },
+    {
+        "Description": "Alpha Crypt encrypted file",
+        "File Extension": "exx"
+    },
+    {
+        "Description": "Alpha Crypt virus encrypted data",
+        "File Extension": "ezz"
+    },
+    {
+        "Description": "Alpha ransomware affected file",
+        "File Extension": "encrypt"
+    },
+    {
+        "Description": "Alpha/Alfa ransomware affected file",
+        "File Extension": "bin"
+    },
+    {
+        "Description": "Angela Merkel ransomware affected file",
+        "File Extension": "angelamerkel"
+    },
+    {
+        "Description": "Angry Duck ransomware affected file",
+        "File Extension": "adk"
+    },
+    {
+        "Description": "Anubis ransomware affected file",
+        "File Extension": "coded"
+    },
+    {
+        "Description": "Apocalypse ransomware affected file",
+        "File Extension": "SecureCrypted"
+    },
+    {
+        "Description": "Atlas ransomware affected file",
+        "File Extension": "atlas"
+    },
+    {
+        "Description": "AxCrypt encrypted data",
+        "File Extension": "axx"
+    },
+    {
+        "Description": "BadEncriptor ransomware affected file",
+        "File Extension": "bript"
+    },
+    {
+        "Description": "BarRax (HiddenTear variant) ransomware affected file",
+        "File Extension": "BarRax"
+    },
+    {
+        "Description": "Bart ransomware affected file",
+        "File Extension": "perl"
+    },
+    {
+        "Description": "Bitstak ransomware affected file",
+        "File Extension": "bitstak"
+    },
+    {
+        "Description": "Braincrypt ransomware affected file",
+        "File Extension": "braincrypt"
+    },
+    {
+        "Description": "Cerber 2 ransomware affected file",
+        "File Extension": "cerber2"
+    },
+    {
+        "Description": "Cerber 3 ransomware affected data",
+        "File Extension": "cerber3"
+    },
+    {
+        "Description": "Cerber ransomware affected data",
+        "File Extension": "cerber"
+    },
+    {
+        "Description": "Chip ransomware affected file",
+        "File Extension": "dale"
+    },
+    {
+        "Description": "Comrade ransomware affected file",
+        "File Extension": "comrade"
+    },
+    {
+        "Description": "Conficker ransomware affected file",
+        "File Extension": "conficker"
+    },
+    {
+        "Description": "Coverton ransomware affected file",
+        "File Extension": "coverton"
+    },
+    {
+        "Description": "Coverton ransomware affected file",
+        "File Extension": "czvxce"
+    },
+    {
+        "Description": "Coverton ransomware affected file",
+        "File Extension": "enigma"
+    },
+    {
+        "Description": "CryLocker ransomware affected file",
+        "File Extension": "cry"
+    },
+    {
+        "Description": "CrySiS ransomware affected file",
+        "File Extension": "dharma"
+    },
+    {
+        "Description": "CryptXXX ransomware affected data",
+        "File Extension": "cryp1"
+    },
+    {
+        "Description": "CryptXXX ransomware affected data",
+        "File Extension": "crypz"
+    },
+    {
+        "Description": "CryptoJoker ransomware affected file",
+        "File Extension": "crjoker"
+    },
+    {
+        "Description": "CryptoLocker encrypted file",
+        "File Extension": "cryptolocker"
+    },
+    {
+        "Description": "CryptoMix (variant) ransomware affected data",
+        "File Extension": "mole"
+    },
+    {
+        "Description": "CryptoMix ransomware affected file",
+        "File Extension": "lesli"
+    },
+    {
+        "Description": "CryptoRoger ransomware affected file",
+        "File Extension": "crptrgr"
+    },
+    {
+        "Description": "Cryptolocker or TeslaCrypt virus encrypted file",
+        "File Extension": "ecc"
+    },
+    {
+        "Description": "Cryptorium ransomware affected file",
+        "File Extension": "enc"
+    },
+    {
+        "Description": "DXXD ransomware affected file",
+        "File Extension": "dxxd"
+    },
+    {
+        "Description": "Damage ransomware affected file",
+        "File Extension": "damage"
+    },
+    {
+        "Description": "DecryptorMax or CryptInfinite ransomware affected file",
+        "File Extension": "crinf"
+    },
+    {
+        "Description": "Dharma ransomware affected data",
+        "File Extension": "onion"
+    },
+    {
+        "Description": "Donald Trump ransomware affected file",
+        "File Extension": "encrypted"
+    },
+    {
+        "Description": "DoubleLocker ransomware affected data",
+        "File Extension": "cryeye"
+    },
+    {
+        "Description": "DummyLocker ransomware affected file",
+        "File Extension": "dCrypt"
+    },
+    {
+        "Description": "EdgeLocker ransomware affected file",
+        "File Extension": "edgel"
+    },
+    {
+        "Description": "El-Polocker affected file",
+        "File Extension": "ha3"
+    },
+    {
+        "Description": "Encrypted file by Cryptowall ransomware",
+        "File Extension": "cryptowall"
+    },
+    {
+        "Description": "Enigma ransomware affected file",
+        "File Extension": "1txt"
+    },
+    {
+        "Description": "Evil ransomware affected file",
+        "File Extension": "file0locked"
+    },
+    {
+        "Description": "Evil-JS (variant) ransomware affected file",
+        "File Extension": "evillock"
+    },
+    {
+        "Description": "Exotic ransomware affected file",
+        "File Extension": "exotic"
+    },
+    {
+        "Description": "FSociety ransomware affected file",
+        "File Extension": "dll"
+    },
+    {
+        "Description": "Fantom ransomware affected file",
+        "File Extension": "fantom"
+    },
+    {
+        "Description": "FileLocker ransomware affected file",
+        "File Extension": "encr"
+    },
+    {
+        "Description": "Files1147@gmail(.)com ransomware affected file",
+        "File Extension": "breaking_bad"
+    },
+    {
+        "Description": "Fsociety ransomware affected file",
+        "File Extension": "realfs0ciety@sigaint.org.fs0ciety"
+    },
+    {
+        "Description": "GPCode ransomware affected file",
+        "File Extension": "lol!"
+    },
+    {
+        "Description": "Globe (variant) ransomware affected file",
+        "File Extension": "lovewindows"
+    },
+    {
+        "Description": "Globe 3 (variant) ransomware affected file",
+        "File Extension": "wallet"
+    },
+    {
+        "Description": "Globe 3 ransomware affected file",
+        "File Extension": "decrypt2017"
+    },
+    {
+        "Description": "Globe 3 ransomware affected file",
+        "File Extension": "hnumkhotep"
+    },
+    {
+        "Description": "Globe [variant] ransomware affected file",
+        "File Extension": "raid10"
+    },
+    {
+        "Description": "Globe ransomware affected file",
+        "File Extension": "globe"
+    },
+    {
+        "Description": "Globe ransomware affected file",
+        "File Extension": "kyra"
+    },
+    {
+        "Description": "Globe ransomware affected file",
+        "File Extension": "purge"
+    },
+    {
+        "Description": "Gremit ransomware affected file",
+        "File Extension": "rnsmwr"
+    },
+    {
+        "Description": "Herbst ransomware affacted file",
+        "File Extension": "herbst"
+    },
+    {
+        "Description": "HiddenTear (variant) ransomware affected file",
+        "File Extension": "maya"
+    },
+    {
+        "Description": "HiddenTear (variant) ransomware affected file",
+        "File Extension": "rekt"
+    },
+    {
+        "Description": "HiddenTear/MafiaWare (variant) ransomware affected file",
+        "File Extension": "AngleWare"
+    },
+    {
+        "Description": "Jigsaw (variant) ransomware affected file",
+        "File Extension": "crypte"
+    },
+    {
+        "Description": "Jigsaw (variant) ransomware affected file",
+        "File Extension": "fun"
+    },
+    {
+        "Description": "Jigsaw (variant) ransomware affected file",
+        "File Extension": "gefickt"
+    },
+    {
+        "Description": "Jigsaw (variant) ransomware affected file",
+        "File Extension": "lcked"
+    },
+    {
+        "Description": "Jigsaw Ransomware affected file",
+        "File Extension": "btc"
+    },
+    {
+        "Description": "Jigsaw Ransomware affected file",
+        "File Extension": "fun"
+    },
+    {
+        "Description": "Jigsaw Ransomware affected file",
+        "File Extension": "kkk"
+    },
+    {
+        "Description": "Jigsaw Ransomware affected file",
+        "File Extension": "paym"
+    },
+    {
+        "Description": "Jigsaw Ransomware affected file",
+        "File Extension": "paymrss"
+    },
+    {
+        "Description": "Jigsaw Ransomware affected file",
+        "File Extension": "payms"
+    },
+    {
+        "Description": "Jigsaw Ransomware affected file",
+        "File Extension": "paymst"
+    },
+    {
+        "Description": "Jigsaw Ransomware affected file",
+        "File Extension": "paymts"
+    },
+    {
+        "Description": "Jigsaw Ransomware affected file",
+        "File Extension": "payrms"
+    },
+    {
+        "Description": "Jigsaw Ransomware affected file",
+        "File Extension": "pays"
+    },
+    {
+        "Description": "Jigsaw ransomware affected file",
+        "File Extension": "hush"
+    },
+    {
+        "Description": "Karmen HiddenTear (variant) ransomware affected file",
+        "File Extension": "grt"
+    },
+    {
+        "Description": "KeRanger OS X ransomware affected file",
+        "File Extension": "encrypted"
+    },
+    {
+        "Description": "KeRanger OS X ransomware file",
+        "File Extension": "kernel_complete"
+    },
+    {
+        "Description": "KeRanger OS X ransomware file",
+        "File Extension": "kernel_pid"
+    },
+    {
+        "Description": "KeRanger OS X ransomware",
+        "File Extension": "kernel_time"
+    },
+    {
+        "Description": "KeyBTC ransomware affected file",
+        "File Extension": "keybtc@inbox_com"
+    },
+    {
+        "Description": "KillLocker ransomware affected file",
+        "File Extension": "rip"
+    },
+    {
+        "Description": "KimcilWare ransomware affected file",
+        "File Extension": "kimcilware"
+    },
+    {
+        "Description": "Kostya ransomware affected file",
+        "File Extension": "kostya"
+    },
+    {
+        "Description": "KratosCrypt ransomware affected file",
+        "File Extension": "kratos"
+    },
+    {
+        "Description": "LOLI RanSomeWare ransomware affected file",
+        "File Extension": "loli"
+    },
+    {
+        "Description": "LeChiffre ransomware affected file",
+        "File Extension": "LeChiffre"
+    },
+    {
+        "Description": "Legion ransomware affected file",
+        "File Extension": "legion"
+    },
+    {
+        "Description": "Lock93 ransomware affected file",
+        "File Extension": "lock93"
+    },
+    {
+        "Description": "LockLock ransomware affected file",
+        "File Extension": "locklock"
+    },
+    {
+        "Description": "Locky (variant) ransomware affected data",
+        "File Extension": "osiris"
+    },
+    {
+        "Description": "Locky ransomware affected data",
+        "File Extension": "locky"
+    },
+    {
+        "Description": "Locky ransomware affected data",
+        "File Extension": "zepto"
+    },
+    {
+        "Description": "Locky ransomware affected file",
+        "File Extension": "aesir"
+    },
+    {
+        "Description": "Locky ransomware affected file",
+        "File Extension": "odin"
+    },
+    {
+        "Description": "Locky ransomware affected file",
+        "File Extension": "shit"
+    },
+    {
+        "Description": "Locky ransomware affected file",
+        "File Extension": "thor"
+    },
+    {
+        "Description": "Locky ransomware affected file",
+        "File Extension": "zzzzz"
+    },
+    {
+        "Description": "Magic ransomware affected file",
+        "File Extension": "magic"
+    },
+    {
+        "Description": "Malware (ransomware) encoded file",
+        "File Extension": "enciphered"
+    },
+    {
+        "Description": "Manifestus ransomware affected file",
+        "File Extension": "fucked"
+    },
+    {
+        "Description": "Marlboro ransomware affected file",
+        "File Extension": "oops"
+    },
+    {
+        "Description": "Merry X-Mas ransomware affected file",
+        "File Extension": "MERRY"
+    },
+    {
+        "Description": "Merry X-Mas ransomware affected file",
+        "File Extension": "MRCR1"
+    },
+    {
+        "Description": "Merry X-Mas ransomware affected file",
+        "File Extension": "PEGS1"
+    },
+    {
+        "Description": "Merry X-Mas ransomware affected file",
+        "File Extension": "RARE1"
+    },
+    {
+        "Description": "Merry X-Mas ransomware affected file",
+        "File Extension": "RMCM1"
+    },
+    {
+        "Description": "Nemucod ransomware affected file",
+        "File Extension": "crypted"
+    },
+    {
+        "Description": "Nuke ransomware affected file",
+        "File Extension": "nuclear55"
+    },
+    {
+        "Description": "ODCODC ransomware affected file",
+        "File Extension": "odcodc"
+    },
+    {
+        "Description": "PEC 2017 ransomware affected file",
+        "File Extension": "pec"
+    },
+    {
+        "Description": "PUBG ransomware affected data",
+        "File Extension": "pubg"
+    },
+    {
+        "Description": "PadCrypt Ransomware script",
+        "File Extension": "pdcr"
+    },
+    {
+        "Description": "PadCrypt ransomware affected file",
+        "File Extension": "padcrypt"
+    },
+    {
+        "Description": "PayDay ransomware affected files",
+        "File Extension": "sexy"
+    },
+    {
+        "Description": "PizzaCrypts Ransomware affected file",
+        "File Extension": "info"
+    },
+    {
+        "Description": "Potato ransomware affected file",
+        "File Extension": "potato"
+    },
+    {
+        "Description": "Princess Locker ransomware affected file",
+        "File Extension": "1cbu1"
+    },
+    {
+        "Description": "PyL33T ransomware affected file",
+        "File Extension": "d4nk"
+    },
+    {
+        "Description": "Radamant ransomware affected file",
+        "File Extension": "rdm"
+    },
+    {
+        "Description": "Radamant v2 ransomware affected file",
+        "File Extension": "rrk"
+    },
+    {
+        "Description": "Rakhni ransomware affected file",
+        "File Extension": "darkness"
+    },
+    {
+        "Description": "Rakhni ransomware affected file",
+        "File Extension": "kraken"
+    },
+    {
+        "Description": "Ransomware affected data",
+        "File Extension": "R16m01d05"
+    },
+    {
+        "Description": "Razy ransomware affected file",
+        "File Extension": "razy"
+    },
+    {
+        "Description": "RektLocker ransomware affected file",
+        "File Extension": "rekt"
+    },
+    {
+        "Description": "Roga ransomware affected file",
+        "File Extension": "madebyadam"
+    },
+    {
+        "Description": "Rokku ransomware affected file",
+        "File Extension": "rokku"
+    },
+    {
+        "Description": "Ruby ransomware affected file",
+        "File Extension": "ruby"
+    },
+    {
+        "Description": "SZFLocker ransomware affected file",
+        "File Extension": "szf"
+    },
+    {
+        "Description": "Sage ransomware affected data",
+        "File Extension": "sage"
+    },
+    {
+        "Description": "Samas/SamSam ransomware affected file",
+        "File Extension": "Whereisyourfiles"
+    },
+    {
+        "Description": "Samas/SamSam ransomware affected file",
+        "File Extension": "helpmeencedfiles"
+    },
+    {
+        "Description": "Samas/SamSam ransomware affected file",
+        "File Extension": "noproblemwedecfiles​"
+    },
+    {
+        "Description": "Samas/SamSam ransomware affected file",
+        "File Extension": "powerfulldecrypt"
+    },
+    {
+        "Description": "Samas/SamSam ransomware affected file",
+        "File Extension": "theworldisyours"
+    },
+    {
+        "Description": "Samsam (variant) ransomware affected file",
+        "File Extension": "VforVendetta"
+    },
+    {
+        "Description": "Satan ransomware affected file",
+        "File Extension": "stn"
+    },
+    {
+        "Description": "Scatter ransomware affected data",
+        "File Extension": "crypt"
+    },
+    {
+        "Description": "Scatter ransomware affected file",
+        "File Extension": "good"
+    },
+    {
+        "Description": "Scatter ransomware affected file",
+        "File Extension": "pzdc"
+    },
+    {
+        "Description": "SerbRansom ransomware affected file",
+        "File Extension": "ifuckedyou"
+    },
+    {
+        "Description": "Serpent (variant) ransomware affected file",
+        "File Extension": "serp"
+    },
+    {
+        "Description": "Serpent ransomware affected file",
+        "File Extension": "serpent"
+    },
+    {
+        "Description": "Shade ransomware affected file",
+        "File Extension": "windows10"
+    },
+    {
+        "Description": "Spora ransomware affected file",
+        "File Extension": "spora"
+    },
+    {
+        "Description": "Surprise ransomware affected file",
+        "File Extension": "surprise"
+    },
+    {
+        "Description": "TeslaCrypt 3.0 ransomware encrypted data",
+        "File Extension": "micro"
+    },
+    {
+        "Description": "TeslaCrypt 3.0 ransomware encrypted file",
+        "File Extension": "ttt"
+    },
+    {
+        "Description": "TeslaCrypt 3.0 ransomware encrypted file",
+        "File Extension": "vvv"
+    },
+    {
+        "Description": "TeslaCrypt 3.0 ransomware encrypted file",
+        "File Extension": "xxx"
+    },
+    {
+        "Description": "TeslaCrypt or Cryptowall encrypted data",
+        "File Extension": "ccc"
+    },
+    {
+        "Description": "TeslaCrypt ransomware encrypted file",
+        "File Extension": "aaa"
+    },
+    {
+        "Description": "TeslaCrypt ransomware encrypted file",
+        "File Extension": "abc"
+    },
+    {
+        "Description": "TeslaCrypt ransomware encrypted file",
+        "File Extension": "xyz"
+    },
+    {
+        "Description": "TeslaCrypt ransomware encrypted file",
+        "File Extension": "zzz"
+    },
+    {
+        "Description": "TorrentLocker ransomware affected file",
+        "File Extension": "enc"
+    },
+    {
+        "Description": "Troldesh (variant) ransomware affected file",
+        "File Extension": "Dexter"
+    },
+    {
+        "Description": "Troldesh (variant) ransomware affected file",
+        "File Extension": "ytbl"
+    },
+    {
+        "Description": "Unlock92 ransomware affected file",
+        "File Extension": "CCCRRRPPP"
+    },
+    {
+        "Description": "VBRansom 7 ransomware affected file",
+        "File Extension": "vbransom"
+    },
+    {
+        "Description": "Various ransomware affected data",
+        "File Extension": "locked"
+    },
+    {
+        "Description": "Various ransomware affected file",
+        "File Extension": "encrypted"
+    },
+    {
+        "Description": "Venus Locker ransomware affected file",
+        "File Extension": "venusf"
+    },
+    {
+        "Description": "Vindows Locker ransomware affected file",
+        "File Extension": "vindows"
+    },
+    {
+        "Description": "WannaCry ransomware affected file",
+        "File Extension": "wcry"
+    },
+    {
+        "Description": "WildFire ransomware affected file",
+        "File Extension": "wflx"
+    },
+    {
+        "Description": "Xorist (variant) Ransomware affected file",
+        "File Extension": "antihacker2017"
+    },
+    {
+        "Description": "Xorist Ransomware affected file",
+        "File Extension": "73i87A"
+    },
+    {
+        "Description": "Xorist Ransomware affected file",
+        "File Extension": "EnCiPhErEd"
+    },
+    {
+        "Description": "Xorist Ransomware affected file",
+        "File Extension": "PoAr2w"
+    },
+    {
+        "Description": "Xorist Ransomware affected file",
+        "File Extension": "p5tkjw"
+    },
+    {
+        "Description": "ZCRYPT ransomware affected file",
+        "File Extension": "zcrypt"
+    },
+    {
+        "Description": "ZYKLON ransomware affected file",
+        "File Extension": "zyklon"
+    },
+    {
+        "Description": "Zeta ransomware affected file",
+        "File Extension": "rmd"
+    },
+    {
+        "Description": "Zorro ransomware affected file",
+        "File Extension": "zorro"
+    },
+    {
+        "Description": "help_dcfile ransomware affected file",
+        "File Extension": "xxx"
+    },
+    {
+        "Description": "vxLock ransomware affected file",
+        "File Extension": "vxlock"
+    }
+]

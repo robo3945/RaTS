@@ -11,7 +11,7 @@ from config import config
 from config.config_utils import read_config_file
 from misc import utils
 from misc.notify import MailSender
-from misc.utils import check_compile_sigs
+from misc.utils import check_compile_sigs, load_ransomware_exts
 from scanners.scanner_for_crypt import ScannerForCrypt
 from scanners.scanner_for_file import ScannerForFile
 
@@ -103,7 +103,10 @@ usage: rats.py -i <inputdir> | -l <dirlistfile> -o <outcsv> [-k|-m] [-e <notify_
         elif inputdir:
             dirs.append(inputdir)
 
+        # load the signatures for file magic byte
         config.signatures = check_compile_sigs()
+        # load the extension for ransomware files
+        load_ransomware_exts()
 
         for adir in dirs:
             if ana_type == "all":

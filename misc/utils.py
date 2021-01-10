@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+import json
 import os
 import time
 
@@ -117,3 +117,15 @@ def check_compile_sigs():
         else:
             raise
     return signs
+
+
+#  ----------------- RANSOMWARE EXTENSIONS UTILITY ----------------------------------------
+
+def load_ransomware_exts():
+    with open('./ransomware_exts.json', 'rt') as f:
+        config.BAD_FILE_EXTS = dict()
+        for i in json.loads(f.read()):
+            try:
+                config.BAD_FILE_EXTS[i['File Extension']].extend([i['Description']])
+            except KeyError:
+                config.BAD_FILE_EXTS[i['File Extension']] = [i['Description']]

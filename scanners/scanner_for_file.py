@@ -25,8 +25,7 @@ class ScannerForFile(Scanner):
         :return:
         """
         super().__init__(verbose)
-        self.file_bad_exts_set = set([line.strip().lower() for line in config.FILE_BAS_EXTS.split(",") if
-                                      line.strip() != ""])
+        self.bad_file_ext_dict = config.BAD_FILE_EXTS
         self.file_name_terms_set = set([line.strip().lower() for line in config.MANIFEST_FILE_NAME_TERMS.split(",") if
                                         line.strip() != ""])
         self.file_name_exts_set = set([line.strip().lower() for line in config.CFG_FILE_NAME_EXTS.split(",") if
@@ -40,10 +39,10 @@ class ScannerForFile(Scanner):
         """
         print(f'{Scanner.sep} Config elements for "{__name__}" {Scanner.sep}')
         print()
-        print(f'Bad file extensions detected: {str(self.file_bad_exts_set)}')
-        print(f'File extensions analyzed: {str(self.file_name_exts_set)}')
-        print(f'File names detected (without the extensions): {str(self.file_name_terms_set)}')
-        print(f'List with terms and their "relevance": {str(self.file_text_terms_set)}')
+        print(f'1 - bad file extensions detected: {self.bad_file_ext_dict}\n')
+        print(f'2 - file extensions analyzed: {str(self.file_name_exts_set)}\n')
+        print(f'  2.1 - File names detected (without the extensions): {str(self.file_name_terms_set)}\n')
+        print(f'  2.3 - List with terms and their "relevance": {str(self.file_text_terms_set)}')
         print()
 
     def search(self, path, recursive=True):
@@ -104,18 +103,25 @@ class ScannerForFile(Scanner):
 
         csv_row = None
         ext = Path(file).suffix.lower()
+        if ext[:1] == '.':
+            ext = ext[1:]
+
         # check only the files with the max size in the configuration
         if file.stat().st_size <= config.CFG_MANIFEST_MAX_SIZE:
             # check if the file has a bad extension
-            if ext in self.file_bad_exts_set:
+            if self.bad_file_ext_dict.get(ext):
                 if self.verbose:
                     print(f'-> Found bad extension for the file: {ext}')
-                csv_row = CsvRow(file, "Bad filename extension", f"extension: {ext}")
+                csv_row = CsvRow(file, "Bad filename extension", f"Extension: {ext}, Value: {self.bad_file_ext_dict[ext]}")
             # Only the allowed extensions in the config are checked for the file name and the content
             elif ext in self.file_name_exts_set:
+
+                # check the filename
                 if self.verbose:
                     print(f"-> Processing the file '{file.path}' for the extension '{ext}'")
                 csv_row = self._search_in_file_name(file)
+
+                # otherwise check the filename
                 if not csv_row:
                     if self.verbose:
                         print(f"-> Processing the file '{file.path}' for the content")
