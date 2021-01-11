@@ -59,7 +59,7 @@ vault,
 CFG_MANIFEST_MAX_SIZE = 10_000_000  # bytes
 
 # extension of file name to analyze to check the evidence of terms
-CFG_FILE_NAME_EXTS = ".html, .htm, .txt, .bmp, .jpg, .gif, .png"
+CFG_FILE_NAME_EXTS = "html, htm, txt, bmp, jpg, gif, png"
 
 # RegEx pattern for searching into the text: tuples with: (regex ptrn, percentage_weight)
 # TODO: expand this section

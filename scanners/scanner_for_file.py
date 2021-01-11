@@ -109,12 +109,13 @@ class ScannerForFile(Scanner):
         # check only the files with the max size in the configuration
         if file.stat().st_size <= config.CFG_MANIFEST_MAX_SIZE:
             # check if the file has a bad extension
-            if self.bad_file_ext_dict.get(ext):
+            if self.bad_file_ext_dict.get(ext) or self.bad_file_ext_dict.get(f'.{ext}'):
                 if self.verbose:
                     print(f'-> Found bad extension for the file: {ext}')
                 csv_row = CsvRow(file, "Bad filename extension", f"Extension: {ext}, Value: {self.bad_file_ext_dict[ext]}")
             # Only the allowed extensions in the config are checked for the file name and the content
-            elif ext in self.file_name_exts_set:
+            elif ext in self.file_name_exts_set \
+                    or f'.{ext}' in self.file_name_exts_set:
 
                 # check the filename
                 if self.verbose:
@@ -191,10 +192,10 @@ class ScannerForFile(Scanner):
                             if perc >= config.CFG_TERM_PERC_TH:
                                 if self.verbose:
                                     print(f"--> Found patterns in the file content: '{str(list_found)}'")
-                                return CsvRow(file, "ptrn_in_file_content", f'\"{str(list_found)}\"')
+                                return CsvRow(file, "Bad patterns in file content", f'\"{str(list_found)}\"')
 
                     if len(list_found) == 0 and self.verbose:
-                        return CsvRow(file, IGNORED_FILE, f"No patterns found")
+                        return CsvRow(file, IGNORED_FILE, f"No bad patterns found")
 
         except PermissionError as e:
             print(f'EEE => Permissions error: {e}')
