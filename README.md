@@ -48,3 +48,20 @@ To execute the sources run this command line:
     `pip3 install -r requirements.txt`
 4. Execute the script with **Python3**
     `python3 rats.py -h`
+
+### Help ###
+
+```
+RaTS - v. x.x.x
+usage: rats.py -i <inputdir> | -l <dirlistfile> -o <outcsv> [-k|-m] [-e <notify_email>] [-r] [-h]
+-i <inputdir>       : the starting directory
+-l <dirlistfile>    : a txt file with the directories to scan
+-o <outcsv>         : the CSV output file prefix (without the extension)
+-x <excl_ext_list>  : file extensions list to exclude from scanning (ex: "jpg,tiff") 
+[-e <notify_email>] : where to send the notification
+[-k]                : search for crypted files
+[-m]                : search for manifest files
+[-r]                : recursive search
+[-c]                : path for the configuration YAML file
+[-v]                : verbose mode (outcome files include all the items detected)
+[-h]                : print this help```

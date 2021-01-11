@@ -4,6 +4,9 @@ RELEASE NOTES for 1.1.5
 NEW FEATURES:
 
 - improved the crypto and manifest engines and the outcome
+- json format for the well known files magic byte
+- extended the ransomware well known filename extensions list: json file
+- improved the messages
 
 ======================================================================================
 RELEASE NOTES for 1.1.4
