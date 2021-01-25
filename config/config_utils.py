@@ -4,6 +4,7 @@ import sys
 from pprint import pprint
 
 import yaml
+from colorama import Fore
 
 from config import config
 
@@ -15,7 +16,8 @@ def read_config_file(path: str):
     :return:
     """
 
-    print("---***--- Read configuration file {0} ---***---".format(path))
+    print(Fore.RESET)
+    print(Fore.LIGHTCYAN_EX + "---***--- Read configuration file {0} ---***---".format(path))
     try:
         with open(path, 'r') as cfg_file:
             # cfg_dict = yaml.load(cfg_file) ==> deprecated with new version of the lib
@@ -49,6 +51,7 @@ def read_config_file(path: str):
             config.CFG_SMTP_USER = cfg_dict['mail_sec']['CFG_SMTP_USER']
             config.CFG_SMTP_PWD = cfg_dict['mail_sec']['CFG_SMTP_PWD']
 
+            print(Fore.GREEN)
             pprint(cfg_dict)
             print(end="\n")
         else:
@@ -56,3 +59,5 @@ def read_config_file(path: str):
     except FileNotFoundError:
         print("Problem with configuration file. Check the syntax and path.")
         sys.exit()
+
+    print(Fore.RESET)

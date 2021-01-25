@@ -6,6 +6,8 @@ import time
 import sys
 from urllib.error import HTTPError
 
+from colorama import Fore
+
 from config import config
 from config.config import CFG_PATH_FOR_SIGNATURES, URL_FOR_SIGNATURES
 from logic.check_sigs import compile_sigs, check_sig_content
@@ -73,10 +75,10 @@ class Timer(object):
         self.msecs = self.secs * 1000  # millisecs
         if self.verbose:
             if self.mem:
-                print('#Timing: elapsed time: %f sec | M: start mem: %f MB delta_mem: %f MB' % (
+                print(f'{Fore.YELLOW}Timing: elapsed time:{Fore.RESET} %f sec | M: start mem: %f MB delta_mem: %f MB' % (
                     self.secs, self.start_mem, self.delta_mem))
             else:
-                print('#Timing: elapsed time: %f sec' % self.secs)
+                print(f'{Fore.YELLOW}Timing: elapsed time:{Fore.RESET} %f sec' % self.secs)
 
 
 #  ----------------- SIGNATURES UTILITY ----------------------------------------
@@ -96,11 +98,11 @@ def is_known_file_type(file, content, verbose: bool = False):
         # It returns only the first one
         sig, desc, offset = results[0][0], results[0][1], results[0][2]
         if verbose:
-            print(f"[+] filename: '{file}' - sig: '{sig}' : First type recogn. '{desc}' <- Offset: {str(offset)}")
+            print(f"{Fore.LIGHTBLUE_EX} + filename:{Fore.RESET} '{file}' - sig: '{sig}' : First type recogn. '{desc}' <- Offset: {str(offset)}")
         return True, sig, desc, offset
 
     if verbose:
-        print(f"[+] filename: '{file}'")
+        print(f"{Fore.LIGHTBLUE_EX} + filename:{Fore.RESET} '{file}'")
     return False, None, None, None
 
 

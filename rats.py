@@ -7,6 +7,8 @@ import string
 import sys
 from pathlib import Path
 
+from colorama import init, Fore, Style, deinit
+
 from config import config
 from config.config_utils import read_config_file
 from misc import utils
@@ -33,9 +35,11 @@ def main(argv):
     recursive = False
     verbose = False
 
-    output_start = config.RATS_LOGO + \
-                   "\n" + config.RATS_NAME + ' - v. ' + config.RATS_VERSION
-    usage_sample = output_start + """
+    init()
+
+    output_start = Fore.RED +config.RATS_LOGO + \
+                   "\n" + Fore.BLUE + config.RATS_NAME + ' - v. ' + config.RATS_VERSION
+    usage_sample = output_start + Fore.CYAN + """
 usage: rats.py -i <inputdir> | -l <dirlistfile> -o <outcsv> [-k|-m] [-e <notify_email>] [-r] [-h]
 -i <inputdir>       : the starting directory
 -l <dirlistfile>    : a txt file with the directories to scan
@@ -50,6 +54,7 @@ usage: rats.py -i <inputdir> | -l <dirlistfile> -o <outcsv> [-k|-m] [-e <notify_
 [-h]                : print this help
 """
 
+    print(Style.RESET_ALL)
     try:
         opts, args = getopt.getopt(argv, "hkmrvi:x:o:e:l:c:")
     except getopt.GetoptError as error:
@@ -85,7 +90,7 @@ usage: rats.py -i <inputdir> | -l <dirlistfile> -o <outcsv> [-k|-m] [-e <notify_
             config_file_path = arg
 
     if (inputdir or dirlistfile) and ana_type:
-        print(output_start + "\n\nHere we are!\n")
+        print(output_start + Fore.YELLOW + "\n\nHere we are!\n")
 
         # read the config file if it was specified
         if config_file_path is not None:
@@ -121,6 +126,7 @@ usage: rats.py -i <inputdir> | -l <dirlistfile> -o <outcsv> [-k|-m] [-e <notify_
     else:
         print(usage_sample)
 
+    deinit()
 
 # Lambda expression for the random string
 def rand_str(n):

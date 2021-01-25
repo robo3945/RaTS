@@ -24,3 +24,4 @@ DESIDERATA:
 
 - dinamically retrieve bas extension, filename and content for manifest engine
 - colorize the console output
+- run for single file

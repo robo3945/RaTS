@@ -6,6 +6,8 @@ from operator import itemgetter
 from pathlib import Path
 from typing import Optional
 
+from colorama import Fore
+
 from config import config
 from logic.csv_row import CsvRow
 from misc import utils
@@ -37,13 +39,14 @@ class ScannerForFile(Scanner):
         Print the values of the configuration
         :return:
         """
-        print(f'{Scanner.sep} Config elements for "{__name__}" {Scanner.sep}')
+        print(Fore.RESET)
+        print(f'{Fore.LIGHTCYAN_EX}{Scanner.sep} Config elements for "{__name__}" {Scanner.sep}')
         print()
-        print(f'1 - bad file extensions detected: {self.bad_file_ext_dict}\n')
-        print(f'2 - file extensions analyzed: {str(self.file_name_exts_set)}\n')
-        print(f'  2.1 - File names detected (without the extensions): {str(self.file_name_terms_set)}\n')
-        print(f'  2.3 - List with terms and their "relevance": {str(self.file_text_terms_set)}')
-        print()
+        print(f'{Fore.YELLOW}1 - bad file extensions detected: {Fore.GREEN}{self.bad_file_ext_dict}\n')
+        print(f'{Fore.YELLOW}2 - file extensions analyzed:{Fore.GREEN} {str(self.file_name_exts_set)}\n')
+        print(f'{Fore.YELLOW}  2.1 - File names detected (without the extensions):{Fore.GREEN} {str(self.file_name_terms_set)}\n')
+        print(f'{Fore.YELLOW}  2.3 - List with terms and their "relevance":{Fore.GREEN} {str(self.file_text_terms_set)}')
+        print(Fore.RESET)
 
     def search(self, path, recursive=True):
         """
@@ -56,7 +59,8 @@ class ScannerForFile(Scanner):
 
         # if self.verbose:
         self.print_config()
-        print(f'{Scanner.sep} Starting search Ransomware manifest traces in: {str(path)} {Scanner.sep}')
+        print(f'{Fore.LIGHTCYAN_EX}{Scanner.sep} Starting search Ransomware manifest traces in: {str(path)} {Scanner.sep}')
+        print(Fore.RESET)
         self._search(path, recursive)
 
     def _search(self, path, recursive=True):
@@ -74,12 +78,12 @@ class ScannerForFile(Scanner):
                         if len(ext) == 0 or ext not in config.EXT_FILES_LIST_TO_EXCLUDE:
                             found = self.__search_in_file(f)
                             if found:
-                                print(f'---> Filename analysed: {f.path}')
+                                print(f'{Fore.MAGENTA}---> Filename analysed:{Fore.RESET} {f.path}')
                                 self.found.append(found)
 
                     elif f.is_dir() and recursive:
                         if self.verbose:
-                            print(f"+ Searching in the path: '{f.path}'")
+                            print(f"{Fore.LIGHTBLUE_EX}+ Searching in the path:{Fore.RESET} '{f.path}'")
                         self._search(f, recursive)
 
                 except PermissionError as e:
@@ -119,13 +123,16 @@ class ScannerForFile(Scanner):
 
                 # check the filename
                 if self.verbose:
-                    print(f"-> Processing the file '{file.path}' for the extension '{ext}'")
+                    print(f"{Fore.MAGENTA}-> Processing the file '{Fore.RESET}{file.path}' {Fore.MAGENTA}for the extension{Fore.RESET} '{ext}'")
+
                 csv_row = self._search_in_file_name(file)
+
 
                 # otherwise check the filename
                 if not csv_row:
                     if self.verbose:
-                        print(f"-> Processing the file '{file.path}' for the content")
+                        print(f"{Fore.MAGENTA}-> Processing the file '{Fore.RESET}{file.path}' {Fore.MAGENTA}for the content{Fore.RESET}")
+
                     csv_row = self._search_in_file_content(file)
             else:
                 if self.verbose:
@@ -147,7 +154,7 @@ class ScannerForFile(Scanner):
         for f in self.file_name_terms_set:
             if lfile.startswith(f):
                 if self.verbose:
-                    print(f"--> Found a file name starting with: '{f}'")
+                    print(f"{Fore.RED}--> Found a file name starting with:{Fore.RESET} '{f}'")
                 return CsvRow(file, "Bad filename prefix", f"file_name_start_with: '{f}'")
 
         return None

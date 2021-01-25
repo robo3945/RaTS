@@ -4,6 +4,8 @@ import os
 from pathlib import Path
 from typing import Optional
 
+from colorama import Fore
+
 from config import config
 from logic.csv_row import CsvRow
 from logic.randomness import RandTest
@@ -29,13 +31,13 @@ class ScannerForCrypt(Scanner):
         self.rand = RandTest()
 
     def print_config(self):
-        print(f"{Scanner.sep} Config elements for '{__name__}' {Scanner.sep}")
+        print(Fore.RESET)
+        print(f"{Fore.LIGHTCYAN_EX}{Scanner.sep} Config elements for '{__name__}' {Scanner.sep}")
         print()
-        print(
-            f'Compression Randomness threshold (strictly greater than): {str(config.CFG_COMPR_RAND_TH)}')
-        print(f'Entropy Randomness threshold (strictly greater than): {str(config.CFG_ENTR_RAND_TH)}')
-        print(f'Number of first bytes of the content to elaborate: {"All" if config.CFG_N_BYTES_2_RAND_CHECK is None else str(config.CFG_N_BYTES_2_RAND_CHECK)}')
-        print()
+        print(f'{Fore.YELLOW}Compression Randomness threshold (strictly greater than):{Fore.GREEN} {str(config.CFG_COMPR_RAND_TH)}{Fore.RESET}')
+        print(f'{Fore.YELLOW}Entropy Randomness threshold (strictly greater than):{Fore.GREEN} {str(config.CFG_ENTR_RAND_TH)}{Fore.RESET}')
+        print(f'{Fore.YELLOW}Number of first bytes of the content to elaborate:{Fore.GREEN} {"All" if config.CFG_N_BYTES_2_RAND_CHECK is None else str(config.CFG_N_BYTES_2_RAND_CHECK)}{Fore.RESET}')
+        print(Fore.RESET)
 
     def search(self, path, recursive=True):
         """
@@ -47,7 +49,8 @@ class ScannerForCrypt(Scanner):
         """
         # if self.verbose:
         self.print_config()
-        print(f'{Scanner.sep} Starting search Crypto content in: {str(path)} {Scanner.sep}')
+        print(f'{Fore.LIGHTCYAN_EX}{Scanner.sep} Starting search Crypto content in: {str(path)} {Scanner.sep}')
+        print(Fore.RESET)
         self._search(path, recursive)
 
     def _search(self, path, recursive=True):
@@ -65,12 +68,12 @@ class ScannerForCrypt(Scanner):
                         if len(ext) == 0 or ext not in config.EXT_FILES_LIST_TO_EXCLUDE:
                             found = self.search_for_crypted_content(f)
                             if found:
-                                print(f'---> Content analysed: {found.min_print()}')
+                                print(f'{Fore.RED}---> Crypto analysis result: {Fore.RESET}{found.min_print()}')
                                 self.found.append(found)
 
                     elif f.is_dir() and recursive:
                         if self.verbose:
-                            print(f"+ Searching (for crypto) in the path: '{f.path}'")
+                            print(f"{Fore.LIGHTBLUE_EX}+ Searching (for crypto) in the path:{Fore.RESET} '{f.path}'")
                         self._search(f, recursive)
 
                 except PermissionError as e:

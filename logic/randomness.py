@@ -5,6 +5,8 @@ from collections import Counter
 
 import math
 
+from colorama import Fore
+
 
 class RandTest:
     """
@@ -32,7 +34,7 @@ class RandTest:
         H = -sum(count / lns * math.log(count / lns, 2) for count in p.values())
 
         if verbose:
-            print("-> [Entropy Test] crypto values: H: %s" % H)
+            print(f"{Fore.LIGHTBLUE_EX}-> [Entropy Test]{Fore.RESET} crypto values: H: %s" % H)
 
         return H
 
@@ -69,7 +71,7 @@ class RandTest:
         rand = len_compr_cnt / len_bcontent
 
         if verbose:
-            print("-> [Compression Test] crypto values: n: %s, d: %s, l0: %s, rand ratio: %s " % (
+            print(f"{Fore.LIGHTBLUE_EX}-> [Compression Test]{Fore.RESET} crypto values: n: %s, d: %s, l0: %s, rand ratio: %s " % (
                 len_compr_cnt, len_bcontent, self._compression_footprint_length, rand))
 
         return rand
