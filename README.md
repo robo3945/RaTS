@@ -53,7 +53,11 @@ To execute the sources run this command line:
 
 ```
 RaTS - v. x.x.x
-usage: rats.py -i <inputdir> | -l <dirlistfile> -o <outcsv> [-k|-m] [-e <notify_email>] [-r] [-h]
+Directories scan: rats.py -i <inputdir> | -l <dirlistfile> -o <outcsv> [-k|-m] [-e <notify_email>] [-r] [-h] [-c] [-v]
+
+Single file scan: rats.py -f <file> [-k|-m] [-e <notify_email>] [-h] [-c] [-v]
+
+-f <file>           : file to scan
 -i <inputdir>       : the starting directory
 -l <dirlistfile>    : a txt file with the directories to scan
 -o <outcsv>         : the CSV output file prefix (without the extension)
@@ -64,4 +68,5 @@ usage: rats.py -i <inputdir> | -l <dirlistfile> -o <outcsv> [-k|-m] [-e <notify_
 [-r]                : recursive search
 [-c]                : path for the configuration YAML file
 [-v]                : verbose mode (outcome files include all the items detected)
-[-h]                : print this help```
+[-h]                : print this help
+```
