@@ -34,19 +34,23 @@ class ScannerForCrypt(Scanner):
         print(Fore.RESET)
         print(f"{Fore.LIGHTCYAN_EX}{Scanner.sep} Config elements for '{__name__}' {Scanner.sep}")
         print()
-        print(f'{Fore.YELLOW}Compression Randomness threshold (strictly greater than):{Fore.GREEN} {str(config.CFG_COMPR_RAND_TH)}{Fore.RESET}')
-        print(f'{Fore.YELLOW}Entropy Randomness threshold (strictly greater than):{Fore.GREEN} {str(config.CFG_ENTR_RAND_TH)}{Fore.RESET}')
-        print(f'{Fore.YELLOW}Number of first bytes of the content to elaborate:{Fore.GREEN} {"All" if config.CFG_N_BYTES_2_RAND_CHECK is None else str(config.CFG_N_BYTES_2_RAND_CHECK)}{Fore.RESET}')
+        print(
+            f'{Fore.YELLOW}Compression Randomness threshold (strictly greater than):{Fore.GREEN} {str(config.CFG_COMPR_RAND_TH)}{Fore.RESET}')
+        print(
+            f'{Fore.YELLOW}Entropy Randomness threshold (strictly greater than):{Fore.GREEN} {str(config.CFG_ENTR_RAND_TH)}{Fore.RESET}')
+        print(
+            f'{Fore.YELLOW}Number of first bytes of the content to elaborate:{Fore.GREEN} {"All" if config.CFG_N_BYTES_2_RAND_CHECK is None else str(config.CFG_N_BYTES_2_RAND_CHECK)}{Fore.RESET}')
         print(Fore.RESET)
 
-    def search(self, path, recursive=True):
-        """
-        The main search method
+    def file(self, full_file_path:str):
 
-        :param path:
-        :param recursive:
-        :return:
-        """
+        self.print_config()
+        print(f'{Fore.LIGHTCYAN_EX}{Scanner.sep} Starting search Crypto content in: {str(full_file_path)} {Scanner.sep}')
+        print(Fore.RESET)
+
+        super()._internal_file(full_file_path)
+
+    def search(self, path, recursive=True):
         # if self.verbose:
         self.print_config()
         print(f'{Fore.LIGHTCYAN_EX}{Scanner.sep} Starting search Crypto content in: {str(path)} {Scanner.sep}')
@@ -64,13 +68,7 @@ class ScannerForCrypt(Scanner):
             for f in it:
                 try:
                     if f.is_file() and not f.is_symlink() and not f.name.startswith('.'):
-                        ext = Path(f).suffix.lower().replace('.', '')
-                        if len(ext) == 0 or ext not in config.EXT_FILES_LIST_TO_EXCLUDE:
-                            found = self.search_for_crypted_content(f)
-                            if found:
-                                print(f'{Fore.RED}---> Crypto analysis result: {Fore.RESET}{found.min_print()}')
-                                self.found.append(found)
-
+                        self._process_a_file(f)
                     elif f.is_dir() and recursive:
                         if self.verbose:
                             print(f"{Fore.LIGHTBLUE_EX}+ Searching (for crypto) in the path:{Fore.RESET} '{f.path}'")
@@ -81,7 +79,15 @@ class ScannerForCrypt(Scanner):
                 except OSError as e:
                     print(f"EEE(1) => OSError '{e.errno}-{e.strerror}' for: '{f.path}'")
 
-    def search_for_crypted_content(self, file) -> Optional[CsvRow]:
+    def _process_a_file(self, file):
+        ext = Path(file).suffix.lower().replace('.', '')
+        if len(ext) == 0 or ext not in config.EXT_FILES_LIST_TO_EXCLUDE:
+            found = self._search_for_crypted_content(file)
+            if found:
+                print(f'{Fore.RED}---> Crypto analysis result: {Fore.RESET}{found.min_print()}')
+                self.found.append(found)
+
+    def _search_for_crypted_content(self, file) -> Optional[CsvRow]:
         """
         Calculate randomness of the crypto content
 
@@ -110,8 +116,9 @@ class ScannerForCrypt(Scanner):
                     adesc = f'entropy: {str(rnd_test_entropy)} OR comp: {rnd_test_compr}'
 
                     # Tests: entropy || compression factor
-                    if (rnd_test_entropy > config.CFG_ENTR_RAND_TH)\
-                            or (rnd_test_compr > config.CFG_COMPR_RAND_TH and lcontent > config.CFG_COMPRESSED_CONTENT_MIN_LEN):
+                    if (rnd_test_entropy > config.CFG_ENTR_RAND_TH) \
+                            or (
+                            rnd_test_compr > config.CFG_COMPR_RAND_TH and lcontent > config.CFG_COMPRESSED_CONTENT_MIN_LEN):
                         return CsvRow(file, CRYPTO, adesc)
                     else:
                         if self.verbose:
@@ -119,7 +126,8 @@ class ScannerForCrypt(Scanner):
                 else:
                     # with verbose flag all the items are put into the outcome to evaluate also the excluded items
                     if self.verbose:
-                        return CsvRow(file, CRYPTO_NOTPROC, f"Well Known filetype - sig: '{sig}', first type recogn: \"{desc}\" <- offset: {str(offset)} - {adesc}")
+                        return CsvRow(file, CRYPTO_NOTPROC,
+                                      f"Well Known filetype - sig: '{sig}', first type recogn: \"{desc}\" <- offset: {str(offset)} - {adesc}")
 
         except PermissionError:
             print(f"EEE => Permissions error for: '{file.path}'")

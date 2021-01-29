@@ -5,7 +5,6 @@ import random
 import re
 import string
 import sys
-from pathlib import Path
 
 from colorama import init, Fore, Style, deinit
 
@@ -26,6 +25,7 @@ def main(argv):
     """
 
     inputdir = ""
+    input_file = ""
     extfilesxd = ""
     dirlistfile = ""
     outputcsv_prefix = ""
@@ -37,10 +37,15 @@ def main(argv):
 
     init()
 
-    output_start = Fore.RED +config.RATS_LOGO + \
+    output_start = Fore.RED + config.RATS_LOGO + \
                    "\n" + Fore.BLUE + config.RATS_NAME + ' - v. ' + config.RATS_VERSION
     usage_sample = output_start + Fore.CYAN + """
-usage: rats.py -i <inputdir> | -l <dirlistfile> -o <outcsv> [-k|-m] [-e <notify_email>] [-r] [-h]
+
+Directories scan: rats.py -i <inputdir> | -l <dirlistfile> -o <outcsv> [-k|-m] [-e <notify_email>] [-r] [-h] [-c] [-v]
+
+Single file scan: rats.py -f <file> [-k|-m] [-e <notify_email>] [-h] [-c] [-v]
+
+-f <file>           : file to scan
 -i <inputdir>       : the starting directory
 -l <dirlistfile>    : a txt file with the directories to scan
 -o <outcsv>         : the CSV output file prefix (without the extension)
@@ -56,7 +61,7 @@ usage: rats.py -i <inputdir> | -l <dirlistfile> -o <outcsv> [-k|-m] [-e <notify_
 
     print(Style.RESET_ALL)
     try:
-        opts, args = getopt.getopt(argv, "hkmrvi:x:o:e:l:c:")
+        opts, args = getopt.getopt(argv, "hkmrvi:x:o:e:l:c:f:")
     except getopt.GetoptError as error:
         print('************ arguments error ************', end='\n')
         print(f'error: {str(error)}')
@@ -78,6 +83,8 @@ usage: rats.py -i <inputdir> | -l <dirlistfile> -o <outcsv> [-k|-m] [-e <notify_
             recursive = True
         elif opt == "-i":
             inputdir = arg
+        elif opt == "-f":
+            input_file = arg
         elif opt == "-x":
             extfilesxd = arg
         elif opt == "-l":
@@ -89,8 +96,10 @@ usage: rats.py -i <inputdir> | -l <dirlistfile> -o <outcsv> [-k|-m] [-e <notify_
         elif opt == "-c":
             config_file_path = arg
 
+    d = {'k': 'crypto', 'm': 'manifest'}
+
     if (inputdir or dirlistfile) and ana_type:
-        print(output_start + Fore.YELLOW + "\n\nHere we are!\n")
+        print(output_start + Fore.YELLOW + "\nHere we are!\n")
 
         # read the config file if it was specified
         if config_file_path is not None:
@@ -115,34 +124,58 @@ usage: rats.py -i <inputdir> | -l <dirlistfile> -o <outcsv> [-k|-m] [-e <notify_
 
         for adir in dirs:
             if ana_type == "all":
-                main_process(adir, outputcsv_prefix + "-manifest@", 'm', dst_email, verbose=verbose,
+                process_dirs(adir, outputcsv_prefix + "-manifest@", 'm', dst_email, verbose=verbose,
                              recursive=recursive)
-                main_process(adir, outputcsv_prefix + "-crypto@", 'k', dst_email, verbose=verbose,
+                process_dirs(adir, outputcsv_prefix + "-crypto@", 'k', dst_email, verbose=verbose,
                              recursive=recursive)
             else:
-                d = {'k': 'crypto', 'm': 'manifest'}
-                main_process(adir, outputcsv_prefix + "-" + d[ana_type] + "@", ana_type, dst_email, verbose=verbose,
+                process_dirs(adir, outputcsv_prefix + "-" + d[ana_type] + "@", ana_type, dst_email, verbose=verbose,
                              recursive=recursive)
+    elif input_file and ana_type:
+        print(output_start + Fore.YELLOW + "\nHere we are!\n")
+
+        # read the config file if it was specified
+        if config_file_path is not None:
+            read_config_file(config_file_path)
+
+        # load the signatures for file magic byte
+        config.signatures = check_compile_sigs()
+        # load the extension for ransomware files
+        load_ransomware_exts()
+
+        if ana_type == "all":
+            process_file(input_file, 'm', verbose=verbose)
+            process_file(input_file, 'k', verbose=verbose)
+        else:
+            process_file(input_file, ana_type, verbose=verbose)
+
     else:
         print(usage_sample)
 
     deinit()
 
-# Lambda expression for the random string
-def rand_str(n):
-    return ''.join([random.choice(string.ascii_lowercase) for i in range(n)])
+
+def process_file(file, ana_type, verbose=False):
+    """
+    Process a single file
+    """
+    s = None
+    if ana_type == 'm':
+        s = ScannerForFile(verbose)
+    if ana_type == 'k':
+        s = ScannerForCrypt(verbose)
+
+    s.file(file)
+    s.print_found_list()
 
 
-def main_process(inputdir, prefix_output_file, ana_type, email, verbose=False, recursive=False):
+def process_dirs(inputdir, prefix_output_file, ana_type, email, verbose=False, recursive=False):
     """
-    The main main method
-    :param verbose:
-    :param email:
-    :param recursive:
-    :param ana_type:
-    :param prefix_output_file:
-    :param inputdir:
+    Process a dir
     """
+
+    def rand_str(n):
+        return ''.join([random.choice(string.ascii_lowercase) for i in range(n)])
 
     if ana_type == 'm':
         s = ScannerForFile(verbose)

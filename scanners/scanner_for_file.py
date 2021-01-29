@@ -44,20 +44,29 @@ class ScannerForFile(Scanner):
         print()
         print(f'{Fore.YELLOW}1 - bad file extensions detected: {Fore.GREEN}{self.bad_file_ext_dict}\n')
         print(f'{Fore.YELLOW}2 - file extensions analyzed:{Fore.GREEN} {str(self.file_name_exts_set)}\n')
-        print(f'{Fore.YELLOW}  2.1 - File names detected (without the extensions):{Fore.GREEN} {str(self.file_name_terms_set)}\n')
-        print(f'{Fore.YELLOW}  2.3 - List with terms and their "relevance":{Fore.GREEN} {str(self.file_text_terms_set)}')
+        print(
+            f'{Fore.YELLOW}  2.1 - File names detected (without the extensions):{Fore.GREEN} {str(self.file_name_terms_set)}\n')
+        print(
+            f'{Fore.YELLOW}  2.3 - List with terms and their "relevance":{Fore.GREEN} {str(self.file_text_terms_set)}')
         print(Fore.RESET)
+
+    def file(self, full_file_path:str):
+        """
+        Process a single file
+        """
+
+        self.print_config()
+        print(f'{Fore.LIGHTCYAN_EX}{Scanner.sep} Starting search Ransomware manifest traces in: {str(full_file_path)} {Scanner.sep}')
+        print(Fore.RESET)
+
+        super()._internal_file(full_file_path)
+
 
     def search(self, path, recursive=True):
         """
-        The main search method
-
-        :param path:
-        :param recursive:
-        :return:
+        Process a Dir
         """
 
-        # if self.verbose:
         self.print_config()
         print(f'{Fore.LIGHTCYAN_EX}{Scanner.sep} Starting search Ransomware manifest traces in: {str(path)} {Scanner.sep}')
         print(Fore.RESET)
@@ -74,12 +83,7 @@ class ScannerForFile(Scanner):
             for f in it:
                 try:
                     if f.is_file() and not f.is_symlink() and not f.name.startswith('.'):
-                        ext = Path(f).suffix.lower().replace('.', '')
-                        if len(ext) == 0 or ext not in config.EXT_FILES_LIST_TO_EXCLUDE:
-                            found = self.__search_in_file(f)
-                            if found:
-                                print(f'{Fore.MAGENTA}---> Filename analysed:{Fore.RESET} {f.path}')
-                                self.found.append(found)
+                        self._process_a_file(f)
 
                     elif f.is_dir() and recursive:
                         if self.verbose:
@@ -91,7 +95,15 @@ class ScannerForFile(Scanner):
                 except OSError as e:
                     print(f'EEE => OSError {e.errno}-{e}')
 
-    def __search_in_file(self, file) -> Optional[CsvRow]:
+    def _process_a_file(self, file):
+        ext = Path(file).suffix.lower().replace('.', '')
+        if len(ext) == 0 or ext not in config.EXT_FILES_LIST_TO_EXCLUDE:
+            found = self._search_in_file(file)
+            if found:
+                print(f'{Fore.MAGENTA}---> Filename analysed:{Fore.RESET} {file.path}')
+                self.found.append(found)
+
+    def _search_in_file(self, file) -> Optional[CsvRow]:
         """
         The search for the file
 
@@ -116,22 +128,24 @@ class ScannerForFile(Scanner):
             if self.bad_file_ext_dict.get(ext) or self.bad_file_ext_dict.get(f'.{ext}'):
                 if self.verbose:
                     print(f'-> Found bad extension for the file: {ext}')
-                csv_row = CsvRow(file, "Bad filename extension", f"Extension: {ext}, Value: {self.bad_file_ext_dict[ext]}")
+                csv_row = CsvRow(file, "Bad filename extension",
+                                 f"Extension: {ext}, Value: {self.bad_file_ext_dict[ext]}")
             # Only the allowed extensions in the config are checked for the file name and the content
             elif ext in self.file_name_exts_set \
                     or f'.{ext}' in self.file_name_exts_set:
 
                 # check the filename
                 if self.verbose:
-                    print(f"{Fore.MAGENTA}-> Processing the file '{Fore.RESET}{file.path}' {Fore.MAGENTA}for the extension{Fore.RESET} '{ext}'")
+                    print(
+                        f"{Fore.MAGENTA}-> Processing the file '{Fore.RESET}{file.path}' {Fore.MAGENTA}for the extension{Fore.RESET} '{ext}'")
 
                 csv_row = self._search_in_file_name(file)
-
 
                 # otherwise check the filename
                 if not csv_row:
                     if self.verbose:
-                        print(f"{Fore.MAGENTA}-> Processing the file '{Fore.RESET}{file.path}' {Fore.MAGENTA}for the content{Fore.RESET}")
+                        print(
+                            f"{Fore.MAGENTA}-> Processing the file '{Fore.RESET}{file.path}' {Fore.MAGENTA}for the content{Fore.RESET}")
 
                     csv_row = self._search_in_file_content(file)
             else:
