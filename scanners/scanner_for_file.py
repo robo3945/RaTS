@@ -141,7 +141,7 @@ class ScannerForFile(Scanner):
 
                 csv_row = self._search_in_file_name(file)
 
-                # otherwise check the filename
+                # otherwise check the file content
                 if not csv_row:
                     if self.verbose:
                         print(

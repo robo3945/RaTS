@@ -56,7 +56,7 @@ class RandTest:
 
         :param bcontent: byte content
         :param verbose:
-        :return: [0,1]
+        :return: r in [0,1]
         """
 
         # if print_path:
