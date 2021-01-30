@@ -70,3 +70,30 @@ Single file scan: rats.py -f <file> [-k|-m] [-e <notify_email>] [-h] [-c] [-v]
 [-v]                : verbose mode (outcome files include all the items detected)
 [-h]                : print this help
 ```
+
+### RaTS rationale ###
+
+Find manifestations of the ransomware activities
+
+```
+if file_size <= MANIFEST_MAX_SIZE:    
+    if file has a bad extension
+        'Found bad extension for the file'
+    else 
+        if ext_is_legit
+            if filename has a ransomware pattern
+                'Found bad filename for the file'
+            else 
+                if filename has a ranomware pattern in the content
+                    'Found bad content in the file'
+```
+
+Find files with 'probable' crypted content:
+
+```
+if file type is NOT well known:
+    new content = N_BYTES_2_RAND_CHECK OR content 
+    entropy test(new content): http://rosettacode.org/wiki/Entropy#Python:_More_succinct_version in [0,8]
+    compression test(new content): len(compressed)/len(uncompressed) in [0,1]
+    crypted = entropy test > ENTR_RAND_TH OR compression test > COMPR_RAND_TH
+``` 
