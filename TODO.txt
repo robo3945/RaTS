@@ -1,3 +1,0 @@
-DESIDERATA:
-
-- dinamically retrieve bad extension, filename and content for manifest engine
