@@ -7,8 +7,6 @@ from colorama import Fore
 
 from logic.csv_row import CsvRow
 
-import pandas as pd
-
 
 class Scanner(metaclass=abc.ABCMeta):
     """
@@ -93,30 +91,22 @@ class Scanner(metaclass=abc.ABCMeta):
         print(f'{Fore.LIGHTCYAN_EX}{Scanner.sep} Found items {Scanner.sep}{Fore.RESET}')
         print(self.found)
 
-    def print_found_csv(self, file_name, verbose=False):
+    def print_found_csv(self, file_name):
         """
         Print the list of found items in the form of CSV file
-        :param verbose:
         :param file_name:
         :return:
         """
 
-        s = ""
         if self.found:
-            s = CsvRow.get_header() + "\n"
-            for x in self.found:
-                s = s + str(x) + "\n"
 
-            if file_name and s.split():
+            if file_name:
                 with open(file_name, "w", encoding="UTF8", errors='ignore') as handle:
-                    handle.write(s)
+                    handle.write(f"{CsvRow.get_header()}\n")
+                    for x in self.found:
+                        handle.write(f"{x}\n")
 
-                df = pd.read_csv(file_name, sep=";", encoding="UTF8")
+                with open(file_name, "r", encoding="UTF8", errors='ignore') as handle:
+                    return handle.read()
 
-                if verbose:
-                    print(f'\n\n{Scanner.sep} Result in the CSV file: ({file_name}) {Scanner.sep}')
-                    print(df.filter(df.columns[2:]))
-                    print("*****************************************************")
-                # return df
-
-        return s
+        return None

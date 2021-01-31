@@ -188,6 +188,7 @@ def process_dirs(inputdir, prefix_output_file, ana_type, email, verbose=False, r
     path = re.sub(r"\W+", '_', inputdir, flags=re.IGNORECASE)
     output_file = f'{prefix_output_file}{path}.t_{round(t.secs)}s.rnd_{rand_str(4)}.csv'
     msg = s.print_found_csv(output_file)
+
     if email:
         from_part = config.CFG_SMTP_USER
         to_part = email
