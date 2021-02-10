@@ -8,6 +8,6 @@ python-dateutil==2.8.1
 pytz==2020.5
 PyYAML==5.4.1
 six==1.15.0
-soupsieve==2.1
+soupsieve==2.2
 colorama==0.4.4
 
