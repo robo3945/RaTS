@@ -50,17 +50,17 @@ class ScannerForFile(Scanner):
             f'{Fore.YELLOW}  2.3 - List with terms and their "relevance":{Fore.GREEN} {str(self.file_text_terms_set)}')
         print(Fore.RESET)
 
-    def file(self, full_file_path:str):
+    def file(self, full_file_path: str):
         """
         Process a single file
         """
 
         self.print_config()
-        print(f'{Fore.LIGHTCYAN_EX}{Scanner.sep} Starting search Ransomware manifest traces in: {str(full_file_path)} {Scanner.sep}')
+        print(
+            f'{Fore.LIGHTCYAN_EX}{Scanner.sep} Starting search Ransomware manifest traces in: {str(full_file_path)} {Scanner.sep}')
         print(Fore.RESET)
 
         super()._internal_file(full_file_path)
-
 
     def search(self, path, recursive=True):
         """
@@ -68,7 +68,8 @@ class ScannerForFile(Scanner):
         """
 
         self.print_config()
-        print(f'{Fore.LIGHTCYAN_EX}{Scanner.sep} Starting search Ransomware manifest traces in: {str(path)} {Scanner.sep}')
+        print(
+            f'{Fore.LIGHTCYAN_EX}{Scanner.sep} Starting search Ransomware manifest traces in: {str(path)} {Scanner.sep}')
         print(Fore.RESET)
         self._search(path, recursive)
 
@@ -122,30 +123,30 @@ class ScannerForFile(Scanner):
         if ext[:1] == '.':
             ext = ext[1:]
 
-        # check if the file has a bad extension
+        # check if the file has a ransomware extension
         if self.bad_file_ext_dict.get(ext) or self.bad_file_ext_dict.get(f'.{ext}'):
             if self.verbose:
-                print(f'-> Found bad extension for the file: {ext}')
-            csv_row = CsvRow(file, "Bad filename extension",
+                print(f'-> Found ransomware extension for the file: {ext}')
+            csv_row = CsvRow(file, "Ransomware filename extension",
                              f"Extension: {ext}, Value: {self.bad_file_ext_dict[ext]}")
-        # Only the allowed extensions are checked for the file name and the content
+        # Otherwise the allowed extensions are checked for the file name and the content
         elif file.stat().st_size <= config.CFG_MANIFEST_MAX_SIZE \
                 and ext in self.file_name_exts_set \
                 or f'.{ext}' in self.file_name_exts_set:
 
-            # check the filename
             if self.verbose:
                 print(
                     f"{Fore.MAGENTA}-> Processing the file '{Fore.RESET}{file.path}' {Fore.MAGENTA}for the extension{Fore.RESET} '{ext}'")
 
+            # check the filename
             csv_row = self._search_in_file_name(file)
 
-            # otherwise check the file content
             if not csv_row:
                 if self.verbose:
                     print(
                         f"{Fore.MAGENTA}-> Processing the file '{Fore.RESET}{file.path}' {Fore.MAGENTA}for the content{Fore.RESET}")
 
+                # otherwise check the file content
                 csv_row = self._search_in_file_content(file)
         else:
             if self.verbose:
