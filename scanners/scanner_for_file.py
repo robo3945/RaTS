@@ -126,7 +126,7 @@ class ScannerForFile(Scanner):
         # check if the file has a ransomware extension
         if self.bad_file_ext_dict.get(ext) or self.bad_file_ext_dict.get(f'.{ext}'):
             if self.verbose:
-                print(f'-> Found ransomware extension for the file: {ext}')
+                print(f'{Fore.RED}-> Found ransomware extension for the file: {Fore.RESET}{ext}')
             csv_row = CsvRow(file, "Ransomware filename extension",
                              f"Extension: {ext}, Value: {self.bad_file_ext_dict[ext]}")
         # Otherwise the allowed extensions are checked for the file name and the content
