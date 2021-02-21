@@ -42,8 +42,8 @@ class ScannerForFile(Scanner):
         print(Fore.RESET)
         print(f'{Fore.LIGHTCYAN_EX}{Scanner.sep} Config elements for "{__name__}" {Scanner.sep}')
         print()
-        print(f'{Fore.YELLOW}1 - bad file extensions detected: {Fore.GREEN}{self.bad_file_ext_dict}\n')
-        print(f'{Fore.YELLOW}2 - file extensions analyzed:{Fore.GREEN} {str(self.file_name_exts_set)}\n')
+        print(f'{Fore.YELLOW}1 - ransomware file extensions detected: {Fore.GREEN}{self.bad_file_ext_dict}\n')
+        print(f'{Fore.YELLOW}2 - manifest file extensions analyzed:{Fore.GREEN} {str(self.file_name_exts_set)}\n')
         print(
             f'{Fore.YELLOW}  2.1 - File names detected (without the extensions):{Fore.GREEN} {str(self.file_name_terms_set)}\n')
         print(
@@ -122,39 +122,34 @@ class ScannerForFile(Scanner):
         if ext[:1] == '.':
             ext = ext[1:]
 
-        # check only the files with the max size in the configuration
-        if file.stat().st_size <= config.CFG_MANIFEST_MAX_SIZE:
-            # check if the file has a bad extension
-            if self.bad_file_ext_dict.get(ext) or self.bad_file_ext_dict.get(f'.{ext}'):
-                if self.verbose:
-                    print(f'-> Found bad extension for the file: {ext}')
-                csv_row = CsvRow(file, "Bad filename extension",
-                                 f"Extension: {ext}, Value: {self.bad_file_ext_dict[ext]}")
-            # Only the allowed extensions in the config are checked for the file name and the content
-            elif ext in self.file_name_exts_set \
-                    or f'.{ext}' in self.file_name_exts_set:
+        # check if the file has a bad extension
+        if self.bad_file_ext_dict.get(ext) or self.bad_file_ext_dict.get(f'.{ext}'):
+            if self.verbose:
+                print(f'-> Found bad extension for the file: {ext}')
+            csv_row = CsvRow(file, "Bad filename extension",
+                             f"Extension: {ext}, Value: {self.bad_file_ext_dict[ext]}")
+        # Only the allowed extensions are checked for the file name and the content
+        elif file.stat().st_size <= config.CFG_MANIFEST_MAX_SIZE \
+                and ext in self.file_name_exts_set \
+                or f'.{ext}' in self.file_name_exts_set:
 
-                # check the filename
+            # check the filename
+            if self.verbose:
+                print(
+                    f"{Fore.MAGENTA}-> Processing the file '{Fore.RESET}{file.path}' {Fore.MAGENTA}for the extension{Fore.RESET} '{ext}'")
+
+            csv_row = self._search_in_file_name(file)
+
+            # otherwise check the file content
+            if not csv_row:
                 if self.verbose:
                     print(
-                        f"{Fore.MAGENTA}-> Processing the file '{Fore.RESET}{file.path}' {Fore.MAGENTA}for the extension{Fore.RESET} '{ext}'")
+                        f"{Fore.MAGENTA}-> Processing the file '{Fore.RESET}{file.path}' {Fore.MAGENTA}for the content{Fore.RESET}")
 
-                csv_row = self._search_in_file_name(file)
-
-                # otherwise check the file content
-                if not csv_row:
-                    if self.verbose:
-                        print(
-                            f"{Fore.MAGENTA}-> Processing the file '{Fore.RESET}{file.path}' {Fore.MAGENTA}for the content{Fore.RESET}")
-
-                    csv_row = self._search_in_file_content(file)
-            else:
-                if self.verbose:
-                    csv_row = CsvRow(file, IGNORED_FILE,
-                                     f"Ext not in bad exts - manifest file size < {config.CFG_MANIFEST_MAX_SIZE}")
+                csv_row = self._search_in_file_content(file)
         else:
             if self.verbose:
-                csv_row = CsvRow(file, IGNORED_FILE, f"Manifest file size > {config.CFG_MANIFEST_MAX_SIZE}")
+                csv_row = CsvRow(file, IGNORED_FILE, f"Ext not in bad exts or the file is not a manifest")
 
         return csv_row
 

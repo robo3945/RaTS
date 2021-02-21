@@ -77,16 +77,15 @@ Single file scan: rats.py -f <file> [-k|-m] [-e <notify_email>] [-h] [-c] [-v]
 Find manifestations of the ransomware activities
 
 ```
-if file_size <= MANIFEST_MAX_SIZE:    
-    if file has a bad extension
-        'Found bad extension for the file'
-    else 
-        if ext_is_legit
-            if filename has a ransomware pattern
-                'Found bad filename for the file'
-            else 
-                if filename has a ranomware pattern in the content
-                    'Found bad content in the file'
+if file has a bad extension
+    'Found bad extension for the file'
+else 
+    if ext_is_legit and file_size <= MANIFEST_MAX_SIZE
+        if filename has a ransomware pattern
+            'Found bad filename for the file'
+        else 
+            if filename has a ransomware pattern in the content
+                'Found bad content in the file'
 ```
 
 Find files with 'probable' crypted content:
