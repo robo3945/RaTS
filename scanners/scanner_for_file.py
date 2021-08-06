@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 import os
 import re
 from operator import itemgetter
@@ -80,21 +79,19 @@ class ScannerForFile(Scanner):
         :param path: starting path
         :return:
         """
-        with os.scandir(path) as it:
-            for f in it:
-                try:
-                    if f.is_file() and not f.is_symlink() and not f.name.startswith('.'):
-                        self._process_a_file(f)
+        for entry in os.scandir(path):
+            try:
+                if entry.is_dir(follow_symlinks=False) and recursive:
+                    if self.verbose:
+                        print(f"{Fore.LIGHTBLUE_EX}+ Searching in the path:{Fore.RESET} '{entry.path}'")
+                    self._search(entry, recursive)
+                else:
+                    self._process_a_file(entry)
 
-                    elif f.is_dir() and recursive:
-                        if self.verbose:
-                            print(f"{Fore.LIGHTBLUE_EX}+ Searching in the path:{Fore.RESET} '{f.path}'")
-                        self._search(f, recursive)
-
-                except PermissionError as e:
-                    print(f'EEE => Permissions error: {e}')
-                except OSError as e:
-                    print(f'EEE => OSError {e.errno}-{e}')
+            except PermissionError as e:
+                print(f'EEE => Permissions error: {e}')
+            except OSError as e:
+                print(f'EEE => OSError {e.errno}-{e}')
 
     def _process_a_file(self, file):
         ext = Path(file).suffix.lower().replace('.', '')
