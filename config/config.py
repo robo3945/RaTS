@@ -112,3 +112,4 @@ CFG_PATH_FOR_SIGNATURES = './file_sigs.json'
 CFG_MAX_FILE_SIGNATURE_LENGTH = 60
 # the minimum bytes length for checking the compressed item
 CFG_COMPRESSED_CONTENT_MIN_LEN = 100
+CFG_ENTROPY_CONTENT_MIN_LEN = 100

@@ -20,6 +20,8 @@ random_sec:
   CFG_N_BYTES_2_RAND_CHECK: -1
   # minimum bytes for a compressed content to check
   CFG_COMPRESSED_CONTENT_MIN_LEN: 500
+  # minimum bytes for a content to entropy check
+  CFG_ENTROPY_CONTENT_MIN_LEN: 500
 
   # configuration for magic number exclusion euristic
   magic_n_sec:
