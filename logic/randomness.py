@@ -39,6 +39,17 @@ class RandTest:
         return H
 
     @staticmethod
+    def calc_max_entropy(content: bytes):
+        """
+        Calculate the max entropy for the content
+        """
+
+        card_X = len(set(content))
+        max_H = math.log(card_X, 2)
+
+        print(f"{Fore.LIGHTBLUE_EX}-> [Entropy Test]{Fore.RESET} max H: {max_H}")
+
+    @staticmethod
     def _compress(data) -> bytes:
         return gzip.compress(data, 9)
 
