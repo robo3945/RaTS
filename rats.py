@@ -175,7 +175,7 @@ def process_dirs(inputdir, prefix_output_file, ana_type, email, verbose=False, r
     """
 
     def rand_str(n):
-        return ''.join([random.choice(string.ascii_lowercase) for i in range(n)])
+        return ''.join([random.choice(string.ascii_lowercase) for _ in range(n)])
 
     if ana_type == 'm':
         s = ScannerForFile(verbose)
@@ -186,16 +186,17 @@ def process_dirs(inputdir, prefix_output_file, ana_type, email, verbose=False, r
         s.search(inputdir, recursive=recursive)
 
     path = re.sub(r"\W+", '_', inputdir, flags=re.IGNORECASE)
-    output_file = f'{prefix_output_file}{path}.t_{round(t.secs)}s.rnd_{rand_str(4)}.csv'
+    filename = f'{path}.t_{round(t.secs)}s.rnd_{rand_str(4)}.csv'
+    output_file = f'{prefix_output_file}{filename}'
     msg = s.print_found_csv(output_file)
 
     if email:
         from_part = config.CFG_SMTP_USER
         to_part = email
         ms = MailSender()
-        subject = config.RATS_NAME + ": notify"
-        print(f"Send the notification e-mail to: '{to_part}'")
-        ms.send_email(from_part, to_part, subject, msg)
+        subject = config.RATS_NAME + f": notify for {'manifest' if ana_type == 'm' else 'crypto'} processing: {filename}"
+        print(f"{subject}, sent to: '{to_part}'")
+        ms.send_email(from_part, to_part, subject, msg, filename)
 
 
 if __name__ == "__main__":

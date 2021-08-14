@@ -91,7 +91,7 @@ class Scanner(metaclass=abc.ABCMeta):
         print(f'{Fore.LIGHTCYAN_EX}{Scanner.sep} Found items {Scanner.sep}{Fore.RESET}')
         print(self.found)
 
-    def print_found_csv(self, file_name):
+    def print_found_csv(self, file_name) -> str:
         """
         Print the list of found items in the form of CSV file
         :param file_name:
@@ -101,12 +101,12 @@ class Scanner(metaclass=abc.ABCMeta):
         if self.found:
 
             if file_name:
-                with open(file_name, "w", encoding="UTF8", errors='ignore') as handle:
+                with open(file_name, "w", encoding="utf8", errors='ignore') as handle:
                     handle.write(f"{CsvRow.get_header()}\n")
                     for x in self.found:
                         handle.write(f"{x}\n")
 
-                with open(file_name, "r", encoding="UTF8", errors='ignore') as handle:
+                with open(file_name, "r", encoding="utf8", errors='ignore') as handle:
                     return handle.read()
 
-        return None
+        return ""
