@@ -81,17 +81,21 @@ class ScannerForFile(Scanner):
         """
         for entry in os.scandir(path):
             try:
-                if entry.is_dir(follow_symlinks=False) and recursive:
-                    if self.verbose:
-                        print(f"{Fore.LIGHTBLUE_EX}+ Searching in the path:{Fore.RESET} '{entry.path}'")
-                    self._search(entry, recursive)
-                else:
-                    self._process_a_file(entry)
+                try:
+                    if entry.is_dir(follow_symlinks=False) and recursive:
+                        if self.verbose:
+                            print(f"{Fore.LIGHTBLUE_EX}+ Searching in the path:{Fore.RESET} '{entry.path}'")
+                        self._search(entry, recursive)
+                    else:
+                        self._process_a_file(entry)
 
-            except PermissionError as e:
-                print(f'EEE => Permissions error: {e}')
-            except OSError as e:
-                print(f'EEE => OSError {e.errno}-{e}')
+                except PermissionError as e:
+                    print(f'EEE => Permissions error: {e}')
+                except OSError as e:
+                    print(f'EEE => OSError {e.errno}-{e}')
+
+            except UnicodeEncodeError as e:
+                print(f"EEE => Unicode Error for file - defensive strategy to continue: {e}")
 
     def _process_a_file(self, file):
         ext = Path(file).suffix.lower().replace('.', '')
