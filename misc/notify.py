@@ -2,8 +2,10 @@
 
 import smtplib
 import ssl
+from distutils.util import strtobool
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+
 from config import config
 
 
@@ -13,7 +15,7 @@ class MailSender(object):
         self.smtp_port = config.CFG_SMTP_PORT
         self.smtp_user = config.CFG_SMTP_USER
         self.smtp_passwd = config.CFG_SMTP_PWD
-        self.smtp_ssl = config.CFG_SMTP_SSL
+        self.smtp_ssl = strtobool(config.CFG_SMTP_SSL)
 
     def send_email(self, from_part, to_part, subject, content, filename: str):
         msg = MIMEMultipart('alternative')
