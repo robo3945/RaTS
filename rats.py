@@ -185,7 +185,7 @@ def process_dirs(inputdir, prefix_output_file, ana_type, email, verbose=False, r
     filename = f'{path}.rnd_{rand_str(4)}.csv'
     output_file = f'{prefix_output_file}{filename}'
 
-    print(f'{Fore.LIGHTCYAN_EX} Open CSV file for write outcome{Fore.RESET}')
+    print(f'{Fore.LIGHTCYAN_EX}Open CSV file for write outcome{Fore.RESET}')
 
     scanner = None
     if ana_type == 'm':
@@ -197,7 +197,7 @@ def process_dirs(inputdir, prefix_output_file, ana_type, email, verbose=False, r
         with utils.Timer(verbose=True):
             scanner.search(inputdir, recursive=recursive)
             scanner.close_csv_handle()
-            print(f'{Fore.LIGHTCYAN_EX} Closed CSV file for write outcome{Fore.RESET}')
+            print(f'{Fore.LIGHTCYAN_EX}Closed CSV file for write outcome{Fore.RESET}')
 
     # msg = scanner.print_found_csv(output_file)
 
