@@ -21,9 +21,9 @@ class CsvRow(object):
         # file attributes
 
         p = Path(file)
-        self.full_file_name = str(p).replace(';','#')
-        self.file_path = str(p.parent).replace(';','#')
-        self.file_name = str(p.name).replace(';','#')
+        self.full_file_name = str(p).replace(';', '#')
+        self.file_path = str(p.parent).replace(';', '#')
+        self.file_name = str(p.name).replace(';', '#')
         self.adate = datetime.datetime.fromtimestamp(file.stat().st_atime).strftime(CsvRow._date_format)
         self.mdate = datetime.datetime.fromtimestamp(file.stat().st_mtime).strftime(CsvRow._date_format)
         self.cdate = datetime.datetime.fromtimestamp(file.stat().st_ctime).strftime(CsvRow._date_format)
@@ -35,19 +35,6 @@ class CsvRow(object):
         self.desc = desc
 
         # Conversion
-
-    @staticmethod
-    def get_header():
-        return "Full file name;" + \
-               "file path;" + \
-               "file name;" + \
-               "file size;" + \
-               "File extension;" + \
-               "File Type;" + \
-               "A description;" + \
-               "Last Access Date and Time;" + \
-               "Last Modification Date and Time;" + \
-               "Last Status Change Date and Time"
 
     def __repr__(self):
         file_size = bitmath.Byte(bytes=self.file_size).best_prefix()
@@ -64,3 +51,45 @@ class CsvRow(object):
         """
 
         return f'{self.file_path}|{self.file_name}|{self.type}|{self.desc}'
+
+
+class CsvManager(object):
+
+    def __init__(self, csv_handle):
+        self.csv_handle = csv_handle
+
+    @staticmethod
+    def _get_header():
+        return "Full file name;" + \
+               "file path;" + \
+               "file name;" + \
+               "file size;" + \
+               "File extension;" + \
+               "File Type;" + \
+               "A description;" + \
+               "Last Access Date and Time;" + \
+               "Last Modification Date and Time;" + \
+               "Last Status Change Date and Time"
+
+    def print_header(self):
+        """
+        Prints the header of the CSV file
+        :return:
+        """
+        self.csv_handle.write(f"{self._get_header()}\n")
+
+    def csv_row(self, file, type="", desc="") -> CsvRow:
+        """
+        Prints the single row
+
+        :param file:
+        :param type:
+        :param desc:
+        :return:
+        """
+        row = CsvRow(file, type, desc)
+        if self.csv_handle:
+            self.csv_handle.write(f"{row}\n")
+        return row
+
+

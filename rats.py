@@ -10,9 +10,11 @@ from colorama import init, Fore, Style, deinit
 
 from config import config
 from config.config_utils import read_config_file
+from logic.csv_manager import CsvManager
 from misc import utils
 from misc.notify import MailSender
 from misc.utils import check_compile_sigs, load_ransomware_exts
+from scanners.scanner import Scanner
 from scanners.scanner_for_crypt import ScannerForCrypt
 from scanners.scanner_for_file import ScannerForFile
 
@@ -161,12 +163,13 @@ def process_file(file, ana_type, verbose=False):
     """
     s = None
     if ana_type == 'm':
-        s = ScannerForFile(verbose)
+        s = ScannerForFile(verbose = verbose)
     if ana_type == 'k':
-        s = ScannerForCrypt(verbose)
+        s = ScannerForCrypt(verbose = verbose)
 
-    s.file(file)
-    s.print_found_list()
+    print()
+    print(f'{Fore.LIGHTCYAN_EX}{Scanner.sep} Found items {Scanner.sep}{Fore.RESET}')
+    print(s.file(file))
 
 
 def process_dirs(inputdir, prefix_output_file, ana_type, email, verbose=False, recursive=False):
@@ -177,18 +180,26 @@ def process_dirs(inputdir, prefix_output_file, ana_type, email, verbose=False, r
     def rand_str(n):
         return ''.join([random.choice(string.ascii_lowercase) for _ in range(n)])
 
-    if ana_type == 'm':
-        s = ScannerForFile(verbose)
-    if ana_type == 'k':
-        s = ScannerForCrypt(verbose)
-
-    with utils.Timer(verbose=True) as t:
-        s.search(inputdir, recursive=recursive)
-
     path = re.sub(r"\W+", '_', inputdir, flags=re.IGNORECASE)
-    filename = f'{path}.t_{round(t.secs)}s.rnd_{rand_str(4)}.csv'
+    # filename = f'{path}.t_{round(t.secs)}s.rnd_{rand_str(4)}.csv'
+    filename = f'{path}.rnd_{rand_str(4)}.csv'
     output_file = f'{prefix_output_file}{filename}'
-    msg = s.print_found_csv(output_file)
+
+    print(f'{Fore.LIGHTCYAN_EX}Open CSV file for write outcome{Fore.RESET}')
+
+    scanner = None
+    if ana_type == 'm':
+        scanner = ScannerForFile(output_file, verbose)
+    if ana_type == 'k':
+        scanner = ScannerForCrypt(output_file, verbose)
+
+    if scanner:
+        with utils.Timer(verbose=True):
+            scanner.search(inputdir, recursive=recursive)
+            scanner.close_csv_handle()
+            print(f'{Fore.LIGHTCYAN_EX}Closed CSV file for write outcome{Fore.RESET}')
+
+    # msg = scanner.print_found_csv(output_file)
 
     if email:
         from_part = config.CFG_SMTP_USER
@@ -196,8 +207,10 @@ def process_dirs(inputdir, prefix_output_file, ana_type, email, verbose=False, r
         ms = MailSender()
         subject = config.RATS_NAME + f": notify for {'manifest' if ana_type == 'm' else 'crypto'} processing: {filename}"
         print(f"{subject}, sent to: '{to_part}'")
-        ms.send_email(from_part, to_part, subject, msg, filename)
+        ms.send_email(from_part, to_part, subject, scanner.read_csv_content(), filename)
 
 
 if __name__ == "__main__":
+    #import ntpath
+    #ntpath.realpath = ntpath.abspath
     main(sys.argv[1:])

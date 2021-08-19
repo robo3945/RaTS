@@ -8,7 +8,7 @@ from typing import Optional
 from colorama import Fore
 
 from config import config
-from logic.csv_row import CsvRow
+from logic.csv_manager import CsvRow
 from misc import utils
 from scanners.scanner import Scanner
 
@@ -20,12 +20,12 @@ class ScannerForFile(Scanner):
     The search main class
     """
 
-    def __init__(self, verbose=False):
+    def __init__(self, csv_path = None, verbose=False):
         """
         Initialization of the fields
         :return:
         """
-        super().__init__(verbose)
+        super().__init__(csv_path, verbose)
         self.bad_file_ext_dict = config.BAD_FILE_EXTS
         self.file_name_terms_set = set([line.strip().lower() for line in config.MANIFEST_FILE_NAME_TERMS.split(",") if
                                         line.strip() != ""])
@@ -70,6 +70,7 @@ class ScannerForFile(Scanner):
         print(
             f'{Fore.LIGHTCYAN_EX}{Scanner.sep} Starting search Ransomware manifest traces in: {str(path)} {Scanner.sep}')
         print(Fore.RESET)
+        self.csv_manager.print_header()
         self._search(path, recursive)
 
     def _search(self, path, recursive=True):
@@ -103,7 +104,8 @@ class ScannerForFile(Scanner):
             found = self._search_in_file(file)
             if found:
                 print(f'{Fore.MAGENTA}---> Filename analysed:{Fore.RESET} {file.path}')
-                self.found.append(found)
+                # TODO to remove
+                #self.found.append(found)
 
     def _search_in_file(self, file) -> Optional[CsvRow]:
         """
@@ -128,7 +130,7 @@ class ScannerForFile(Scanner):
         if self.bad_file_ext_dict.get(ext) or self.bad_file_ext_dict.get(f'.{ext}'):
             if self.verbose:
                 print(f'{Fore.RED}-> Found ransomware extension for the file: {Fore.RESET}{ext}')
-            csv_row = CsvRow(file, "Ransomware filename extension",
+            csv_row = self.csv_manager.csv_row(file, "Ransomware filename extension",
                              f"Extension: {ext}, Value: {self.bad_file_ext_dict[ext]}")
         # Otherwise the allowed extensions are checked for the file name and the content
         elif file.stat().st_size <= config.CFG_MANIFEST_MAX_SIZE \
@@ -151,7 +153,7 @@ class ScannerForFile(Scanner):
                 csv_row = self._search_in_file_content(file)
         else:
             if self.verbose:
-                csv_row = CsvRow(file, IGNORED_FILE, f"Ext not in bad exts or the file is not a manifest")
+                csv_row = self.csv_manager.csv_row(file, IGNORED_FILE, f"Ext not in bad exts or the file is not a manifest")
 
         return csv_row
 
@@ -166,7 +168,7 @@ class ScannerForFile(Scanner):
             if lfile.startswith(f):
                 if self.verbose:
                     print(f"{Fore.RED}--> Found a file name starting with:{Fore.RESET} '{f}'")
-                return CsvRow(file, "Bad filename prefix", f"file_name_start_with: '{f}'")
+                return self.csv_manager.csv_row(file, "Bad filename prefix", f"file_name_start_with: '{f}'")
 
         return None
 
@@ -191,7 +193,7 @@ class ScannerForFile(Scanner):
 
             if is_well_known:
                 if self.verbose:
-                    return CsvRow(file, IGNORED_FILE,
+                    return self.csv_manager.csv_row(file, IGNORED_FILE,
                                   f"Well Known filetype - sig: '{sig}', first type recogn: \"{desc}\" <- offset: {str(offset)} - {adesc}")
 
                 return None
@@ -210,10 +212,10 @@ class ScannerForFile(Scanner):
                             if perc >= config.CFG_TERM_PERC_TH:
                                 if self.verbose:
                                     print(f"--> Found patterns in the file content: '{str(list_found)}'")
-                                return CsvRow(file, "Bad patterns in file content", f'\"{str(list_found)}\"')
+                                return self.csv_manager.csv_row(file, "Bad patterns in file content", f'\"{str(list_found)}\"')
 
                     if len(list_found) == 0 and self.verbose:
-                        return CsvRow(file, IGNORED_FILE, f"No bad patterns found")
+                        return self.csv_manager.csv_row(file, IGNORED_FILE, f"No bad patterns found")
 
         except PermissionError as e:
             print(f'EEE => Permissions error: {e}')

@@ -17,7 +17,7 @@ random_sec:
   # binary entropy threshold [0,8]
   CFG_ENTR_RAND_TH: 7.80
   # bytes content limit to check (-1 is for no limit)
-  CFG_N_BYTES_2_RAND_CHECK: -1
+  CFG_N_BYTES_2_RAND_CHECK: 10_000_000
   # minimum bytes for a compressed content to check
   CFG_COMPRESSED_CONTENT_MIN_LEN: 500
   # minimum bytes for a content to entropy check
