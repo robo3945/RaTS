@@ -211,4 +211,6 @@ def process_dirs(inputdir, prefix_output_file, ana_type, email, verbose=False, r
 
 
 if __name__ == "__main__":
+    #import ntpath
+    #ntpath.realpath = ntpath.abspath
     main(sys.argv[1:])

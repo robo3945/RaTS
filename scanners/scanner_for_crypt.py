@@ -121,12 +121,16 @@ class ScannerForCrypt(Scanner):
                     lcontent = len(content)
 
                     # treshold test for the entropy (min length)
-                    if self.verbose and lcontent < config.CFG_ENTROPY_CONTENT_MIN_LEN:
-                        return self.csv_manager.csv_row(file, CRYPTO_NOTPROC, f"[entropy] content length: {lcontent} < {config.CFG_ENTROPY_CONTENT_MIN_LEN}")
+                    if lcontent < config.CFG_ENTROPY_CONTENT_MIN_LEN:
+                        if self.verbose:
+                            return self.csv_manager.csv_row(file, CRYPTO_NOTPROC, f"[entropy] content length: {lcontent} < {config.CFG_ENTROPY_CONTENT_MIN_LEN}")
+                        return None
 
                     # treshold test for the compression test (min length)
-                    if self.verbose and lcontent < config.CFG_COMPRESSED_CONTENT_MIN_LEN:
-                        return self.csv_manager.csv_row(file, CRYPTO_NOTPROC, f"[compression] content length: {lcontent} < {config.CFG_COMPRESSED_CONTENT_MIN_LEN}")
+                    if lcontent < config.CFG_COMPRESSED_CONTENT_MIN_LEN:
+                        if self.verbose:
+                            return self.csv_manager.csv_row(file, CRYPTO_NOTPROC, f"[compression] content length: {lcontent} < {config.CFG_COMPRESSED_CONTENT_MIN_LEN}")
+                        return None
 
                     # test for the entropy
                     if (rnd_test_entropy := RandTest.calc_entropy_test(content, self.verbose)) > config.CFG_ENTR_RAND_TH:
