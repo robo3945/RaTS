@@ -22,7 +22,7 @@ class ScannerForCrypt(Scanner):
     Class managing the encrypted file: in the filename and in the content
     """
 
-    def __init__(self, csv_path = None, verbose=False):
+    def __init__(self, csv_path=None, verbose=False):
         """
         Initialization
         :return:
@@ -72,7 +72,8 @@ class ScannerForCrypt(Scanner):
                 try:
                     if entry.is_dir(follow_symlinks=False) and recursive:
                         if self.verbose:
-                            print(f"{Fore.LIGHTBLUE_EX}+ Searching (for crypto) in the path:{Fore.RESET} '{entry.path}'")
+                            print(
+                                f"{Fore.LIGHTBLUE_EX}+ Searching (for crypto) in the path:{Fore.RESET} '{entry.path}'")
                         self._search(entry, recursive)
                     else:
                         self._process_a_file(entry)
@@ -85,7 +86,6 @@ class ScannerForCrypt(Scanner):
             except UnicodeEncodeError as e:
                 print(f"EEE => Unicode Error for file - defensive strategy to continue: {e}")
 
-
     def _process_a_file(self, file) -> CsvRow:
         ext = Path(file).suffix.lower().replace('.', '')
         if len(ext) == 0 or ext not in config.EXT_FILES_LIST_TO_EXCLUDE:
@@ -93,7 +93,7 @@ class ScannerForCrypt(Scanner):
             if found:
                 print(f'{Fore.RED}---> Crypto analysis result: {Fore.RESET}{found.min_print()}')
                 # TODO to remove
-                #self.found.append(found)
+                # self.found.append(found)
                 return found
 
     def _search_for_crypted_content(self, file) -> Optional[CsvRow]:
@@ -123,28 +123,34 @@ class ScannerForCrypt(Scanner):
                     # treshold test for the entropy (min length)
                     if lcontent < config.CFG_ENTROPY_CONTENT_MIN_LEN:
                         if self.verbose:
-                            return self.csv_manager.csv_row(file, CRYPTO_NOTPROC, f"[entropy] content length: {lcontent} < {config.CFG_ENTROPY_CONTENT_MIN_LEN}")
+                            return self.csv_manager.csv_row(file, CRYPTO_NOTPROC,
+                                                            f"[entropy] content length: {lcontent} < {config.CFG_ENTROPY_CONTENT_MIN_LEN}")
                         return None
 
                     # treshold test for the compression test (min length)
                     if lcontent < config.CFG_COMPRESSED_CONTENT_MIN_LEN:
                         if self.verbose:
-                            return self.csv_manager.csv_row(file, CRYPTO_NOTPROC, f"[compression] content length: {lcontent} < {config.CFG_COMPRESSED_CONTENT_MIN_LEN}")
+                            return self.csv_manager.csv_row(file, CRYPTO_NOTPROC,
+                                                            f"[compression] content length: {lcontent} < {config.CFG_COMPRESSED_CONTENT_MIN_LEN}")
                         return None
 
                     # test for the entropy
-                    if (rnd_test_entropy := RandTest.calc_entropy_test(content, self.verbose)) > config.CFG_ENTR_RAND_TH:
-                        return self.csv_manager.csv_row(file, CRYPTO, f'[randomness test] 1-entropy: {rnd_test_entropy} > {config.CFG_ENTR_RAND_TH}')
+                    if (
+                    rnd_test_entropy := RandTest.calc_entropy_test(content, self.verbose)) > config.CFG_ENTR_RAND_TH:
+                        return self.csv_manager.csv_row(file, CRYPTO,
+                                                        f'[randomness test] 1-entropy: {rnd_test_entropy} > {config.CFG_ENTR_RAND_TH}')
 
                     # test for the compression test
-                    if (rnd_test_compr := self.rand.calc_compression_test(content, self.verbose)) > config.CFG_COMPR_RAND_TH:
-                        return self.csv_manager.csv_row(file, CRYPTO, f'[randomness test] 2-compression: {rnd_test_compr} > {config.CFG_COMPR_RAND_TH}')
+                    if (rnd_test_compr := self.rand.calc_compression_test(content,
+                                                                          self.verbose)) > config.CFG_COMPR_RAND_TH:
+                        return self.csv_manager.csv_row(file, CRYPTO,
+                                                        f'[randomness test] 2-compression: {rnd_test_compr} > {config.CFG_COMPR_RAND_TH}')
 
                 else:
                     # with verbose flag all the items are put into the outcome to evaluate also the excluded items
                     if self.verbose:
                         return self.csv_manager.csv_row(file, CRYPTO_NOTPROC,
-                                      f"Well Known filetype - sig: '{sig}', first type recogn: \"{desc}\" <- offset: {str(offset)} - {adesc}")
+                                                        f"Well Known filetype - sig: '{sig}', first type recogn: \"{desc}\" <- offset: {str(offset)} - {adesc}")
 
         except PermissionError:
             print(f"EEE => Permissions error for: '{file.path}'")
