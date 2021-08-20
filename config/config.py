@@ -104,9 +104,12 @@ KNOWN_FILE_SIGS = \
         "deadbeef": "DEAD BEEF",
         "ffd8ff": "JPEG ALL",
         "0a0501": "PCX ALL",
-        "0000001C667479706D703432": "MPEG-4 Video",
-        "FFFBB0": "MP3"
-
+        "0000001c66747970": "MPEG-4 Video",
+        "fffbb0": "MP3",
+        "fffb90": "MP3",
+        "fffb94": "MP3",
+        "fffb54": "MP3",
+        "fffbd4": "MP3"
     }
 
 URL_FOR_SIGNATURES = "http://www.filesignatures.net/index.php?page=all&currentpage={}"
