@@ -93,7 +93,12 @@ def is_known_file_type(file, content, verbose: bool = False):
     """
 
     results = check_sig_content(content, config.signatures)
+    #print(results)
 
+    """
+    - match at the start of the string
+    - searching for match after the start of the string introduces false negatives and it's preferable to have false positives than negatives ones
+    """
     if results and results[0][2] == 0:
         # It returns only the first one
         sig, desc, offset = results[0][0], results[0][1], results[0][2]
