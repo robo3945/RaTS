@@ -188,13 +188,12 @@ class ScannerForFile(Scanner):
                     return None
 
                 # well known file are not checked
-                adesc = None
                 is_well_known, sig, desc, offset = utils.is_known_file_type(file.name, content, verbose=self.verbose)
 
             if is_well_known:
                 if self.verbose:
                     return self.csv_manager.csv_row(file, IGNORED_FILE,
-                                  f"Well Known filetype - sig: '{sig}', first type recogn: \"{desc}\" <- offset: {str(offset)} - {adesc}")
+                                  f"Well Known filetype - sig: '{sig}', first type recogn: \"{desc}\" <- offset: {str(offset)}")
 
                 return None
 

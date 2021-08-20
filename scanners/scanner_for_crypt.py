@@ -111,7 +111,6 @@ class ScannerForCrypt(Scanner):
                     return None
 
                 # well known file are not checked
-                adesc = None
                 is_well_known, sig, desc, offset = utils.is_known_file_type(file.name, content, verbose=self.verbose)
                 if not is_well_known:
 
@@ -150,7 +149,7 @@ class ScannerForCrypt(Scanner):
                     # with verbose flag all the items are put into the outcome to evaluate also the excluded items
                     if self.verbose:
                         return self.csv_manager.csv_row(file, CRYPTO_NOTPROC,
-                                                        f"Well Known filetype - sig: '{sig}', first type recogn: \"{desc}\" <- offset: {str(offset)} - {adesc}")
+                                                        f"Well Known filetype - sig: '{sig}', first type recogn: \"{desc}\" <- offset: {str(offset)}")
 
         except PermissionError:
             print(f"EEE => Permissions error for: '{file.path}'")
