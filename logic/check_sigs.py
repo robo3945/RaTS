@@ -26,25 +26,33 @@ def compile_sigs(path_file_signs: str, url: str):
 
         print("--- Signature Pack building ---")
 
-        # look at every page: maximum 50
-        for i in range(25):
+        # look at every page: maximum 100
+        last_html = None
+        for i in range(1,100):
             response = urlopen(url.format(i))
             html = response.read()  # get the html as a string
 
+            # if the last page is equal to the current stop
+            if html == last_html:
+                break
+            last_html = html
             soup = BeautifulSoup(html, "lxml")  # parse the source
 
-            t_cells = soup.find_all("td", {"width": 236})  # find td elements with width=236
+            t_cells = soup.find_all("td", {"width": 147})  # find td elements with width=236
             for td in t_cells:
                 # append (signature, description) to signatures
-                sign = str(td.get_text()).replace(' ', '').lower()  # strip spaces, lowercase
-                descr = str(td.find_next_sibling("td").get_text())
+                ext = str(td.get_text()).replace(' ', '').lower()
+                sign = str(td.find_next_sibling("td").get_text()).replace(' ', '').lower()  # strip spaces, lowercase
+                descr = str(td.find_next_sibling("td").find_next_sibling("td").get_text())
 
                 if sign not in signatures.keys():
-                    signatures[sign] = descr
+                    signatures[sign] = [(ext, descr)]
+                else:
+                    signatures[sign].append((ext, descr))
 
         # Add the signatures in config.py
-        for sign, descr in config.KNOWN_FILE_SIGS.items():
-            signatures[sign] = descr
+        for sign, value in config.KNOWN_FILE_SIGS.items():
+            signatures[sign] = value
 
         # pickle them sigs
         with open(path_file_signs, 'wt') as f:
@@ -53,7 +61,7 @@ def compile_sigs(path_file_signs: str, url: str):
 
         print(js)
         print(f"Signatures list size: {len(signatures)}")
-        print("--- // Signature Pickle Pack building ---")
+        print("--- // Signature Pack building ---")
 
     else:
         with open(path_file_signs, 'rt') as f:
