@@ -97,7 +97,7 @@ def is_known_file_type(file, content, verbose: bool = False):
 
     """
     - match at the start of the string
-    - searching for match after the start of the string introduces false negatives and it's preferable to have false positives than negatives ones
+    - searching for match after the start of the string introduces more FN, so it's better to have FP than negatives ones
     """
     if results and results[0][2] == 0:
         # It returns only the first one
