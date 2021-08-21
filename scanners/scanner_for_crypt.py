@@ -149,7 +149,7 @@ class ScannerForCrypt(Scanner):
                     # with verbose flag all the items are put into the outcome to evaluate also the excluded items
                     if self.verbose:
                         return self.csv_manager.csv_row(file, CRYPTO_NOTPROC,
-                                                        f"Well Known filetype - sig: '{sig}', first type recogn: \"{desc}\" <- offset: {str(offset)}")
+                                                        f"Well known filetype - sig: '{sig}' - off: {str(offset)} - types: \"{desc}\"")
 
         except PermissionError:
             print(f"EEE => Permissions error for: '{file.path}'")
