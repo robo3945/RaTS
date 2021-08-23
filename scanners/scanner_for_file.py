@@ -13,7 +13,7 @@ from misc import utils
 from scanners.scanner import Scanner
 
 IGNORED_FILE = "Ignored file"
-
+ERROR = "Error"
 
 class ScannerForFile(Scanner):
     """
@@ -91,12 +91,21 @@ class ScannerForFile(Scanner):
                         self._process_a_file(entry)
 
                 except PermissionError as e:
-                    print(f'EEE => Permissions error: {e}')
+                    msg = f'EEE (Dir)=> Permissions error: {e}'
+                    print(msg)
+                    if self.verbose:
+                        self.csv_manager.csv_row(entry, ERROR, msg)
                 except OSError as e:
-                    print(f'EEE => OSError {e.errno}-{e}')
+                    msg = f'EEE (Dir) => OSError {e.errno}-{e}'
+                    print(msg)
+                    if self.verbose:
+                        self.csv_manager.csv_row(entry, ERROR, msg)
 
             except UnicodeEncodeError as e:
-                print(f"EEE => Unicode Error for file - defensive strategy to continue: {e}")
+                msg = f"EEE (Dir) => Unicode Error for dir entry - defensive strategy to continue: {e}"
+                print(msg)
+                if self.verbose:
+                    self.csv_manager.csv_row(entry, ERROR, msg)
 
     def _process_a_file(self, file):
         ext = Path(file).suffix.lower().replace('.', '')
@@ -104,8 +113,6 @@ class ScannerForFile(Scanner):
             found = self._search_in_file(file)
             if found:
                 print(f'{Fore.MAGENTA}---> Filename analysed:{Fore.RESET} {file.path}')
-                # TODO to remove
-                #self.found.append(found)
 
     def _search_in_file(self, file) -> Optional[CsvRow]:
         """
@@ -114,8 +121,7 @@ class ScannerForFile(Scanner):
         It searches for:
 
         1)  If the file has a Bad extension
-        2)  For the allowed extensions allowed (not the Bad exts), if it has a file name with suspect name part or terms
-            in the content. If yes it detect it and continue on the next file
+        2)  For the allowed extensions (not the Bad exts), if it has a file name with suspect name part or            terms in the content
 
         :param file: the file analyzed
         :return: None or the file detected
@@ -129,10 +135,10 @@ class ScannerForFile(Scanner):
         # check if the file has a ransomware extension
         if self.bad_file_ext_dict.get(ext) or self.bad_file_ext_dict.get(f'.{ext}'):
             if self.verbose:
-                print(f'{Fore.RED}-> Found ransomware extension for the file: {Fore.RESET}{ext}')
+                print(f'{Fore.RED}-> Found ransomware ext: {Fore.RESET}{ext}')
             csv_row = self.csv_manager.csv_row(file, "Ransomware filename extension",
                              f"Extension: {ext}, Value: {self.bad_file_ext_dict[ext]}")
-        # Otherwise the allowed extensions are checked for the file name and the content
+        # or the allowed extensions are checked for the file name and the content
         elif file.stat().st_size <= config.CFG_MANIFEST_MAX_SIZE \
                 and ext in self.file_name_exts_set \
                 or f'.{ext}' in self.file_name_exts_set:
@@ -163,13 +169,16 @@ class ScannerForFile(Scanner):
         :param file:
         :return:
         """
-        lfile = Path(file).stem.lower()
-        for f in self.file_name_terms_set:
-            if lfile.startswith(f):
+        file_lower = Path(file).stem.lower()
+        for term in self.file_name_terms_set:
+            if file_lower.startswith(term):
                 if self.verbose:
-                    print(f"{Fore.RED}--> Found a file name starting with:{Fore.RESET} '{f}'")
-                return self.csv_manager.csv_row(file, "Bad filename prefix", f"file_name_start_with: '{f}'")
-
+                    print(f"{Fore.RED}--> Found a file name starting with:{Fore.RESET} '{term}'")
+                return self.csv_manager.csv_row(file, "Bad filename prefix", f"file_name_start_with: '{term}'")
+            if term in file_lower:
+                if self.verbose:
+                    print(f"{Fore.RED}--> Found a file name contains this term:{Fore.RESET} '{term}'")
+                return self.csv_manager.csv_row(file, "Bad filename content", f"file_name_contains: '{term}'")
         return None
 
     def _search_in_file_content(self, file) -> Optional[CsvRow]:
@@ -193,8 +202,7 @@ class ScannerForFile(Scanner):
             if is_well_known:
                 if self.verbose:
                     return self.csv_manager.csv_row(file, IGNORED_FILE,
-                                  f"Well Known filetype - sig: '{sig}', first type recogn: \"{desc}\" <- offset: {str(offset)}")
-
+                                  f"Well known filetype - sig: '{sig}' - off: {str(offset)} - types: \"{desc}\"")
                 return None
 
             else:
@@ -217,8 +225,14 @@ class ScannerForFile(Scanner):
                         return self.csv_manager.csv_row(file, IGNORED_FILE, f"No bad patterns found")
 
         except PermissionError as e:
-            print(f'EEE => Permissions error: {e}')
+            msg = f'EEE => Permissions error: {e}'
+            print(msg)
+            if self.verbose:
+                self.csv_manager.csv_row(file, ERROR, msg)
         except OSError as e:
-            print(f'EEE => OSError: {e.errno}-{e}')
+            msg = f'EEE => OSError: {e.errno}-{e}'
+            print(msg)
+            if self.verbose:
+                self.csv_manager.csv_row(file, ERROR, msg)
 
         return None

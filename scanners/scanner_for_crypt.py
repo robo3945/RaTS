@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 
 import os
+from os.path import getsize
 from pathlib import Path
 from typing import Optional
 
+from binaryornot.check import is_binary
 from colorama import Fore
 
 from config import config
@@ -12,9 +14,9 @@ from logic.randomness import RandTest
 from misc import utils
 from scanners.scanner import Scanner
 
-IMAGE = "Image"
 CRYPTO = "Crypto"
-CRYPTO_NOTPROC = "Ignored"
+IGNORED = "Ignored"
+ERROR = "Error"
 
 
 class ScannerForCrypt(Scanner):
@@ -79,21 +81,28 @@ class ScannerForCrypt(Scanner):
                         self._process_a_file(entry)
 
                 except PermissionError as e:
-                    print(f'EEE => Permissions error: {e}')
+                    msg = f'EEE (Dir) => Permissions error: {e}'
+                    print(msg)
+                    if self.verbose:
+                        self.csv_manager.csv_row(entry, ERROR, msg)
                 except OSError as e:
-                    print(f"EEE(1) => OSError '{e.errno}-{e.strerror}' for: '{entry.path}'")
+                    msg = f"EEE(1) (Dir) => OSError '{e.errno}-{e.strerror}' for: '{entry.path}'"
+                    print(msg)
+                    if self.verbose:
+                        self.csv_manager.csv_row(entry, ERROR, msg)
 
             except UnicodeEncodeError as e:
-                print(f"EEE => Unicode Error for file - defensive strategy to continue: {e}")
+                msg = f"EEE (Dir) => Unicode Error for dir entry - defensive strategy to continue: {e}"
+                print(msg)
+                if self.verbose:
+                    self.csv_manager.csv_row(entry, ERROR, msg)
 
     def _process_a_file(self, file) -> CsvRow:
         ext = Path(file).suffix.lower().replace('.', '')
         if len(ext) == 0 or ext not in config.EXT_FILES_LIST_TO_EXCLUDE:
             found = self._search_for_crypted_content(file)
             if found:
-                print(f'{Fore.RED}---> Crypto analysis result: {Fore.RESET}{found.min_print()}')
-                # TODO to remove
-                # self.found.append(found)
+                print(f'{Fore.RED}---> Crypto result: {Fore.RESET}{found.min_print()}')
                 return found
 
     def _search_for_crypted_content(self, file) -> Optional[CsvRow]:
@@ -104,7 +113,18 @@ class ScannerForCrypt(Scanner):
         :return:
         """
         try:
+            # check for the thresholds
+            file_size = getsize(file.path)
+
+            # treshold test for the entropy (min length)
+            if file_size < config.CFG_RAND_CONTENT_MIN_LEN:
+                if self.verbose:
+                    return self.csv_manager.csv_row(file, IGNORED,
+                                                    f"[rand test] content length: {file_size} < {config.CFG_RAND_CONTENT_MIN_LEN}")
+                return None
+
             with open(file=file.path, mode='rb') as handle:
+
                 # read only the first part of the file to check the magic type
                 content = handle.read(config.CFG_MAX_FILE_SIGNATURE_LENGTH)
                 if len(content) == 0:
@@ -117,43 +137,30 @@ class ScannerForCrypt(Scanner):
                     # read the size of the file set in the config
                     handle.seek(0)
                     content = handle.read(config.CFG_N_BYTES_2_RAND_CHECK)
-                    lcontent = len(content)
-
-                    # treshold test for the entropy (min length)
-                    if lcontent < config.CFG_ENTROPY_CONTENT_MIN_LEN:
-                        if self.verbose:
-                            return self.csv_manager.csv_row(file, CRYPTO_NOTPROC,
-                                                            f"[entropy] content length: {lcontent} < {config.CFG_ENTROPY_CONTENT_MIN_LEN}")
-                        return None
-
-                    # treshold test for the compression test (min length)
-                    if lcontent < config.CFG_COMPRESSED_CONTENT_MIN_LEN:
-                        if self.verbose:
-                            return self.csv_manager.csv_row(file, CRYPTO_NOTPROC,
-                                                            f"[compression] content length: {lcontent} < {config.CFG_COMPRESSED_CONTENT_MIN_LEN}")
-                        return None
 
                     # test for the entropy
-                    if (
-                    rnd_test_entropy := RandTest.calc_entropy_test(content, self.verbose)) > config.CFG_ENTR_RAND_TH:
-                        return self.csv_manager.csv_row(file, CRYPTO,
-                                                        f'[randomness test] 1-entropy: {rnd_test_entropy} > {config.CFG_ENTR_RAND_TH}')
+                    if (rnd_test_entropy := RandTest.calc_entropy_test(content,self.verbose)) > config.CFG_ENTR_RAND_TH:
+                        return self.csv_manager.csv_row(file, CRYPTO, f'[randomness test] 1-entropy: {rnd_test_entropy} > {config.CFG_ENTR_RAND_TH}')
 
                     # test for the compression test
-                    if (rnd_test_compr := self.rand.calc_compression_test(content,
-                                                                          self.verbose)) > config.CFG_COMPR_RAND_TH:
-                        return self.csv_manager.csv_row(file, CRYPTO,
-                                                        f'[randomness test] 2-compression: {rnd_test_compr} > {config.CFG_COMPR_RAND_TH}')
+                    if (rnd_test_compr := self.rand.calc_compression_test(content, self.verbose)) > config.CFG_COMPR_RAND_TH:
+                        return self.csv_manager.csv_row(file, CRYPTO, f'[randomness test] 2-compression: {rnd_test_compr} > {config.CFG_COMPR_RAND_TH}')
 
                 else:
                     # with verbose flag all the items are put into the outcome to evaluate also the excluded items
                     if self.verbose:
-                        return self.csv_manager.csv_row(file, CRYPTO_NOTPROC,
+                        return self.csv_manager.csv_row(file, IGNORED,
                                                         f"Well known filetype - sig: '{sig}' - off: {str(offset)} - types: \"{desc}\"")
 
         except PermissionError:
-            print(f"EEE => Permissions error for: '{file.path}'")
+            msg = f"EEE => Permissions error for: '{file.path}'"
+            print(msg)
+            if self.verbose:
+                self.csv_manager.csv_row(file, ERROR, msg)
         except OSError as e:
-            print(f'EEE(2) => OSError {e.errno}-{e}')
+            msg = f'EEE(2) => OSError {e.errno}-{e}'
+            print(msg)
+            if self.verbose:
+                self.csv_manager.csv_row(file, ERROR, msg)
 
         return None
