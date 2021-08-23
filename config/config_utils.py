@@ -37,8 +37,7 @@ def read_config_file(path: str):
             if config.CFG_N_BYTES_2_RAND_CHECK == -1:
                 config.CFG_N_BYTES_2_RAND_CHECK = None
 
-            config.CFG_COMPRESSED_CONTENT_MIN_LEN = int(cfg_dict['random_sec']['CFG_COMPRESSED_CONTENT_MIN_LEN'])
-            config.CFG_ENTROPY_CONTENT_MIN_LEN = int(cfg_dict['random_sec']['CFG_ENTROPY_CONTENT_MIN_LEN'])
+            config.CFG_RAND_CONTENT_MIN_LEN = int(cfg_dict['random_sec']['CFG_RAND_CONTENT_MIN_LEN'])
 
             # random_sec
             config.CFG_PATH_FOR_SIGNATURES = cfg_dict['random_sec']['magic_n_sec']['CFG_PATH_FOR_SIGNATURES']
