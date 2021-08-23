@@ -10,7 +10,6 @@ from colorama import init, Fore, Style, deinit
 
 from config import config
 from config.config_utils import read_config_file
-from logic.csv_manager import CsvManager
 from misc import utils
 from misc.notify import MailSender
 from misc.utils import check_compile_sigs, load_ransomware_exts
