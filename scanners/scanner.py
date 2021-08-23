@@ -15,14 +15,12 @@ class Scanner(metaclass=abc.ABCMeta):
 
     sep = '---***---'
 
-    def __init__(self, csv_path = None, verbose=False):
+    def __init__(self, csv_path=None, verbose=False):
         """
         Initialization of the fields
         :return:
         """
         self.csv_path = csv_path
-        # TODO to remove
-        #self.found = []
         self.verbose = verbose
 
         self.csv_manager = CsvManager(None)
@@ -89,32 +87,6 @@ class Scanner(metaclass=abc.ABCMeta):
                         print(f'EEE => OSError {e.errno}-{e}')
 
         print(f"{Fore.MAGENTA}-> No file processed '{Fore.RESET}{full_file_path}'")
-
-    # TODO to remove
-    """
-    def print_found_list(self):
-        print()
-        print(f'{Fore.LIGHTCYAN_EX}{Scanner.sep} Found items {Scanner.sep}{Fore.RESET}')
-        print(self.found)
-    """
-
-    # TODO to remove
-    """
-    def print_found_csv(self, file_name) -> str:
-
-        if self.found:
-
-            if file_name:
-                with open(file_name, "w", encoding="utf8", errors='ignore') as handle:
-                    handle.write(f"{CsvRow.get_header()}\n")
-                    for x in self.found:
-                        handle.write(f"{x}\n")
-
-                with open(file_name, "r", encoding="utf8", errors='ignore') as handle:
-                    return handle.read()
-
-        return ""
-    """
 
     def read_csv_content(self) -> str:
         if self.csv_path:
