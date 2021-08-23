@@ -210,16 +210,19 @@ class ScannerForFile(Scanner):
                 with open(file.path, mode='r', errors='ignore') as handle:
                     content = handle.read()
 
-                    perc, list_found = 0, []
+                    sum_perc, list_found = 0, []
                     for k, v in self.file_text_terms_set:
                         found = re.search(k, content, re.IGNORECASE | re.MULTILINE)
                         if found:
                             list_found.append((k, v))
-                            perc += v
-                            if perc >= config.CFG_TERM_PERC_TH:
-                                if self.verbose:
-                                    print(f"--> Found patterns in the file content: '{str(list_found)}'")
-                                return self.csv_manager.csv_row(file, "Bad patterns in file content", f'\"{str(list_found)}\"')
+                            sum_perc += v
+
+                    if sum_perc > 0 and len(list_found) > 0:
+                        p = sum_perc / len(list_found)
+                        if p >= config.CFG_TERM_PERC_TH:
+                            if self.verbose:
+                                print(f"--> Found patterns in the file content: '{str(list_found)}' (mean {p}%)")
+                            return self.csv_manager.csv_row(file, "Bad patterns in file content", f'\"{str(list_found)}\"')
 
                     if len(list_found) == 0 and self.verbose:
                         return self.csv_manager.csv_row(file, IGNORED_FILE, f"No bad patterns found")

@@ -64,15 +64,15 @@ CFG_FILE_NAME_EXTS = "html, hta, htm, txt, bmp, jpg, gif, png"
 
 # RegEx pattern for searching into the text: tuples with: (regex ptrn, percentage_weight)
 # TODO: expand this section
-FILE_TEXT_TERMS_DIC = [(r'\bcryptowall\b', 99),
-                       (r'\bcryptolocker\b', 99),
-                       (r'\bCryptoDefense\b', 99),
-                       (r'\bloker\b', 99),
+FILE_TEXT_TERMS_DIC = [(r'\bcryptowall\b', 100),
+                       (r'\bcryptolocker\b', 100),
+                       (r'\bCryptoDefense\b', 100),
+                       (r'\bloker\b', 100),
                        (r'\bprivate\s+key\b', 80),
                        (r'\bAES-256\b', 80),
                        (r'\bRSA-2048\b', 80),
-                       (r'\.onion\b', 50),
-                       (r'torproject.org', 50),
+                       (r'\.onion\b', 80),
+                       (r'torproject.org', 80),
                        (r'\bbitcoin\b', 50),
                        (r'\btor\b', 30),
                        (r'\bencrypted\b', 30),
@@ -80,7 +80,7 @@ FILE_TEXT_TERMS_DIC = [(r'\bcryptowall\b', 99),
                        (r'\bcrypto\b', 30)]
 
 # threshold for the detection of the terms in the text files
-CFG_TERM_PERC_TH = 100
+CFG_TERM_PERC_TH = 90
 
 # ----------------------------------------------------------
 
