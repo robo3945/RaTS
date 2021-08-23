@@ -18,10 +18,8 @@ random_sec:
   CFG_ENTR_RAND_TH: 7.80
   # bytes content limit to check (-1 is for no limit)
   CFG_N_BYTES_2_RAND_CHECK: -1
-  # minimum bytes for a compressed content to check
-  CFG_COMPRESSED_CONTENT_MIN_LEN: 100
-  # minimum bytes for a content to entropy check
-  CFG_ENTROPY_CONTENT_MIN_LEN: 100
+  # minimum bytes for a randomness content to check
+  CFG_RAND_CONTENT_MIN_LEN: 100
 
   # configuration for magic number exclusion euristic
   magic_n_sec:

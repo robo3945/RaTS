@@ -45,6 +45,7 @@ howto_restore_file,
 howtodecrypt,
 install_tor,
 last_chance,
+-LOCKFILE-README,
 message,
 readme_for_decrypt,
 recovery_file,
@@ -58,8 +59,8 @@ vault,
 # The maximum size of the file to be analyzed: ransomware disclaimer are little
 CFG_MANIFEST_MAX_SIZE = 10_000_000  # bytes
 
-# extension of file name to analyze to check the evidence of terms
-CFG_FILE_NAME_EXTS = "html, htm, txt, bmp, jpg, gif, png"
+# extension of file name to analyze
+CFG_FILE_NAME_EXTS = "html, hta, htm, txt, bmp, jpg, gif, png"
 
 # RegEx pattern for searching into the text: tuples with: (regex ptrn, percentage_weight)
 # TODO: expand this section
@@ -70,7 +71,7 @@ FILE_TEXT_TERMS_DIC = [(r'\bcryptowall\b', 99),
                        (r'\bprivate\s+key\b', 80),
                        (r'\bAES-256\b', 80),
                        (r'\bRSA-2048\b', 80),
-                       (r'.onion', 50),
+                       (r'\.onion\b', 50),
                        (r'torproject.org', 50),
                        (r'\bbitcoin\b', 50),
                        (r'\btor\b', 30),
@@ -117,5 +118,4 @@ CFG_PATH_FOR_SIGNATURES = './file_sigs.json'
 # the maximum lenght of the signature to find in the Dump file
 CFG_MAX_FILE_SIGNATURE_LENGTH = 60
 # the minimum bytes length for checking the compressed item
-CFG_COMPRESSED_CONTENT_MIN_LEN = 100
-CFG_ENTROPY_CONTENT_MIN_LEN = 100
+CFG_RAND_CONTENT_MIN_LEN = 100
