@@ -106,6 +106,7 @@ KNOWN_FILE_SIGS = \
         "ffd8ff": ["jpg","JPEG ALL"],
         "0a0501": ["pcx", "PCX ALL"],
         "0000001c66747970": ["mpeg", "MPEG-4 Video"],
+        "0000002466747970": ["mpeg", "MPEG-4 Video"],
         "fffbb0": ["mp3","MP3"],
         "fffb90": ["mp3","MP3"],
         "fffb94": ["mp3","MP3"],
