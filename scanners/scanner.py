@@ -27,7 +27,7 @@ class Scanner(metaclass=abc.ABCMeta):
 
         # opens the csv file's handle
         if self.csv_path:
-            self.csv_handle = open(self.csv_path, "w", encoding="utf8", errors='ignore')
+            self.csv_handle = open(self.csv_path, "w", errors='ignore')
             self.csv_manager = CsvManager(self.csv_handle)
 
     @abc.abstractmethod
