@@ -105,5 +105,6 @@ venv.bak/
 /venv/
 /venvmac/
 .idea/
-/config-private.yaml
+/ymlcfg/config-private.yaml
 /misc/stats.py
+/ymlcfg/config-private.yaml
