@@ -35,6 +35,7 @@ def main(argv):
     ana_type = "all"  # default is to do Manifest and Crypto checks
     recursive = False
     verbose = False
+    crypto_type='all'
 
     init()
 
@@ -53,6 +54,7 @@ Single file scan: rats.py -f <file> [-k|-m] [-e <notify_email>] [-h] [-c] [-v]
 -x <excl_ext_list>  : file extensions list to exclude from scanning (ex: "jpg,tiff") 
 [-e <notify_email>] : where to send the notification
 [-k]                : search for crypted files
+[-kt]               : crypto engine (all, entropy, compression)
 [-m]                : search for manifest files
 [-r]                : recursive search
 [-c]                : path for the configuration YAML file
@@ -61,13 +63,17 @@ Single file scan: rats.py -f <file> [-k|-m] [-e <notify_email>] [-h] [-c] [-v]
 """
 
     print(Style.RESET_ALL)
+    print(output_start + Fore.YELLOW + "\nHere we are!\n")
+
     try:
-        opts, args = getopt.getopt(argv, "hkmrvi:x:o:e:l:c:f:")
+        opts, args = getopt.getopt(argv, "hkmrvi:x:o:e:l:c:f:t:")
     except getopt.GetoptError as error:
         print('************ arguments error ************', end='\n')
         print(f'error: {str(error)}')
         print(usage_sample)
         sys.exit(2)
+
+    print(Fore.LIGHTCYAN_EX + "---***--- Cmd line args ---***---" + Fore.RESET)
 
     for opt, arg in opts:
         if opt == '-h':
@@ -76,31 +82,44 @@ Single file scan: rats.py -f <file> [-k|-m] [-e <notify_email>] [-h] [-c] [-v]
             sys.exit()
         elif opt == '-k':
             ana_type = 'k'
+            print(Fore.LIGHTCYAN_EX + "-k" + Fore.RESET)
+        elif opt == '-t':
+            crypto_type = arg
+            print(Fore.LIGHTCYAN_EX + f"-t {arg}" + Fore.RESET)
         elif opt == '-m':
             ana_type = 'm'
+            print(Fore.LIGHTCYAN_EX + "-m" + Fore.RESET)
         elif opt == '-v':
             verbose = True
+            print(Fore.LIGHTCYAN_EX + "-v" + Fore.RESET)
         elif opt == '-r':
             recursive = True
+            print(Fore.LIGHTCYAN_EX + "-r" + Fore.RESET)
         elif opt == "-i":
             inputdir = arg
+            print(Fore.LIGHTCYAN_EX + f"-i {arg}" + Fore.RESET)
         elif opt == "-f":
             input_file = arg
+            print(Fore.LIGHTCYAN_EX + f"-f {arg}" + Fore.RESET)
         elif opt == "-x":
             extfilesxd = arg
+            print(Fore.LIGHTCYAN_EX + f"-x {arg}" + Fore.RESET)
         elif opt == "-l":
             dirlistfile = arg
+            print(Fore.LIGHTCYAN_EX + f"-l {arg}" + Fore.RESET)
         elif opt == "-o":
             outputcsv_prefix = arg
+            print(Fore.LIGHTCYAN_EX + f"-o {arg}" + Fore.RESET)
         elif opt == "-e":
             dst_email = arg
+            print(Fore.LIGHTCYAN_EX + f"-e {arg}" + Fore.RESET)
         elif opt == "-c":
             config_file_path = arg
+            print(Fore.LIGHTCYAN_EX + f"-c {arg}" + Fore.RESET)
 
     d = {'k': 'crypto', 'm': 'manifest'}
 
     if (inputdir or dirlistfile) and ana_type:
-        print(output_start + Fore.YELLOW + "\nHere we are!\n")
 
         # read the config file if it was specified
         if config_file_path is not None:
@@ -125,12 +144,10 @@ Single file scan: rats.py -f <file> [-k|-m] [-e <notify_email>] [-h] [-c] [-v]
 
         for adir in dirs:
             if ana_type == "all":
-                process_dirs(adir, outputcsv_prefix + "-manifest@", 'm', dst_email, verbose=verbose,
-                             recursive=recursive)
-                process_dirs(adir, outputcsv_prefix + "-crypto@", 'k', dst_email, verbose=verbose,
-                             recursive=recursive)
+                process_dirs(adir, outputcsv_prefix + "-manifest@", 'm', crypto_type=crypto_type, email=dst_email, verbose=verbose, recursive=recursive)
+                process_dirs(adir, outputcsv_prefix + "-crypto@", 'k', crypto_type=crypto_type,email=dst_email, verbose=verbose, recursive=recursive)
             else:
-                process_dirs(adir, outputcsv_prefix + "-" + d[ana_type] + "@", ana_type, dst_email, verbose=verbose,
+                process_dirs(adir, outputcsv_prefix + "-" + d[ana_type] + "@", ana_type, crypto_type=crypto_type, email=dst_email, verbose=verbose,
                              recursive=recursive)
     elif input_file and ana_type:
         print(output_start + Fore.YELLOW + "\nHere we are!\n")
@@ -156,7 +173,7 @@ Single file scan: rats.py -f <file> [-k|-m] [-e <notify_email>] [-h] [-c] [-v]
     deinit()
 
 
-def process_file(file, ana_type, verbose=False):
+def process_file(file, ana_type, crypto_type, verbose=False):
     """
     Process a single file
     """
@@ -164,14 +181,14 @@ def process_file(file, ana_type, verbose=False):
     if ana_type == 'm':
         s = ScannerForFile(verbose = verbose)
     if ana_type == 'k':
-        s = ScannerForCrypt(verbose = verbose)
+        s = ScannerForCrypt(rand_test=crypto_type, verbose = verbose)
 
     print()
     print(f'{Fore.LIGHTCYAN_EX}{Scanner.sep} Found items {Scanner.sep}{Fore.RESET}')
     print(s.file(file))
 
 
-def process_dirs(inputdir, prefix_output_file, ana_type, email, verbose=False, recursive=False):
+def process_dirs(inputdir, prefix_output_file, ana_type, crypto_type, email, verbose=False, recursive=False):
     """
     Process a dir
     """
@@ -190,7 +207,7 @@ def process_dirs(inputdir, prefix_output_file, ana_type, email, verbose=False, r
     if ana_type == 'm':
         scanner = ScannerForFile(output_file, verbose)
     if ana_type == 'k':
-        scanner = ScannerForCrypt(output_file, verbose)
+        scanner = ScannerForCrypt(csv_path=output_file, rand_test=crypto_type, verbose = verbose)
 
     if scanner:
         with utils.Timer(verbose=True):

@@ -24,13 +24,23 @@ class ScannerForCrypt(Scanner):
     Class managing the encrypted file: in the filename and in the content
     """
 
-    def __init__(self, csv_path=None, verbose=False):
+    def __init__(self, rand_test='all', csv_path=None, verbose=False):
         """
         Initialization
         :return:
         """
         super().__init__(csv_path, verbose)
         self.rand = RandTest()
+
+        if rand_test == 'entropy':
+            self.rand_test_entropy = True
+            self.rand_test_compression = False
+        elif rand_test == 'compression':
+            self.rand_test_compression = True
+            self.rand_test_entropy = False
+        else:
+            self.rand_test_compression = True
+            self.rand_test_entropy = True
 
     def print_config(self):
         print(Fore.RESET)
@@ -139,12 +149,17 @@ class ScannerForCrypt(Scanner):
                     content = handle.read(config.CFG_N_BYTES_2_RAND_CHECK)
 
                     # test for the entropy
-                    if (rnd_test_entropy := RandTest.calc_entropy_test(content,self.verbose)) > config.CFG_ENTR_RAND_TH:
-                        return self.csv_manager.csv_row(file, CRYPTO, f'[randomness test] 1-entropy: {rnd_test_entropy} > {config.CFG_ENTR_RAND_TH}')
+                    if self.rand_test_entropy and \
+                            (rnd_test_entropy := RandTest.calc_entropy_test(content, self.verbose)) > config.CFG_ENTR_RAND_TH:
+                        return self.csv_manager.csv_row(file, CRYPTO,
+                                                        f'[randomness test] 1-entropy: {rnd_test_entropy} > {config.CFG_ENTR_RAND_TH}')
 
                     # test for the compression test
-                    if (rnd_test_compr := self.rand.calc_compression_test(content, self.verbose)) > config.CFG_COMPR_RAND_TH:
-                        return self.csv_manager.csv_row(file, CRYPTO, f'[randomness test] 2-compression: {rnd_test_compr} > {config.CFG_COMPR_RAND_TH}')
+                    if self.rand_test_compression and \
+                            (rnd_test_compr := self.rand.calc_compression_test(content,
+                                                                          self.verbose)) > config.CFG_COMPR_RAND_TH:
+                        return self.csv_manager.csv_row(file, CRYPTO,
+                                                        f'[randomness test] 2-compression: {rnd_test_compr} > {config.CFG_COMPR_RAND_TH}')
 
                 else:
                     # with verbose flag all the items are put into the outcome to evaluate also the excluded items
