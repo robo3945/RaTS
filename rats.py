@@ -41,7 +41,7 @@ def main(argv):
 
     output_start = Fore.RED + config.RATS_LOGO + \
                    "\n" + Fore.BLUE + config.RATS_NAME + ' - v. ' + config.RATS_VERSION
-    usage_sample = output_start + Fore.CYAN + """
+    usage_sample = Fore.CYAN + """
 
 Directories scan: rats.py -i <inputdir> | -l <dirlistfile> -o <outcsv> [-k|-m] [-e <notify_email>] [-r] [-h] [-c] [-v]
 

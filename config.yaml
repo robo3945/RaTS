@@ -8,7 +8,7 @@ manifest_sec:
   # Manifest extensions to check
   CFG_FILE_NAME_EXTS: html, hta, htm, txt, bmp, jpg, gif, png
   # threshold for the notifications
-  CFG_TERM_PERC_TH: 80
+  CFG_TERM_PERC_TH: 30
 
 # Configuration for randomness check
 random_sec:
