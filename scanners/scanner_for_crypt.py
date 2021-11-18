@@ -79,8 +79,8 @@ class ScannerForCrypt(Scanner):
         :return:
         """
 
-        for entry in os.scandir(path):
-            try:
+        try:
+            for entry in os.scandir(path):
                 try:
                     if entry.is_dir(follow_symlinks=False) and recursive:
                         if self.verbose:
@@ -100,12 +100,19 @@ class ScannerForCrypt(Scanner):
                     print(msg)
                     if self.verbose:
                         self.csv_manager.csv_row(entry, ERROR, msg)
+                except UnicodeEncodeError as e:
+                    msg = f"EEE (Dir) => Unicode Error for dir entry - defensive strategy to continue: {e}"
+                    print(msg)
+                    if self.verbose:
+                        self.csv_manager.csv_row(entry, ERROR, msg)
 
-            except UnicodeEncodeError as e:
-                msg = f"EEE (Dir) => Unicode Error for dir entry - defensive strategy to continue: {e}"
-                print(msg)
-                if self.verbose:
-                    self.csv_manager.csv_row(entry, ERROR, msg)
+        except PermissionError as e:
+            msg = f'EEE (ScanDir) => Permission error: {e}'
+            print(msg)
+        except FileNotFoundError as e:
+            msg = f'EEE (ScanDir) => FileNotFound error: {e}'
+            print(msg)
+
 
     def _process_a_file(self, file) -> CsvRow:
         ext = Path(file).suffix.lower().replace('.', '')
