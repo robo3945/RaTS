@@ -3,10 +3,11 @@
 import abc
 import os
 from pathlib import Path
+from typing import List
+
 from colorama import Fore
 
 from logic.csv_manager import CsvRow, CsvManager
-
 
 class Scanner(metaclass=abc.ABCMeta):
     """
@@ -53,18 +54,19 @@ class Scanner(metaclass=abc.ABCMeta):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def search(self, path, recursive=True):
+    def search(self, path, dirs_to_exclude=None, recursive=True):
         """
         The main search method: process a directory
 
         :param path:
+        :param dirs_to_exclude:
         :param recursive:
         :return:
         """
         raise NotImplementedError
 
     @abc.abstractmethod
-    def _search(self, path, recursive=True):
+    def _search(self, path, dirs_to_exclude=None, recursive=True):
         """
         The main recursive Search method
         :param path:
@@ -87,6 +89,19 @@ class Scanner(metaclass=abc.ABCMeta):
                         print(f'EEE => OSError {e.errno}-{e}')
 
         print(f"{Fore.MAGENTA}-> No file processed '{Fore.RESET}{full_file_path}'")
+
+    @staticmethod
+    def is_excluded_dir(path: str, dirs_to_exclude: List[str]):
+        if dirs_to_exclude and len(dirs_to_exclude) > 0:
+            for it in dirs_to_exclude:
+                try:
+                    if os.path.samefile(path, it):
+                        print(f"{Fore.MAGENTA}-> Dir excluded: '{Fore.RESET}{path}'")
+                        return True
+                except (OSError, ValueError):
+                    pass
+
+        return False
 
     def read_csv_content(self) -> str:
         if self.csv_path:

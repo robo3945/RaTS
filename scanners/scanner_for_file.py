@@ -61,7 +61,7 @@ class ScannerForFile(Scanner):
 
         super()._internal_file(full_file_path)
 
-    def search(self, path, recursive=True):
+    def search(self, path, dirs_to_exclude=None, recursive=True):
         """
         Process a Dir
         """
@@ -71,9 +71,9 @@ class ScannerForFile(Scanner):
             f'{Fore.LIGHTCYAN_EX}{Scanner.sep} Starting search Ransomware manifest traces in: {str(path)} {Scanner.sep}')
         print(Fore.RESET)
         self.csv_manager.print_header()
-        self._search(path, recursive)
+        self._search(path, dirs_to_exclude, recursive)
 
-    def _search(self, path, recursive=True):
+    def _search(self, path, dirs_to_exclude=None, recursive=True):
         """
         Recursive main search method
         :param recursive: recursive flag
@@ -87,7 +87,8 @@ class ScannerForFile(Scanner):
                     if entry.is_dir(follow_symlinks=False) and recursive:
                         if self.verbose:
                             print(f"{Fore.LIGHTBLUE_EX}+ Searching in the path:{Fore.RESET} '{entry.path}'")
-                        self._search(entry, recursive)
+                        if not Scanner.is_excluded_dir(entry.path, dirs_to_exclude):
+                            self._search(entry, dirs_to_exclude, recursive)
                     else:
                         self._process_a_file(entry)
 
