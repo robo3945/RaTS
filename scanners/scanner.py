@@ -76,12 +76,6 @@ class Scanner(metaclass=abc.ABCMeta):
         raise NotImplementedError
 
     def _internal_file(self, full_file_path) -> CsvRow:
-        """
-        Process a single file
-
-        :param full_file_path:
-        :return:
-        """
         dir = Path(full_file_path)
         if dir.is_file():
             with os.scandir(dir.parent) as it:
@@ -98,14 +92,6 @@ class Scanner(metaclass=abc.ABCMeta):
 
     @staticmethod
     def is_excluded_dir(path: str, dirs_to_exclude: List[str]):
-        """
-        Determines if the path is in the excluded dirs list
-
-        :param path:
-        :param dirs_to_exclude:
-        :return:
-        """
-
         if dirs_to_exclude and len(dirs_to_exclude) > 0:
             for it in dirs_to_exclude:
                 try:

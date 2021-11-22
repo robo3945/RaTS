@@ -28,8 +28,8 @@ def main(argv):
     inputdir = ""
     input_file = ""
     extfilesxd = ""
-    dirs_exclude = ""
-    dirs_include = ""
+    filesxd = ""
+    dirlistfile = ""
     outputcsv_prefix = ""
     dst_email = ""
     config_file_path = None
@@ -77,7 +77,6 @@ Single file scan: rats.py -f <file> [-k|-m] [-e <notify_email>] [-h] [-c] [-v]
 
     print(Fore.LIGHTCYAN_EX + "---***--- Cmd line args ---***---" + Fore.RESET)
 
-    # TODO check the existence of the argument
     for opt, arg in opts:
         if opt == '-h':
             print('************ help ************', end='\n')
@@ -108,10 +107,10 @@ Single file scan: rats.py -f <file> [-k|-m] [-e <notify_email>] [-h] [-c] [-v]
             extfilesxd = arg
             print(Fore.LIGHTCYAN_EX + f"-x {arg}" + Fore.RESET)
         elif opt == "-z":
-            dirs_exclude = arg
+            filesxd = arg
             print(Fore.LIGHTCYAN_EX + f"-z {arg}" + Fore.RESET)
         elif opt == "-l":
-            dirs_include = arg
+            dirlistfile = arg
             print(Fore.LIGHTCYAN_EX + f"-l {arg}" + Fore.RESET)
         elif opt == "-o":
             outputcsv_prefix = arg
@@ -125,7 +124,7 @@ Single file scan: rats.py -f <file> [-k|-m] [-e <notify_email>] [-h] [-c] [-v]
 
     d = {'k': 'crypto', 'm': 'manifest'}
 
-    if (inputdir or dirs_include) and ana_type:
+    if (inputdir or dirlistfile) and ana_type:
 
         # read the config file if it was specified
         if config_file_path is not None:
@@ -136,48 +135,49 @@ Single file scan: rats.py -f <file> [-k|-m] [-e <notify_email>] [-h] [-c] [-v]
 
         # organize the directories to process: main dir or list of dirs
         dirs_to_process = list()
-        if dirs_include:
-            dirs_to_process = process_dir_file(dirs_include)
+        if dirlistfile:
+            dirs_to_process = process_dir_file(dirlistfile)
         elif inputdir:
             dirs_to_process.append(inputdir)
 
         # read the list of dirs to exclude
         dirs_to_exclude = list()
-        if dirs_exclude:
-            dirs_to_exclude = process_dir_file(dirs_exclude)
+        if filesxd:
+            dirs_to_exclude = process_dir_file(filesxd)
 
         # load the signatures for file magic byte
         config.signatures = check_compile_sigs()
         # load the extension for ransomware files
         load_ransomware_exts()
 
-        try:
-            if ana_type == "all":
-                process_dirs(dirs_to_process,
-                             dirs_to_exclude,
-                             outputcsv_prefix + "-manifest@", 'm',
-                             crypto_type=crypto_type,
-                             email=dst_email,
-                             verbose=verbose,
-                             recursive=recursive)
-                process_dirs(dirs_to_process,
-                             dirs_to_exclude,
-                             outputcsv_prefix + "-crypto@", 'k',
-                             crypto_type=crypto_type,
-                             email=dst_email,
-                             verbose=verbose,
-                             recursive=recursive)
-            else:
-                process_dirs(dirs_to_process,
-                             dirs_to_exclude,
-                             outputcsv_prefix + "-" + d[ana_type] + "@", ana_type,
-                             crypto_type=crypto_type,
-                             email=dst_email,
-                             verbose=verbose,
-                             recursive=recursive)
-        except FileNotFoundError as e:
-            msg = f'EEE (MainScanDir) => FileNotFound error: {e}'
-            print(msg)
+        for adir in dirs_to_process:
+            try:
+                if ana_type == "all":
+                    process_dirs(adir,
+                                 dirs_to_exclude,
+                                 outputcsv_prefix + "-manifest@", 'm',
+                                 crypto_type=crypto_type,
+                                 email=dst_email,
+                                 verbose=verbose,
+                                 recursive=recursive)
+                    process_dirs(adir,
+                                 dirs_to_exclude,
+                                 outputcsv_prefix + "-crypto@", 'k',
+                                 crypto_type=crypto_type,
+                                 email=dst_email,
+                                 verbose=verbose,
+                                 recursive=recursive)
+                else:
+                    process_dirs(adir,
+                                 dirs_to_exclude,
+                                 outputcsv_prefix + "-" + d[ana_type] + "@", ana_type,
+                                 crypto_type=crypto_type,
+                                 email=dst_email,
+                                 verbose=verbose,
+                                 recursive=recursive)
+            except FileNotFoundError as e:
+                msg = f'EEE (MainScanDir) => FileNotFound error: {e}'
+                print(msg)
 
     elif input_file and ana_type:
         print(output_start + Fore.YELLOW + "\nHere we are!\n")
@@ -232,24 +232,15 @@ def process_file(file, ana_type, crypto_type, verbose=False):
     print(s.file(file))
 
 
-def process_dirs(dirs_to_process, dirs_to_exclude, prefix_output_file, ana_type, crypto_type, email, verbose=False, recursive=False):
+def process_dirs(inputdir, dirs_to_exclude, prefix_output_file, ana_type, crypto_type, email, verbose=False, recursive=False):
     """
-
-    :param dirs_to_process: list of dirs to process
-    :param dirs_to_exclude: list of dirs to exclude
-    :param prefix_output_file:
-    :param ana_type:
-    :param crypto_type:
-    :param email:
-    :param verbose:
-    :param recursive:
-    :return:
+    Process a dir
     """
 
     def rand_str(n):
         return ''.join([random.choice(string.ascii_lowercase) for _ in range(n)])
 
-    path = re.sub(r"\W+", '_', dirs_to_process[0][0:64], flags=re.IGNORECASE)
+    path = re.sub(r"\W+", '_', inputdir[0:64], flags=re.IGNORECASE)
     # filename = f'{path}.t_{round(t.secs)}s.rnd_{rand_str(4)}.csv'
     filename = f'{path}.rnd_{rand_str(4)}.csv'
     output_file = f'{prefix_output_file}{filename}'
@@ -260,15 +251,15 @@ def process_dirs(dirs_to_process, dirs_to_exclude, prefix_output_file, ana_type,
     if ana_type == 'm':
         scanner = ScannerForFile(output_file, verbose)
     if ana_type == 'k':
-        scanner = ScannerForCrypt(csv_path=output_file, rand_test=crypto_type, verbose=verbose)
+        scanner = ScannerForCrypt(csv_path=output_file, rand_test=crypto_type, verbose = verbose)
 
-    with utils.Timer(verbose=True):
-        if scanner:
-            for inputdir in dirs_to_process:
-                # TODO: is it possible to insert here multiprocessing?
-                scanner.search(inputdir, dirs_to_exclude, recursive=recursive)
+    if scanner:
+        with utils.Timer(verbose=True):
+            scanner.search(inputdir, dirs_to_exclude, recursive=recursive)
             scanner.close_csv_handle()
             print(f'{Fore.LIGHTCYAN_EX}Closed CSV file for write outcome: {output_file}{Fore.RESET}')
+
+    # msg = scanner.print_found_csv(output_file)
 
     if email:
         from_part = config.CFG_SMTP_USER
@@ -280,4 +271,6 @@ def process_dirs(dirs_to_process, dirs_to_exclude, prefix_output_file, ana_type,
 
 
 if __name__ == "__main__":
+    #import ntpath
+    #ntpath.realpath = ntpath.abspath
     main(sys.argv[1:])
