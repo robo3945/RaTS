@@ -28,6 +28,7 @@ def main(argv):
     inputdir = ""
     input_file = ""
     extfilesxd = ""
+    filesxd = ""
     dirlistfile = ""
     outputcsv_prefix = ""
     dst_email = ""
@@ -49,12 +50,13 @@ Single file scan: rats.py -f <file> [-k|-m] [-e <notify_email>] [-h] [-c] [-v]
 
 -f <file>           : file to scan
 -i <inputdir>       : the starting directory
--l <dirlistfile>    : a txt file with the directories to scan
+[-l <dirlistfile>]  : txt file with the directories to include in the scan
+[-z <dirlistfile>]  : txt file with the directories to exclude from the scan
 -o <outcsv>         : the CSV output file prefix (without the extension)
--x <excl_ext_list>  : file extensions list to exclude from scanning (ex: "jpg,tiff") 
+[-x <excl_ext_list>]: file extensions list to exclude from scanning (ex: "jpg,tiff") 
 [-e <notify_email>] : where to send the notification
 [-k]                : search for crypted files
-[-kt]               : crypto engine (all, entropy, compression)
+[-t]                : crypto engine (all, entropy, compression)
 [-m]                : search for manifest files
 [-r]                : recursive search
 [-c]                : path for the configuration YAML file
@@ -66,7 +68,7 @@ Single file scan: rats.py -f <file> [-k|-m] [-e <notify_email>] [-h] [-c] [-v]
     print(output_start + Fore.YELLOW + "\nHere we are!\n")
 
     try:
-        opts, args = getopt.getopt(argv, "hkmrvi:x:o:e:l:c:f:t:")
+        opts, args = getopt.getopt(argv, "hkmrvi:x:o:e:l:c:f:t:z:")
     except getopt.GetoptError as error:
         print('************ arguments error ************', end='\n')
         print(f'error: {str(error)}')
@@ -104,6 +106,9 @@ Single file scan: rats.py -f <file> [-k|-m] [-e <notify_email>] [-h] [-c] [-v]
         elif opt == "-x":
             extfilesxd = arg
             print(Fore.LIGHTCYAN_EX + f"-x {arg}" + Fore.RESET)
+        elif opt == "-z":
+            filesxd = arg
+            print(Fore.LIGHTCYAN_EX + f"-z {arg}" + Fore.RESET)
         elif opt == "-l":
             dirlistfile = arg
             print(Fore.LIGHTCYAN_EX + f"-l {arg}" + Fore.RESET)
@@ -128,27 +133,52 @@ Single file scan: rats.py -f <file> [-k|-m] [-e <notify_email>] [-h] [-c] [-v]
         # some cmd line parameters are passed to config to better manage them
         config.EXT_FILES_LIST_TO_EXCLUDE = set([x.strip() for x in extfilesxd.lower().split(sep=',')])
 
-        dirs = []
+        # organize the directories to process: main dir or list of dirs
+        dirs_to_process = list()
         if dirlistfile:
-            with open(dirlistfile, 'r') as handle:
-                content = handle.read()
-                dirs = content.split(sep='\n')
-                dirs = [dir.strip() for dir in dirs if dir and dir.strip()[0] != '#']
+            dirs_to_process = process_dir_file(dirlistfile)
         elif inputdir:
-            dirs.append(inputdir)
+            dirs_to_process.append(inputdir)
+
+        # read the list of dirs to exclude
+        dirs_to_exclude = list()
+        if filesxd:
+            dirs_to_exclude = process_dir_file(filesxd)
 
         # load the signatures for file magic byte
         config.signatures = check_compile_sigs()
         # load the extension for ransomware files
         load_ransomware_exts()
 
-        for adir in dirs:
-            if ana_type == "all":
-                process_dirs(adir, outputcsv_prefix + "-manifest@", 'm', crypto_type=crypto_type, email=dst_email, verbose=verbose, recursive=recursive)
-                process_dirs(adir, outputcsv_prefix + "-crypto@", 'k', crypto_type=crypto_type,email=dst_email, verbose=verbose, recursive=recursive)
-            else:
-                process_dirs(adir, outputcsv_prefix + "-" + d[ana_type] + "@", ana_type, crypto_type=crypto_type, email=dst_email, verbose=verbose,
-                             recursive=recursive)
+        for adir in dirs_to_process:
+            try:
+                if ana_type == "all":
+                    process_dirs(adir,
+                                 dirs_to_exclude,
+                                 outputcsv_prefix + "-manifest@", 'm',
+                                 crypto_type=crypto_type,
+                                 email=dst_email,
+                                 verbose=verbose,
+                                 recursive=recursive)
+                    process_dirs(adir,
+                                 dirs_to_exclude,
+                                 outputcsv_prefix + "-crypto@", 'k',
+                                 crypto_type=crypto_type,
+                                 email=dst_email,
+                                 verbose=verbose,
+                                 recursive=recursive)
+                else:
+                    process_dirs(adir,
+                                 dirs_to_exclude,
+                                 outputcsv_prefix + "-" + d[ana_type] + "@", ana_type,
+                                 crypto_type=crypto_type,
+                                 email=dst_email,
+                                 verbose=verbose,
+                                 recursive=recursive)
+            except FileNotFoundError as e:
+                msg = f'EEE (MainScanDir) => FileNotFound error: {e}'
+                print(msg)
+
     elif input_file and ana_type:
         print(output_start + Fore.YELLOW + "\nHere we are!\n")
 
@@ -173,9 +203,23 @@ Single file scan: rats.py -f <file> [-k|-m] [-e <notify_email>] [-h] [-c] [-v]
     deinit()
 
 
+def process_dir_file(dirlistfile):
+    """
+    Processes a file that contains a list of directories
+
+    :param dirlistfile:
+    :return:
+    """
+    with open(dirlistfile, 'r') as handle:
+        content = handle.read()
+        dirs_to_process = content.split(sep='\n')
+        dirs_to_process = [dir.strip() for dir in dirs_to_process if dir and dir.strip()[0] != '#']
+    return dirs_to_process
+
+
 def process_file(file, ana_type, crypto_type, verbose=False):
     """
-    Process a single file
+    Process a file
     """
     s = None
     if ana_type == 'm':
@@ -188,7 +232,7 @@ def process_file(file, ana_type, crypto_type, verbose=False):
     print(s.file(file))
 
 
-def process_dirs(inputdir, prefix_output_file, ana_type, crypto_type, email, verbose=False, recursive=False):
+def process_dirs(inputdir, dirs_to_exclude, prefix_output_file, ana_type, crypto_type, email, verbose=False, recursive=False):
     """
     Process a dir
     """
@@ -211,7 +255,7 @@ def process_dirs(inputdir, prefix_output_file, ana_type, crypto_type, email, ver
 
     if scanner:
         with utils.Timer(verbose=True):
-            scanner.search(inputdir, recursive=recursive)
+            scanner.search(inputdir, dirs_to_exclude, recursive=recursive)
             scanner.close_csv_handle()
             print(f'{Fore.LIGHTCYAN_EX}Closed CSV file for write outcome: {output_file}{Fore.RESET}')
 
