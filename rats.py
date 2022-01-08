@@ -77,6 +77,7 @@ Single file scan: rats.py -f <file> [-k|-m] [-e <notify_email>] [-h] [-c] [-v]
 
     print(Fore.LIGHTCYAN_EX + "---***--- Cmd line args ---***---" + Fore.RESET)
 
+    # TODO check the existence of the argument
     for opt, arg in opts:
         if opt == '-h':
             print('************ help ************', end='\n')
@@ -264,7 +265,8 @@ def process_dirs(dirs_to_process, dirs_to_exclude, prefix_output_file, ana_type,
     with utils.Timer(verbose=True):
         if scanner:
             for inputdir in dirs_to_process:
-                    scanner.search(inputdir, dirs_to_exclude, recursive=recursive)
+                # TODO: is it possible to insert here multiprocessing?
+                scanner.search(inputdir, dirs_to_exclude, recursive=recursive)
             scanner.close_csv_handle()
             print(f'{Fore.LIGHTCYAN_EX}Closed CSV file for write outcome: {output_file}{Fore.RESET}')
 
@@ -278,6 +280,4 @@ def process_dirs(dirs_to_process, dirs_to_exclude, prefix_output_file, ana_type,
 
 
 if __name__ == "__main__":
-    #import ntpath
-    #ntpath.realpath = ntpath.abspath
     main(sys.argv[1:])
