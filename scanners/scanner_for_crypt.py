@@ -157,7 +157,7 @@ class ScannerForCrypt(Scanner):
 
                     # test for the entropy
                     if self.rand_test_entropy and \
-                            (rnd_test_entropy := RandTest.calc_entropy_test(content, self.verbose)) > config.CFG_ENTR_RAND_TH:
+                            (rnd_test_entropy := RandTest.calc_entropy_test(content)) > config.CFG_ENTR_RAND_TH:
                         return self.csv_manager.csv_row(file, CRYPTO,
                                                         f'[randomness test] 1-entropy: {rnd_test_entropy} > {config.CFG_ENTR_RAND_TH}')
 
