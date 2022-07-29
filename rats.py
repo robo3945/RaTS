@@ -192,10 +192,10 @@ Single file scan: rats.py -f <file> [-k|-m] [-e <notify_email>] [-h] [-c] [-v]
         load_ransomware_exts()
 
         if ana_type == "all":
-            process_file(input_file, 'm', verbose=verbose)
-            process_file(input_file, 'k', verbose=verbose)
+            process_file(input_file, 'm', crypto_type=crypto_type, verbose=verbose)
+            process_file(input_file, 'k', crypto_type=crypto_type, verbose=verbose)
         else:
-            process_file(input_file, ana_type, verbose=verbose)
+            process_file(input_file, ana_type, crypto_type=crypto_type, verbose=verbose)
 
     else:
         print(usage_sample)
