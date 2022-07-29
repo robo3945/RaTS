@@ -14,7 +14,7 @@ class RandTest:
     """
 
     @staticmethod
-    def calc_entropy_test(content: bytes, verbose: bool) -> float:
+    def calc_entropy_test(content: bytes, verbose: bool = False) -> float:
         """
         Entropy randomness test
 
@@ -30,13 +30,19 @@ class RandTest:
         :return:
         """
 
-        p, lns = Counter(content), float(len(content))
-        H = -sum(count / lns * math.log(count / lns, 2) for count in p.values())
+        l = float(len(content))
+        H =  -sum(map(lambda a: (a / l) * math.log2(a / l), Counter(content).values()))
 
         if verbose:
             print(f"{Fore.LIGHTBLUE_EX}-> [Entropy Test]{Fore.RESET} crypto values: H: {H}")
 
         return H
+
+    @staticmethod
+    def calc_aprox_entropy_test1(content: bytes) -> float:
+        return sum([p_x * (int(math.pow(p_x, -1)).bit_length() - 1) for p_x in
+                    [n_x / len(content) for n_x in Counter(content).values()]])
+
 
     @staticmethod
     def calc_max_entropy(content: bytes):
@@ -82,6 +88,7 @@ class RandTest:
         ct = len_compr_cnt / len_bcontent
 
         if verbose:
-            print(f"{Fore.LIGHTBLUE_EX}-> [Compression Test]{Fore.RESET} compression values: n: {len_compr_cnt}, d: {len_bcontent}, l0: {self._compression_footprint_length}, compr. test: {ct} ")
+            print(
+                f"{Fore.LIGHTBLUE_EX}-> [Compression Test]{Fore.RESET} compression values: n: {len_compr_cnt}, d: {len_bcontent}, l0: {self._compression_footprint_length}, compr. test: {ct} ")
 
         return ct
