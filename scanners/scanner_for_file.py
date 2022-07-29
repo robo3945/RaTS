@@ -59,7 +59,7 @@ class ScannerForFile(Scanner):
             f'{Fore.LIGHTCYAN_EX}{Scanner.sep} Starting search Ransomware manifest traces in: {str(full_file_path)} {Scanner.sep}')
         print(Fore.RESET)
 
-        super()._internal_file(full_file_path)
+        super()._internal_one_file(full_file_path)
 
     def search(self, path, dirs_to_exclude=None, recursive=True):
         """

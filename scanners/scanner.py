@@ -75,7 +75,7 @@ class Scanner(metaclass=abc.ABCMeta):
         """
         raise NotImplementedError
 
-    def _internal_file(self, full_file_path) -> CsvRow:
+    def _internal_one_file(self, full_file_path) -> CsvRow:
         """
         Process a single file
 

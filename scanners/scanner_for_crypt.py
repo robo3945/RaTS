@@ -61,7 +61,7 @@ class ScannerForCrypt(Scanner):
             f'{Fore.LIGHTCYAN_EX}{Scanner.sep} Starting search Crypto content in: {str(full_file_path)} {Scanner.sep}')
         print(Fore.RESET)
 
-        return super()._internal_file(full_file_path)
+        return super()._internal_one_file(full_file_path)
 
     def search(self, path, dirs_to_exclude=None, recursive=True):
         # if self.verbose:
@@ -84,9 +84,10 @@ class ScannerForCrypt(Scanner):
                 try:
                     if entry.is_dir(follow_symlinks=False) and recursive:
                         if self.verbose:
-                            print(f"{Fore.LIGHTBLUE_EX}+ Searching (for crypto) in the path:{Fore.RESET} '{entry.path}'")
+                            print(
+                                f"{Fore.LIGHTBLUE_EX}+ Searching (for crypto) in the path:{Fore.RESET} '{entry.path}'")
                         if not Scanner.is_excluded_dir(entry.path, dirs_to_exclude):
-                            self._search(entry,dirs_to_exclude, recursive)
+                            self._search(entry, dirs_to_exclude, recursive)
                     else:
                         self._process_a_file(entry)
 
@@ -112,7 +113,6 @@ class ScannerForCrypt(Scanner):
         except FileNotFoundError as e:
             msg = f'EEE (ScanDir) => FileNotFound error: {e}'
             print(msg)
-
 
     def _process_a_file(self, file) -> CsvRow:
         ext = Path(file).suffix.lower().replace('.', '')
@@ -164,7 +164,7 @@ class ScannerForCrypt(Scanner):
                     # test for the compression test
                     if self.rand_test_compression and \
                             (rnd_test_compr := self.rand.calc_compression_test(content,
-                                                                          self.verbose)) > config.CFG_COMPR_RAND_TH:
+                                                                               self.verbose)) > config.CFG_COMPR_RAND_TH:
                         return self.csv_manager.csv_row(file, CRYPTO,
                                                         f'[randomness test] 2-compression: {rnd_test_compr} > {config.CFG_COMPR_RAND_TH}')
 
