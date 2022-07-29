@@ -108,3 +108,4 @@ venv.bak/
 /ymlcfg/config-private.yaml
 /misc/stats.py
 /ymlcfg/config-private.yaml
+/.dccache
