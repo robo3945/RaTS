@@ -5,12 +5,11 @@ from os.path import getsize
 from pathlib import Path
 from typing import Optional
 
-from binaryornot.check import is_binary
 from colorama import Fore
 
 from config import config
 from logic.csv_manager import CsvRow
-from logic.randomness import RandTest
+from logic.randomness import RandCompressionTest, RandEntropyTest, RandMonobitTest
 from misc import utils
 from scanners.scanner import Scanner
 
@@ -30,17 +29,26 @@ class ScannerForCrypt(Scanner):
         :return:
         """
         super().__init__(csv_path, verbose)
-        self.rand = RandTest()
+
+        self.rand_entropy_test = RandEntropyTest()
+        self.rand_compression_test = RandCompressionTest()
+        self.rand_monobit_test = RandMonobitTest()
+        self.is_entropy = False
+        self.is_compression = False
+        self.is_monobit = False
 
         if rand_test == 'entropy':
-            self.rand_test_entropy = True
-            self.rand_test_compression = False
+            self.is_entropy = True
         elif rand_test == 'compression':
-            self.rand_test_compression = True
-            self.rand_test_entropy = False
+            self.is_compression = True
+        elif rand_test == 'monobit':
+            self.is_monobit = True
+        elif rand_test == 'all':
+            self.is_compression = True
+            self.is_entropy = True
+            self.is_monobit = True
         else:
-            self.rand_test_compression = True
-            self.rand_test_entropy = True
+            raise Exception("Crypto argument is needed!")
 
     def print_config(self):
         print(Fore.RESET)
@@ -50,6 +58,8 @@ class ScannerForCrypt(Scanner):
             f'{Fore.YELLOW}Compression Randomness threshold (strictly greater than):{Fore.GREEN} {str(config.CFG_COMPR_RAND_TH)}{Fore.RESET}')
         print(
             f'{Fore.YELLOW}Entropy Randomness threshold (strictly greater than):{Fore.GREEN} {str(config.CFG_ENTR_RAND_TH)}{Fore.RESET}')
+        print(
+            f'{Fore.YELLOW}Monobit Randomness threshold (strictly greater than):{Fore.GREEN} {str(config.CFG_MONOBIT_RAND_TH)}{Fore.RESET}')
         print(
             f'{Fore.YELLOW}Number of first bytes of the content to elaborate:{Fore.GREEN} {"All" if config.CFG_N_BYTES_2_RAND_CHECK is None else str(config.CFG_N_BYTES_2_RAND_CHECK)}{Fore.RESET}')
         print(Fore.RESET)
@@ -155,18 +165,25 @@ class ScannerForCrypt(Scanner):
                     handle.seek(0)
                     content = handle.read(config.CFG_N_BYTES_2_RAND_CHECK)
 
-                    # test for the entropy
-                    if self.rand_test_entropy and \
-                            (rnd_test_entropy := RandTest.calc_entropy_test(content)) > config.CFG_ENTR_RAND_TH:
+                    # test for the compression test: TRUE RANDOMNESS, slow computation
+                    if self.is_compression and \
+                            (rnd_test_compr := self.rand_compression_test.calc_rand_idx(content,
+                                                                                        self.verbose)) > config.CFG_COMPR_RAND_TH:
                         return self.csv_manager.csv_row(file, CRYPTO,
-                                                        f'[randomness test] 1-entropy: {rnd_test_entropy} > {config.CFG_ENTR_RAND_TH}')
+                                                        f'[randomness test] compression: {rnd_test_compr} > {config.CFG_COMPR_RAND_TH}')
 
-                    # test for the compression test
-                    if self.rand_test_compression and \
-                            (rnd_test_compr := self.rand.calc_compression_test(content,
-                                                                               self.verbose)) > config.CFG_COMPR_RAND_TH:
+                    # test for the entropy: QUANTITY OF INFORMATION -> ENTROPY OF THE SOURCE NOT THE MESSAGE, normal speed
+                    if self.is_entropy and \
+                            (rnd_test_entropy := self.rand_entropy_test.calc_rand_idx(content)) > config.CFG_ENTR_RAND_TH:
                         return self.csv_manager.csv_row(file, CRYPTO,
-                                                        f'[randomness test] 2-compression: {rnd_test_compr} > {config.CFG_COMPR_RAND_TH}')
+                                                        f'[randomness test] entropy: {rnd_test_entropy} > {config.CFG_ENTR_RAND_TH}')
+
+                    # test for randomness from the RAND TEST OF NIST: WEAK TEST but very fast
+                    if self.is_monobit and \
+                            (rand_test_monobit := self.rand_monobit_test.calc_rand_idx(content)) > config.CFG_MONOBIT_RAND_TH:
+                        return self.csv_manager.csv_row(file, CRYPTO,
+                                                        f'[randomness test] monobit: {rand_test_monobit} > {config.CFG_MONOBIT_RAND_TH}')
+
 
                 else:
                     # with verbose flag all the items are put into the outcome to evaluate also the excluded items

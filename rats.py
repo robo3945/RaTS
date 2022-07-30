@@ -56,12 +56,14 @@ Single file scan: rats.py -f <file> [-k|-m] [-e <notify_email>] [-h] [-c] [-v]
 [-x <excl_ext_list>]: file extensions list to exclude from scanning (ex: "jpg,tiff") 
 [-e <notify_email>] : where to send the notification
 [-k]                : search for crypted files
-[-t]                : crypto engine (all, entropy, compression)
+[-t]                : crypto engine with argument "all","entropy", "compression", "monobit" (*)
 [-m]                : search for manifest files
 [-r]                : recursive search
 [-c]                : path for the configuration YAML file
 [-v]                : verbose mode (outcome files include all the items detected)
 [-h]                : print this help
+
+(*) "all" means that the randomness test are executed in order "compression" and if not "entropy" and if not "monobit"
 """
 
     print(Style.RESET_ALL)

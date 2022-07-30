@@ -33,6 +33,12 @@ def read_config_file(path: str):
             # random_sec
             config.CFG_COMPR_RAND_TH = float(cfg_dict['random_sec']['CFG_COMPR_RAND_TH'])
             config.CFG_ENTR_RAND_TH = float(cfg_dict['random_sec']['CFG_ENTR_RAND_TH'])
+
+            try:
+                config.CFG_MONOBIT_RAND_TH = float(cfg_dict['random_sec']['CFG_MONOBIT_RAND_TH'])
+            except KeyError:
+                pass
+
             config.CFG_N_BYTES_2_RAND_CHECK = int(cfg_dict['random_sec']['CFG_N_BYTES_2_RAND_CHECK'])
             if config.CFG_N_BYTES_2_RAND_CHECK == -1:
                 config.CFG_N_BYTES_2_RAND_CHECK = None

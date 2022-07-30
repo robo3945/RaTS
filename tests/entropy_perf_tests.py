@@ -6,7 +6,7 @@ STOP = 30_000
 
 def entropy_tests():
     for i in range(1, STOP):
-        RandTest.calc_entropy_test("1234567890ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghilmnopqrstuvzjkwzx" * 1000, False)
+        RandTest.calc_rand_idx("1234567890ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghilmnopqrstuvzjkwzx" * 1000, False)
 
 
 def entropy_aprox_tests():
@@ -15,13 +15,13 @@ def entropy_aprox_tests():
 
 
 def entropy_monobit_test():
-    h = RandTest.calc_random_test_monobit(
+    h = RandTest.calc_rand_idx(
         bytes("1234567890ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghilmnopqrstuvzjkwzx", 'UTF-8') * 2)
     print("aprox h: " + str(h))
 
 
 def entropy_one_test():
-    h = RandTest.calc_entropy_test("1234567890ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghilmnopqrstuvzjkwzx" * 1000, False)
+    h = RandTest.calc_rand_idx("1234567890ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghilmnopqrstuvzjkwzx" * 1000, False)
     print("exact h: " + str(h))
 
 

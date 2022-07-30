@@ -87,6 +87,8 @@ CFG_TERM_PERC_TH = 90
 # threshold for the randomness test
 CFG_COMPR_RAND_TH = 0.70
 CFG_ENTR_RAND_TH = 7.80
+CFG_MONOBIT_RAND_TH = 0 # ln 2
+
 # rand_first_n_bytes_to_check = 100_000_000
 CFG_N_BYTES_2_RAND_CHECK = None
 
