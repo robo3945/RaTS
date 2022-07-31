@@ -16,6 +16,8 @@ random_sec:
   CFG_COMPR_RAND_TH: 0.99
   # binary entropy threshold [0,8]
   CFG_ENTR_RAND_TH: 7.99
+  # monobit significance test
+  CFG_MONOBIT_RAND_TH: 0.005
   # bytes content limit to check (-1 is for no limit)
   CFG_N_BYTES_2_RAND_CHECK: 10_000_000
   # minimum bytes for a randomness content to check
