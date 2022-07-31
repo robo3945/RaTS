@@ -166,7 +166,7 @@ class ScannerForFile(Scanner):
                 csv_row = self._search_in_file_content(file)
         else:
             if self.verbose:
-                csv_row = self.csv_manager.csv_row(file, IGNORED_FILE, f"Ext not in bad exts or the file is not a manifest")
+                self.csv_manager.csv_row(file, IGNORED_FILE, f"Ext not in bad exts or the file is not a manifest")
 
         return csv_row
 
@@ -232,7 +232,7 @@ class ScannerForFile(Scanner):
                             return self.csv_manager.csv_row(file, "Bad patterns in file content", f'\"{str(list_found)}\"')
 
                     if len(list_found) == 0 and self.verbose:
-                        return self.csv_manager.csv_row(file, IGNORED_FILE, f"No bad patterns found")
+                        self.csv_manager.csv_row(file, IGNORED_FILE, f"No bad patterns found")
 
         except PermissionError as e:
             msg = f'EEE => Permissions error: {e}'

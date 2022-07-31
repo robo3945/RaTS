@@ -146,7 +146,7 @@ class ScannerForCrypt(Scanner):
             # treshold test for the entropy (min length)
             if file_size < config.CFG_RAND_CONTENT_MIN_LEN:
                 if self.verbose:
-                    return self.csv_manager.csv_row(file, IGNORED,
+                    self.csv_manager.csv_row(file, IGNORED,
                                                     f"[rand test] content length: {file_size} < {config.CFG_RAND_CONTENT_MIN_LEN}")
                 return None
 
@@ -165,31 +165,45 @@ class ScannerForCrypt(Scanner):
                     handle.seek(0)
                     content = handle.read(config.CFG_N_BYTES_2_RAND_CHECK)
 
-                    message = "[randomness test] "
+                    message = "[rand test] true "
+                    is_found = False
                     # test for the compression test: TRUE RANDOMNESS, slow computation
-                    if self.is_compression and \
-                            (rnd_test_compr := self.rand_compression_test.calc_rand_idx(content,
-                                                                                        False)) > config.CFG_COMPR_RAND_TH:
-                        message += f'compression: {rnd_test_compr} > {config.CFG_COMPR_RAND_TH} '
+                    if self.is_compression:
+                        if (rnd_test_compr := self.rand_compression_test.calc_rand_idx(content,
+                                                                                       False)) > config.CFG_COMPR_RAND_TH:
+                            message += f'&& COMPRESSION: {rnd_test_compr} > {config.CFG_COMPR_RAND_TH} '
+                            is_found = True
+                        else:
+                            message += f'&& !compression: {rnd_test_compr} > {config.CFG_COMPR_RAND_TH} '
 
                     # test for the entropy: QUANTITY OF INFORMATION -> ENTROPY OF THE SOURCE NOT THE MESSAGE, normal speed
-                    if self.is_entropy and \
-                            (rnd_test_entropy := self.rand_entropy_test.calc_rand_idx(
+                    if self.is_entropy:
+                        if (rnd_test_entropy := self.rand_entropy_test.calc_rand_idx(
                                 content)) > config.CFG_ENTR_RAND_TH:
-                        message += f'entropy: {rnd_test_entropy} > {config.CFG_ENTR_RAND_TH} '
+                            message += f'&& ENTROPY: {rnd_test_entropy} > {config.CFG_ENTR_RAND_TH} '
+                            is_found = True
+                        else:
+                            message += f'&& !entropy: {rnd_test_entropy} > {config.CFG_ENTR_RAND_TH} '
 
                     # test for randomness from the RAND TEST OF NIST: WEAK TEST but very fast
-                    if self.is_monobit and \
-                            (rand_test_monobit := self.rand_monobit_test.calc_rand_idx(
+                    if self.is_monobit:
+                        if (rand_test_monobit := self.rand_monobit_test.calc_rand_idx(
                                 content)) > config.CFG_MONOBIT_RAND_TH:
-                        message += f'monobit: {rand_test_monobit} > {config.CFG_MONOBIT_RAND_TH}'
+                            message += f'&& MONOBIT: {rand_test_monobit} > {config.CFG_MONOBIT_RAND_TH}'
+                            is_found = True
+                        else:
+                            message += f'&& !monobit: {rand_test_monobit} > {config.CFG_MONOBIT_RAND_TH}'
 
-                    return self.csv_manager.csv_row(file, CRYPTO, message)
+                    if is_found:
+                        return self.csv_manager.csv_row(file, CRYPTO, message)
+                    else:
+                        if self.verbose:
+                            self.csv_manager.csv_row(file, IGNORED, message)
 
                 else:
                     # with verbose flag all the items are put into the outcome to evaluate also the excluded items
                     if self.verbose:
-                        return self.csv_manager.csv_row(file, IGNORED,
+                        self.csv_manager.csv_row(file, IGNORED,
                                                         f"Well known filetype - sig: '{sig}' - off: {str(offset)} - types: \"{desc}\"")
 
         except PermissionError:
