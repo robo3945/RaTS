@@ -39,6 +39,7 @@ class RandMonobitTest:
             return score
         return -1  # not random
 
+
 class RandEntropyTest:
 
     @staticmethod
@@ -59,7 +60,7 @@ class RandEntropyTest:
         """
 
         l = float(len(content))
-        H =  -sum(map(lambda a: (a / l) * math.log2(a / l), Counter(content).values()))
+        H = -sum(map(lambda a: (a / l) * math.log2(a / l), Counter(content).values()))
 
         if verbose:
             print(f"{Fore.LIGHTBLUE_EX}-> [Entropy Test]{Fore.RESET} crypto values: H: {H}")
@@ -71,8 +72,6 @@ class RandEntropyTest:
         return sum([p_x * (int(math.pow(p_x, -1)).bit_length() - 1) for p_x in
                     [n_x / len(content) for n_x in Counter(content).values()]])
 
-
-
     @staticmethod
     def calc_max_entropy(content: bytes):
         """
@@ -83,6 +82,7 @@ class RandEntropyTest:
         max_H = math.log(card_X, 2)
 
         print(f"{Fore.LIGHTBLUE_EX}-> [Entropy Test]{Fore.RESET} max H: {max_H}")
+
 
 class RandCompressionTest:
     """
