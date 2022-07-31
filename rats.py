@@ -63,7 +63,7 @@ Single file scan: rats.py -f <file> [-k|-m] [-e <notify_email>] [-h] [-c] [-v]
 [-v]                : verbose mode (outcome files include all the items detected)
 [-h]                : print this help
 
-(*) "all" means that the randomness test are executed in order "compression" and if not "entropy" and if not "monobit"
+(*) "all" means that the randomness test are all executed for every file
 """
 
     print(Style.RESET_ALL)

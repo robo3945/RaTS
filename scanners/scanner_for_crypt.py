@@ -165,25 +165,26 @@ class ScannerForCrypt(Scanner):
                     handle.seek(0)
                     content = handle.read(config.CFG_N_BYTES_2_RAND_CHECK)
 
+                    message = "[randomness test] "
                     # test for the compression test: TRUE RANDOMNESS, slow computation
                     if self.is_compression and \
                             (rnd_test_compr := self.rand_compression_test.calc_rand_idx(content,
-                                                                                        self.verbose)) > config.CFG_COMPR_RAND_TH:
-                        return self.csv_manager.csv_row(file, CRYPTO,
-                                                        f'[randomness test] compression: {rnd_test_compr} > {config.CFG_COMPR_RAND_TH}')
+                                                                                        False)) > config.CFG_COMPR_RAND_TH:
+                        message += f'compression: {rnd_test_compr} > {config.CFG_COMPR_RAND_TH} '
 
                     # test for the entropy: QUANTITY OF INFORMATION -> ENTROPY OF THE SOURCE NOT THE MESSAGE, normal speed
                     if self.is_entropy and \
-                            (rnd_test_entropy := self.rand_entropy_test.calc_rand_idx(content)) > config.CFG_ENTR_RAND_TH:
-                        return self.csv_manager.csv_row(file, CRYPTO,
-                                                        f'[randomness test] entropy: {rnd_test_entropy} > {config.CFG_ENTR_RAND_TH}')
+                            (rnd_test_entropy := self.rand_entropy_test.calc_rand_idx(
+                                content)) > config.CFG_ENTR_RAND_TH:
+                        message += f'entropy: {rnd_test_entropy} > {config.CFG_ENTR_RAND_TH} '
 
                     # test for randomness from the RAND TEST OF NIST: WEAK TEST but very fast
                     if self.is_monobit and \
-                            (rand_test_monobit := self.rand_monobit_test.calc_rand_idx(content)) > config.CFG_MONOBIT_RAND_TH:
-                        return self.csv_manager.csv_row(file, CRYPTO,
-                                                        f'[randomness test] monobit: {rand_test_monobit} > {config.CFG_MONOBIT_RAND_TH}')
+                            (rand_test_monobit := self.rand_monobit_test.calc_rand_idx(
+                                content)) > config.CFG_MONOBIT_RAND_TH:
+                        message += f'monobit: {rand_test_monobit} > {config.CFG_MONOBIT_RAND_TH}'
 
+                    return self.csv_manager.csv_row(file, CRYPTO, message)
 
                 else:
                     # with verbose flag all the items are put into the outcome to evaluate also the excluded items
