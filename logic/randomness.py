@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+import abc
 import gzip
 from collections import Counter
 
@@ -14,7 +14,7 @@ from config.config import CFG_MONOBIT_RAND_TH
 class RandMonobitTest:
 
     @staticmethod
-    def calc_rand_idx(content: bytes) -> float:
+    def calc_rand_idx(content: bytes, verbose: bool = False) -> float:
         """
             Monobit test as described in NIST paper: https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-22r1a.pdf
             The focus of the test is the proportion of zeroes and ones for the entire sequence. The purpose of this test is to determine
@@ -35,9 +35,13 @@ class RandMonobitTest:
         # Compute score
         score: float = math.erfc(float(difference) / (math.sqrt(float(bits.size)) * math.sqrt(2.0)))
         # Return result
-        if score >= CFG_MONOBIT_RAND_TH:  # random case
-            return score
-        return -1  # not random
+        if score < CFG_MONOBIT_RAND_TH:  # random case
+            score = -1
+
+        if verbose:
+            print(f"{Fore.LIGHTBLUE_EX}-> [Monobit Test]{Fore.RESET} score values: {score}")
+
+        return score
 
 
 class RandEntropyTest:
