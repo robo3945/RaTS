@@ -1,7 +1,7 @@
 ## RaTS: Ransomware Traces Scanner ##
 
 [![License](https://img.shields.io/badge/license-GPL3-green)](https://github.com/robo3945/RaTS/blob/master/LICENSE)
-[![Build](https://img.shields.io/badge/build-1.7.2b-yellowgreen)](https://github.com/robo3945/RaTS/releases/tag/1.7.2b)
+[![Build](https://img.shields.io/badge/build-1.8b-yellowgreen)](https://github.com/robo3945/RaTS/releases/tag/1.8b)
 
 **RaTS** is a **Ransomware Traces Scanner** licensed with **GPL3**.
 
