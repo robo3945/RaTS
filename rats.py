@@ -9,6 +9,7 @@ import sys
 from colorama import init, Fore, Style, deinit
 
 from config import config
+from config.config import HELP
 from config.config_utils import read_config_file
 from misc import utils
 from misc.notify import MailSender
@@ -42,29 +43,7 @@ def main(argv):
 
     output_start = Fore.RED + config.RATS_LOGO + \
                    "\n" + Fore.BLUE + config.RATS_NAME + ' - v. ' + config.RATS_VERSION
-    usage_sample = Fore.CYAN + """
-
-Directories scan: rats.py -i <inputdir> | -l <dirlistfile> -o <outcsv> [-k|-m] [-e <notify_email>] [-r] [-h] [-c] [-v]
-
-Single file scan: rats.py -f <file> [-k|-m] [-e <notify_email>] [-h] [-c] [-v]
-
--f <file>           : file to scan
--i <inputdir>       : the starting directory
-[-l <dirlistfile>]  : txt file with the directories to include in the scan
-[-z <dirlistfile>]  : txt file with the directories to exclude from the scan
--o <outcsv>         : the CSV output file prefix (without the extension)
-[-x <excl_ext_list>]: file extensions list to exclude from scanning (ex: "jpg,tiff") 
-[-e <notify_email>] : where to send the notification
-[-k]                : search for crypted files
-[-t]                : crypto engine with argument "all","entropy", "compression", "monobit" (*)
-[-m]                : search for manifest files
-[-r]                : recursive search
-[-c]                : path for the configuration YAML file
-[-v]                : verbose mode (outcome files include all the items detected)
-[-h]                : print this help
-
-(*) "all" means that the randomness test are all executed for every file
-"""
+    usage_sample = Fore.CYAN + HELP
 
     print(Style.RESET_ALL)
     print(output_start + Fore.YELLOW + "\nHere we are!\n")

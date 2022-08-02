@@ -14,6 +14,30 @@ ______    _____ _____
 """
 RATS_VERSION = '1.8b'
 
+HELP = """
+
+Directories scan: rats.py -i <inputdir> | -l <dirlistfile> -o <outcsv> [-k|-m] [-e <notify_email>] [-r] [-h] [-c] [-v]
+
+Single file scan: rats.py -f <file> [-k|-m] [-e <notify_email>] [-h] [-c] [-v]
+
+-f <file>           : file to scan
+-i <inputdir>       : the starting directory
+[-l <dirlistfile>]  : txt file with the directories to include in the scan
+[-z <dirlistfile>]  : txt file with the directories to exclude from the scan
+-o <outcsv>         : the CSV output file prefix (without the extension)
+[-x <excl_ext_list>]: file extensions list to exclude from scanning (ex: "jpg,tiff") 
+[-e <notify_email>] : where to send the notification
+[-k]                : search for crypted files
+[-t]                : crypto engine with argument "all","entropy", "compression", "monobit" (*)
+[-m]                : search for manifest files
+[-r]                : recursive search
+[-c]                : path for the configuration YAML file
+[-v]                : verbose mode (outcome files include all the items detected)
+[-h]                : print this help
+
+(*) "all" means that the randomness test are all executed for every file
+"""
+
 # ------ Rules file -------
 
 # files to exclude from scanning
@@ -122,3 +146,4 @@ CFG_PATH_FOR_SIGNATURES = './file_sigs.json'
 CFG_MAX_FILE_SIGNATURE_LENGTH = 60
 # the minimum bytes length for checking the compressed item
 CFG_RAND_CONTENT_MIN_LEN = 100
+
