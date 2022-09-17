@@ -1,9 +1,14 @@
 # -*- coding: utf-8 -*-
 
 import datetime
+import math
+import secrets
 from pathlib import Path
 
 import bitmath
+
+# to remove and put in the command line
+anonymize = True
 
 
 class CsvRow(object):
@@ -23,6 +28,7 @@ class CsvRow(object):
         p = Path(file)
         self.full_file_name = str(p).replace(';', '#')
         self.file_path = str(p.parent).replace(';', '#')
+
         self.file_name = str(p.name).replace(';', '#')
         self.adate = datetime.datetime.fromtimestamp(file.stat().st_atime).strftime(CsvRow._date_format)
         self.mdate = datetime.datetime.fromtimestamp(file.stat().st_mtime).strftime(CsvRow._date_format)
@@ -30,7 +36,13 @@ class CsvRow(object):
         self.file_size = file.stat().st_size
         self.file_extension = p.suffix.lower()
 
-        # other informations
+        if anonymize:
+            self.file_name = anonymize_file_name(self.file_name, self.file_extension)
+            self.full_file_name = anonymize_file_name(self.full_file_name, self.file_extension)
+            self.file_path = anonymize_file_name(self.file_path, self.file_extension)
+
+
+        # other information
         self.type = type
         self.desc = desc
 
@@ -93,3 +105,10 @@ class CsvManager(object):
         return row
 
 
+def anonymize_field(text: str) -> str:
+    return secrets.token_hex(int(len(text) / 2))
+
+
+def anonymize_file_name(file_name: str, suffix: str) -> str:
+    f = file_name.removesuffix(suffix)
+    return f"{secrets.token_hex(int(len(f) / 2))}{suffix}"
