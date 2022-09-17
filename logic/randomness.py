@@ -35,8 +35,8 @@ class RandMonobitTest:
         # Compute score
         score: float = math.erfc(float(difference) / (math.sqrt(float(bits.size)) * math.sqrt(2.0)))
         # Return result
-        if score < CFG_MONOBIT_RAND_TH:  # random case
-            score = -1
+        if score < CFG_MONOBIT_RAND_TH:  # not random case, to avoid small scores to be represented
+            score = -0.0
 
         if verbose:
             print(f"{Fore.LIGHTBLUE_EX}-> [Monobit Test]{Fore.RESET} score values: {score}")
