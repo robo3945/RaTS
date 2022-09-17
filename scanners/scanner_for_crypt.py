@@ -174,7 +174,7 @@ class ScannerForCrypt(Scanner):
                             message += f'&& COMPRESSION: {round(rnd_test_compr, 2)} > {config.CFG_COMPR_RAND_TH} '
                             is_found = True
                         else:
-                            message += f'&& !compression: {round(rnd_test_compr, 2)} > {config.CFG_COMPR_RAND_TH} '
+                            message += f'&& !(compression: {round(rnd_test_compr, 2)} > {config.CFG_COMPR_RAND_TH}) '
 
                     # test for the entropy: QUANTITY OF INFORMATION -> ENTROPY OF THE SOURCE NOT THE MESSAGE, normal speed
                     if self.is_entropy:
@@ -183,7 +183,7 @@ class ScannerForCrypt(Scanner):
                             message += f'&& ENTROPY: {round(rnd_test_entropy, 2)} > {config.CFG_ENTR_RAND_TH} '
                             is_found = True
                         else:
-                            message += f'&& !entropy: {round(rnd_test_entropy, 2)} > {config.CFG_ENTR_RAND_TH} '
+                            message += f'&& !(entropy: {round(rnd_test_entropy, 2)} > {config.CFG_ENTR_RAND_TH}) '
 
                     # test for randomness from the RAND TEST OF NIST: WEAK TEST but very fast
                     if self.is_monobit:
@@ -192,7 +192,7 @@ class ScannerForCrypt(Scanner):
                             message += f'&& MONOBIT: {round(rand_test_monobit, 2)} > {config.CFG_MONOBIT_RAND_TH}'
                             is_found = True
                         else:
-                            message += f'&& !monobit: {round(rand_test_monobit, 2)} > {config.CFG_MONOBIT_RAND_TH}'
+                            message += f'&& !(monobit: {round(rand_test_monobit, 2)} > {config.CFG_MONOBIT_RAND_TH}) '
 
                     if is_found:
                         return self.csv_manager.csv_row(file, CRYPTO, message)
