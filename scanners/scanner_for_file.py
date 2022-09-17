@@ -15,17 +15,18 @@ from scanners.scanner import Scanner
 IGNORED_FILE = "Ignored file"
 ERROR = "Error"
 
+
 class ScannerForFile(Scanner):
     """
     The search main class
     """
 
-    def __init__(self, csv_path = None, verbose=False):
+    def __init__(self, csv_path=None, verbose=False, anonymize=False):
         """
         Initialization of the fields
         :return:
         """
-        super().__init__(csv_path, verbose)
+        super().__init__(csv_path, verbose, anonymize=anonymize)
         self.bad_file_ext_dict = config.BAD_FILE_EXTS
         self.file_name_terms_set = set([line.strip().lower() for line in config.MANIFEST_FILE_NAME_TERMS.split(",") if
                                         line.strip() != ""])
@@ -144,7 +145,7 @@ class ScannerForFile(Scanner):
             if self.verbose:
                 print(f'{Fore.RED}-> Found ransomware ext: {Fore.RESET}{ext}')
             csv_row = self.csv_manager.csv_row(file, "Ransomware filename extension",
-                             f"Extension: {ext}, Value: {self.bad_file_ext_dict[ext]}")
+                                               f"Extension: {ext}, Value: {self.bad_file_ext_dict[ext]}")
         # or the allowed extensions are checked for the file name and the content
         elif file.stat().st_size <= config.CFG_MANIFEST_MAX_SIZE \
                 and ext in self.file_name_exts_set \
@@ -209,7 +210,7 @@ class ScannerForFile(Scanner):
             if is_well_known:
                 if self.verbose:
                     return self.csv_manager.csv_row(file, IGNORED_FILE,
-                                  f"Well known filetype - sig: '{sig}' - off: {str(offset)} - types: \"{desc}\"")
+                                                    f"Well known filetype - sig: '{sig}' - off: {str(offset)} - types: \"{desc}\"")
                 return None
 
             else:
@@ -229,7 +230,8 @@ class ScannerForFile(Scanner):
                         if p >= config.CFG_TERM_PERC_TH:
                             if self.verbose:
                                 print(f"--> Found patterns in the file content: '{str(list_found)}' (mean {p}%)")
-                            return self.csv_manager.csv_row(file, "Bad patterns in file content", f'\"{str(list_found)}\"')
+                            return self.csv_manager.csv_row(file, "Bad patterns in file content",
+                                                            f'\"{str(list_found)}\"')
 
                     if len(list_found) == 0 and self.verbose:
                         self.csv_manager.csv_row(file, IGNORED_FILE, f"No bad patterns found")

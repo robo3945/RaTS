@@ -23,12 +23,12 @@ class ScannerForCrypt(Scanner):
     Class managing the encrypted file: in the filename and in the content
     """
 
-    def __init__(self, rand_test='all', csv_path=None, verbose=False):
+    def __init__(self, rand_test='all', csv_path=None, verbose=False, anonymize=False):
         """
         Initialization
         :return:
         """
-        super().__init__(csv_path, verbose)
+        super().__init__(csv_path, verbose=verbose, anonymize=anonymize)
 
         self.rand_entropy_test = RandEntropyTest()
         self.rand_compression_test = RandCompressionTest()
@@ -147,7 +147,7 @@ class ScannerForCrypt(Scanner):
             if file_size < config.CFG_RAND_CONTENT_MIN_LEN:
                 if self.verbose:
                     self.csv_manager.csv_row(file, IGNORED,
-                                                    f"[rand test] content length: {file_size} < {config.CFG_RAND_CONTENT_MIN_LEN}")
+                                             f"[rand test] content length: {file_size} < {config.CFG_RAND_CONTENT_MIN_LEN}")
                 return None
 
             with open(file=file.path, mode='rb') as handle:
@@ -171,28 +171,28 @@ class ScannerForCrypt(Scanner):
                     if self.is_compression:
                         if (rnd_test_compr := self.rand_compression_test.calc_rand_idx(content,
                                                                                        False)) > config.CFG_COMPR_RAND_TH:
-                            message += f'&& COMPRESSION: {round(rnd_test_compr,2)} > {config.CFG_COMPR_RAND_TH} '
+                            message += f'&& COMPRESSION: {round(rnd_test_compr, 2)} > {config.CFG_COMPR_RAND_TH} '
                             is_found = True
                         else:
-                            message += f'&& !compression: {round(rnd_test_compr,2)} > {config.CFG_COMPR_RAND_TH} '
+                            message += f'&& !compression: {round(rnd_test_compr, 2)} > {config.CFG_COMPR_RAND_TH} '
 
                     # test for the entropy: QUANTITY OF INFORMATION -> ENTROPY OF THE SOURCE NOT THE MESSAGE, normal speed
                     if self.is_entropy:
                         if (rnd_test_entropy := self.rand_entropy_test.calc_rand_idx(
                                 content)) > config.CFG_ENTR_RAND_TH:
-                            message += f'&& ENTROPY: {round(rnd_test_entropy,2)} > {config.CFG_ENTR_RAND_TH} '
+                            message += f'&& ENTROPY: {round(rnd_test_entropy, 2)} > {config.CFG_ENTR_RAND_TH} '
                             is_found = True
                         else:
-                            message += f'&& !entropy: {round(rnd_test_entropy,2)} > {config.CFG_ENTR_RAND_TH} '
+                            message += f'&& !entropy: {round(rnd_test_entropy, 2)} > {config.CFG_ENTR_RAND_TH} '
 
                     # test for randomness from the RAND TEST OF NIST: WEAK TEST but very fast
                     if self.is_monobit:
                         if (rand_test_monobit := self.rand_monobit_test.calc_rand_idx(
                                 content)) > config.CFG_MONOBIT_RAND_TH:
-                            message += f'&& MONOBIT: {round(rand_test_monobit,2)} > {config.CFG_MONOBIT_RAND_TH}'
+                            message += f'&& MONOBIT: {round(rand_test_monobit, 2)} > {config.CFG_MONOBIT_RAND_TH}'
                             is_found = True
                         else:
-                            message += f'&& !monobit: {round(rand_test_monobit,2)} > {config.CFG_MONOBIT_RAND_TH}'
+                            message += f'&& !monobit: {round(rand_test_monobit, 2)} > {config.CFG_MONOBIT_RAND_TH}'
 
                     if is_found:
                         return self.csv_manager.csv_row(file, CRYPTO, message)
@@ -204,7 +204,7 @@ class ScannerForCrypt(Scanner):
                     # with verbose flag all the items are put into the outcome to evaluate also the excluded items
                     if self.verbose:
                         self.csv_manager.csv_row(file, IGNORED,
-                                                        f"Well known filetype - sig: '{sig}' - off: {str(offset)} - types: \"{desc}\"")
+                                                 f"Well known filetype - sig: '{sig}' - off: {str(offset)} - types: \"{desc}\"")
 
         except PermissionError:
             msg = f"EEE => Permissions error for: '{file.path}'"

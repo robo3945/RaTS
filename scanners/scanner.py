@@ -9,6 +9,7 @@ from colorama import Fore
 
 from logic.csv_manager import CsvRow, CsvManager
 
+
 class Scanner(metaclass=abc.ABCMeta):
     """
     The search abstract main class
@@ -16,7 +17,7 @@ class Scanner(metaclass=abc.ABCMeta):
 
     sep = '---***---'
 
-    def __init__(self, csv_path=None, verbose=False):
+    def __init__(self, csv_path=None, verbose=False, anonymize=False):
         """
         Initialization of the fields
         :return:
@@ -29,7 +30,7 @@ class Scanner(metaclass=abc.ABCMeta):
         # opens the csv file's handle
         if self.csv_path:
             self.csv_handle = open(self.csv_path, "w", errors='ignore')
-            self.csv_manager = CsvManager(self.csv_handle)
+            self.csv_manager = CsvManager(self.csv_handle, anonymize=anonymize)
 
     @abc.abstractmethod
     def print_config(self):
@@ -57,11 +58,6 @@ class Scanner(metaclass=abc.ABCMeta):
     def search(self, path, dirs_to_exclude=None, recursive=True):
         """
         The main search method: process a directory
-
-        :param path:
-        :param dirs_to_exclude:
-        :param recursive:
-        :return:
         """
         raise NotImplementedError
 
@@ -69,9 +65,6 @@ class Scanner(metaclass=abc.ABCMeta):
     def _search(self, path, dirs_to_exclude=None, recursive=True):
         """
         The main recursive Search method
-        :param path:
-        :param recursive:
-        :return:
         """
         raise NotImplementedError
 

@@ -1,14 +1,10 @@
 # -*- coding: utf-8 -*-
 
 import datetime
-import math
 import secrets
 from pathlib import Path
 
 import bitmath
-
-# to remove and put in the command line
-anonymize = True
 
 
 class CsvRow(object):
@@ -18,7 +14,7 @@ class CsvRow(object):
 
     _date_format = "%Y-%m-%d %H:%M:%S"
 
-    def __init__(self, file, type="", desc=""):
+    def __init__(self, file, type="", desc="", anonymize=False):
         # time_t    st_atime;   /* time of last access */
         # time_t    st_mtime;   /* time of last modification */
         # time_t    st_ctime;   /* time of last status change */
@@ -40,7 +36,6 @@ class CsvRow(object):
             self.file_name = anonymize_file_name(self.file_name, self.file_extension)
             self.full_file_name = anonymize_file_name(self.full_file_name, self.file_extension)
             self.file_path = anonymize_file_name(self.file_path, self.file_extension)
-
 
         # other information
         self.type = type
@@ -67,8 +62,9 @@ class CsvRow(object):
 
 class CsvManager(object):
 
-    def __init__(self, csv_handle):
+    def __init__(self, csv_handle, anonymize=False):
         self.csv_handle = csv_handle
+        self.anonymize = anonymize
 
     @staticmethod
     def _get_header():
@@ -99,7 +95,7 @@ class CsvManager(object):
         :param desc:
         :return:
         """
-        row = CsvRow(file, type, desc)
+        row = CsvRow(file, type, desc, anonymize=self.anonymize)
         if self.csv_handle:
             self.csv_handle.write(f"{row}\n")
         return row

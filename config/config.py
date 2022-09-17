@@ -12,7 +12,7 @@ ______    _____ _____
 | |\ \ (_| | | /\__/ /
 \_| \_\__,_\_/ \____/ 
 """
-RATS_VERSION = '1.8b'
+RATS_VERSION = '1.9a'
 
 HELP = """
 
@@ -31,6 +31,7 @@ Single file scan: rats.py -f <file> [-k|-m] [-e <notify_email>] [-h] [-c] [-v]
 [-t]                : crypto engine with argument "all","entropy", "compression", "monobit" (*)
 [-m]                : search for manifest files
 [-r]                : recursive search
+[-a]                : anonymize data in the outcome file
 [-c]                : path for the configuration YAML file
 [-v]                : verbose mode (outcome files include all the items detected)
 [-h]                : print this help

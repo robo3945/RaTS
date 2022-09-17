@@ -37,7 +37,8 @@ def main(argv):
     ana_type = "all"  # default is to do Manifest and Crypto checks
     recursive = False
     verbose = False
-    crypto_type='all'
+    crypto_type = 'all'
+    anonymize = False
 
     init()
 
@@ -49,7 +50,7 @@ def main(argv):
     print(output_start + Fore.YELLOW + "\nHere we are!\n")
 
     try:
-        opts, args = getopt.getopt(argv, "hkmrvi:x:o:e:l:c:f:t:z:")
+        opts, args = getopt.getopt(argv, "hkmrvai:x:o:e:l:c:f:t:z:")
     except getopt.GetoptError as error:
         print('************ arguments error ************', end='\n')
         print(f'error: {str(error)}')
@@ -79,6 +80,9 @@ def main(argv):
         elif opt == '-r':
             recursive = True
             print(Fore.LIGHTCYAN_EX + "-r" + Fore.RESET)
+        elif opt == "-a":
+            anonymize = True
+            print(Fore.LIGHTCYAN_EX + f"-a" + Fore.RESET)
         elif opt == "-i":
             inputdir = arg
             print(Fore.LIGHTCYAN_EX + f"-i {arg}" + Fore.RESET)
@@ -140,14 +144,16 @@ def main(argv):
                              crypto_type=crypto_type,
                              email=dst_email,
                              verbose=verbose,
-                             recursive=recursive)
+                             recursive=recursive,
+                             anonymize=anonymize)
                 process_dirs(dirs_to_process,
                              dirs_to_exclude,
                              outputcsv_prefix + "-crypto@", 'k',
                              crypto_type=crypto_type,
                              email=dst_email,
                              verbose=verbose,
-                             recursive=recursive)
+                             recursive=recursive,
+                             anonymize=anonymize)
             else:
                 process_dirs(dirs_to_process,
                              dirs_to_exclude,
@@ -155,7 +161,8 @@ def main(argv):
                              crypto_type=crypto_type,
                              email=dst_email,
                              verbose=verbose,
-                             recursive=recursive)
+                             recursive=recursive,
+                             anonymize=anonymize)
         except FileNotFoundError as e:
             msg = f'EEE (MainScanDir) => FileNotFound error: {e}'
             print(msg)
@@ -204,29 +211,17 @@ def process_file(file, ana_type, crypto_type, verbose=False):
     """
     s = None
     if ana_type == 'm':
-        s = ScannerForFile(verbose = verbose)
+        s = ScannerForFile(verbose=verbose)
     if ana_type == 'k':
-        s = ScannerForCrypt(rand_test=crypto_type, verbose = verbose)
+        s = ScannerForCrypt(rand_test=crypto_type, verbose=verbose)
 
     print()
     print(f'{Fore.LIGHTCYAN_EX}{Scanner.sep} Found items {Scanner.sep}{Fore.RESET}')
     print(s.file(file))
 
 
-def process_dirs(dirs_to_process, dirs_to_exclude, prefix_output_file, ana_type, crypto_type, email, verbose=False, recursive=False):
-    """
-
-    :param dirs_to_process: list of dirs to process
-    :param dirs_to_exclude: list of dirs to exclude
-    :param prefix_output_file:
-    :param ana_type:
-    :param crypto_type:
-    :param email:
-    :param verbose:
-    :param recursive:
-    :return:
-    """
-
+def process_dirs(dirs_to_process, dirs_to_exclude, prefix_output_file, ana_type, crypto_type, email, verbose=False,
+                 recursive=False, anonymize=False):
     def rand_str(n):
         return ''.join([random.choice(string.ascii_lowercase) for _ in range(n)])
 
@@ -239,9 +234,9 @@ def process_dirs(dirs_to_process, dirs_to_exclude, prefix_output_file, ana_type,
 
     scanner = None
     if ana_type == 'm':
-        scanner = ScannerForFile(output_file, verbose)
+        scanner = ScannerForFile(output_file, verbose, anonymize=anonymize)
     if ana_type == 'k':
-        scanner = ScannerForCrypt(csv_path=output_file, rand_test=crypto_type, verbose=verbose)
+        scanner = ScannerForCrypt(csv_path=output_file, rand_test=crypto_type, verbose=verbose, anonymize=anonymize)
 
     with utils.Timer(verbose=True):
         if scanner:
