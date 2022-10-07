@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import abc
+from genericpath import samefile
 import os
 from pathlib import Path
 from typing import List
@@ -55,14 +56,14 @@ class Scanner(metaclass=abc.ABCMeta):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def search(self, path, dirs_to_exclude=None, recursive=True):
+    def search(self, path, dirs_to_exclude=None, files_to_exclude_list=None, recursive=True):
         """
         The main search method: process a directory
         """
         raise NotImplementedError
 
     @abc.abstractmethod
-    def _search(self, path, dirs_to_exclude=None, recursive=True):
+    def _search(self, path, dirs_to_exclude=None, files_to_exclude_list=None, recursive=True):
         """
         The main recursive Search method
         """
@@ -102,8 +103,29 @@ class Scanner(metaclass=abc.ABCMeta):
         if dirs_to_exclude and len(dirs_to_exclude) > 0:
             for it in dirs_to_exclude:
                 try:
-                    if os.path.samefile(path, it):
+                    if (samefile(os.path.abspath(path), it)):
                         print(f"{Fore.MAGENTA}-> Dir excluded: '{Fore.RESET}{path}'")
+                        return True
+                except (OSError, ValueError):
+                    pass
+
+        return False
+
+    @staticmethod
+    def is_excluded_file(path: str, files_to_exclude_list: List[str]):
+        """
+        Determines if the path is in the excluded dirs list
+
+        :param path:
+        :param files_to_exclude_list:
+        :return:
+        """
+
+        if files_to_exclude_list and len(files_to_exclude_list) > 0:
+            for it in files_to_exclude_list:
+                try:
+                    if os.path.samefile(path, it):
+                        print(f"{Fore.MAGENTA}-> File excluded: '{Fore.RESET}{path}'")
                         return True
                 except (OSError, ValueError):
                     pass

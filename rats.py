@@ -30,6 +30,7 @@ def main(argv):
     input_file = ""
     extfilesxd = ""
     dirs_exclude = ""
+    files_exclude = ""
     dirs_include = ""
     outputcsv_prefix = ""
     dst_email = ""
@@ -50,7 +51,7 @@ def main(argv):
     print(output_start + Fore.YELLOW + "\nHere we are!\n")
 
     try:
-        opts, args = getopt.getopt(argv, "hkmrvai:x:o:e:l:c:f:t:z:")
+        opts, args = getopt.getopt(argv, "hkmrvai:x:o:e:l:c:f:t:z:q:")
     except getopt.GetoptError as error:
         print('************ arguments error ************', end='\n')
         print(f'error: {str(error)}')
@@ -95,6 +96,9 @@ def main(argv):
         elif opt == "-z":
             dirs_exclude = arg
             print(Fore.LIGHTCYAN_EX + f"-z {arg}" + Fore.RESET)
+        elif opt == "-q":
+            files_exclude = arg
+            print(Fore.LIGHTCYAN_EX + f"-q {arg}" + Fore.RESET)
         elif opt == "-l":
             dirs_include = arg
             print(Fore.LIGHTCYAN_EX + f"-l {arg}" + Fore.RESET)
@@ -110,7 +114,7 @@ def main(argv):
 
     d = {'k': 'crypto', 'm': 'manifest'}
 
-    if (inputdir or dirs_include) and ana_type:
+    if (inputdir or dirs_include or files_exclude) and ana_type:
 
         # read the config file if it was specified
         if config_file_path is not None:
@@ -129,7 +133,12 @@ def main(argv):
         # read the list of dirs to exclude
         dirs_to_exclude = list()
         if dirs_exclude:
-            dirs_to_exclude = process_dir_file(dirs_exclude)
+            dirs_to_exclude = process_dir_file(dirs_exclude)  
+
+        # read the list of files to exclude
+        files_to_exclude_list=list()
+        if files_exclude:
+            files_to_exclude_list = exclude_files(files_exclude)
 
         # load the signatures for file magic byte
         config.signatures = check_compile_sigs()
@@ -140,6 +149,7 @@ def main(argv):
             if ana_type == "all":
                 process_dirs(dirs_to_process,
                              dirs_to_exclude,
+                             files_to_exclude_list,
                              outputcsv_prefix + "-manifest@", 'm',
                              crypto_type=crypto_type,
                              email=dst_email,
@@ -148,6 +158,7 @@ def main(argv):
                              anonymize=anonymize)
                 process_dirs(dirs_to_process,
                              dirs_to_exclude,
+                             files_to_exclude_list,
                              outputcsv_prefix + "-crypto@", 'k',
                              crypto_type=crypto_type,
                              email=dst_email,
@@ -157,6 +168,7 @@ def main(argv):
             else:
                 process_dirs(dirs_to_process,
                              dirs_to_exclude,
+                             files_to_exclude_list,
                              outputcsv_prefix + "-" + d[ana_type] + "@", ana_type,
                              crypto_type=crypto_type,
                              email=dst_email,
@@ -205,6 +217,20 @@ def process_dir_file(dirlistfile):
     return dirs_to_process
 
 
+def exclude_files(files_to_exclude_file):
+
+    """
+    Processes a file that contains a list of files
+
+    :param files_to_exclude_file:
+    :return:
+    """
+    with open(files_to_exclude_file, 'r') as handle:
+        content = handle.read()
+        files_to_exclude_list = content.split(sep='\n')
+        files_to_exclude_list =  [file.strip() for file in files_to_exclude_list if file and file.strip()[0] != '#'] 
+    return files_to_exclude_list
+
 def process_file(file, ana_type, crypto_type, verbose=False):
     """
     Process a file
@@ -220,7 +246,7 @@ def process_file(file, ana_type, crypto_type, verbose=False):
     print(s.file(file))
 
 
-def process_dirs(dirs_to_process, dirs_to_exclude, prefix_output_file, ana_type, crypto_type, email, verbose=False,
+def process_dirs(dirs_to_process, dirs_to_exclude, files_to_exclude_list, prefix_output_file, ana_type, crypto_type, email, verbose=False,
                  recursive=False, anonymize=False):
     def rand_str(n):
         return ''.join([random.choice(string.ascii_lowercase) for _ in range(n)])
@@ -242,7 +268,7 @@ def process_dirs(dirs_to_process, dirs_to_exclude, prefix_output_file, ana_type,
         if scanner:
             for inputdir in dirs_to_process:
                 # TODO: is it possible to insert here multiprocessing?
-                scanner.search(inputdir, dirs_to_exclude, recursive=recursive)
+                scanner.search(inputdir, dirs_to_exclude, files_to_exclude_list, recursive=recursive)
             scanner.close_csv_handle()
             print(f'{Fore.LIGHTCYAN_EX}Closed CSV file for write outcome: {output_file}{Fore.RESET}')
 

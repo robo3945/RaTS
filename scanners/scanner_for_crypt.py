@@ -73,15 +73,15 @@ class ScannerForCrypt(Scanner):
 
         return super()._internal_one_file(full_file_path)
 
-    def search(self, path, dirs_to_exclude=None, recursive=True):
+    def search(self, path, dirs_to_exclude=None, files_to_exclude_list=None, recursive=True):
         # if self.verbose:
         self.print_config()
         print(f'{Fore.LIGHTCYAN_EX}{Scanner.sep} Starting search Crypto content in: {str(path)} {Scanner.sep}')
         print(Fore.RESET)
         self.csv_manager.print_header()
-        self._search(path, dirs_to_exclude, recursive)
+        self._search(path, dirs_to_exclude, files_to_exclude_list, recursive)
 
-    def _search(self, path, dirs_to_exclude=None, recursive=True):
+    def _search(self, path, dirs_to_exclude=None,files_to_exclude_list=None, recursive=True):
         """
         Recursive main search method
         :param recursive: recursive flag
@@ -97,9 +97,9 @@ class ScannerForCrypt(Scanner):
                             print(
                                 f"{Fore.LIGHTBLUE_EX}+ Searching (for crypto) in the path:{Fore.RESET} '{entry.path}'")
                         if not Scanner.is_excluded_dir(entry.path, dirs_to_exclude):
-                            self._search(entry, dirs_to_exclude, recursive)
+                            self._search(entry, dirs_to_exclude, files_to_exclude_list, recursive)
                     else:
-                        self._process_a_file(entry)
+                        self._process_a_file(entry,files_to_exclude_list)
 
                 except PermissionError as e:
                     msg = f'EEE (Dir) => Permissions error: {e}'
@@ -124,13 +124,14 @@ class ScannerForCrypt(Scanner):
             msg = f'EEE (ScanDir) => FileNotFound error: {e}'
             print(msg)
 
-    def _process_a_file(self, file) -> CsvRow:
-        ext = Path(file).suffix.lower().replace('.', '')
-        if len(ext) == 0 or ext not in config.EXT_FILES_LIST_TO_EXCLUDE:
-            found = self._search_for_crypted_content(file)
-            if found:
-                print(f'{Fore.RED}---> Crypto result: {Fore.RESET}{found.min_print()}')
-                return found
+    def _process_a_file(self, file, files_to_exclude_list) -> CsvRow:
+        if not (file.path in files_to_exclude_list):
+            ext = Path(file).suffix.lower().replace('.', '')
+            if len(ext) == 0 or ext not in config.EXT_FILES_LIST_TO_EXCLUDE:
+                found = self._search_for_crypted_content(file)
+                if found:
+                    print(f'{Fore.RED}---> Crypto result: {Fore.RESET}{found.min_print()}')
+                    return found
 
     def _search_for_crypted_content(self, file) -> Optional[CsvRow]:
         """
