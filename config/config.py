@@ -93,6 +93,7 @@ FILE_TEXT_TERMS_DIC = [(r'\bcryptowall\b', 100),
                        (r'\bcryptolocker\b', 100),
                        (r'\bCryptoDefense\b', 100),
                        (r'\bloker\b', 100),
+                       (r'How\s+to\s+Restore\s+Your\s+Files', 100),             # VMWare vuln segnalata ACN - 06/02/2023
                        (r'\bprivate\s+key\b', 80),
                        (r'\bAES-256\b', 80),
                        (r'\bRSA-2048\b', 80),
