@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import abc
 import gzip
 from collections import Counter

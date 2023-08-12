@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import os
 import re
 from operator import itemgetter
@@ -187,6 +186,7 @@ class ScannerForFile(Scanner):
                 if self.verbose:
                     print(f"{Fore.RED}--> Found a file name contains this term:{Fore.RESET} '{term}'")
                 return self.csv_manager.csv_row(file, "Bad filename content", f"file_name_contains: '{term}'")
+            # TODO: aggiungere un riconoscimento del nome di file più raffinato, isolando le parole nel nome del file e facendo match con i pattern inseriti nel config.py ad esempio
         return None
 
     def _search_in_file_content(self, file) -> Optional[CsvRow]:
