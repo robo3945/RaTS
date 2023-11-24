@@ -26,7 +26,7 @@ def read_config_file(path: str):
         if cfg_dict is not None:
             # manifest_sec
             config.CFG_MANIFEST_MAX_SIZE = int(cfg_dict['manifest_sec']['CFG_MANIFEST_MAX_SIZE'])
-            config.CFG_FILE_NAME_EXTS = cfg_dict['manifest_sec']['CFG_FILE_NAME_EXTS']
+            config.CFG_MANIFEST_FILE_NAME_EXTS = cfg_dict['manifest_sec']['CFG_FILE_NAME_EXTS']
             config.CFG_TERM_PERC_TH = int(cfg_dict['manifest_sec']['CFG_TERM_PERC_TH'])
 
             # random_sec

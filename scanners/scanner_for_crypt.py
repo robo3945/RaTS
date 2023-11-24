@@ -67,7 +67,7 @@ class ScannerForCrypt(Scanner):
 
         self.print_config()
         print(
-            f'{Fore.LIGHTCYAN_EX}{Scanner.sep} Starting search Crypto content in: {str(full_file_path)} {Scanner.sep}')
+            f'{Fore.LIGHTCYAN_EX}{Scanner.sep} Starting search for Crypto content in: {str(full_file_path)} {Scanner.sep}')
         print(Fore.RESET)
 
         return super()._internal_one_file(full_file_path)
@@ -75,7 +75,7 @@ class ScannerForCrypt(Scanner):
     def search(self, path, dirs_to_exclude=None, files_to_exclude_list=None, recursive=True):
         # if self.verbose:
         self.print_config()
-        print(f'{Fore.LIGHTCYAN_EX}{Scanner.sep} Starting search Crypto content in: {str(path)} {Scanner.sep}')
+        print(f'{Fore.LIGHTCYAN_EX}{Scanner.sep} Starting search for Crypto content in: {str(path)} {Scanner.sep}')
         print(Fore.RESET)
         self.csv_manager.print_header()
         self._search(path, dirs_to_exclude, files_to_exclude_list, recursive)

@@ -5,10 +5,12 @@ import time
 import sys
 from urllib.error import HTTPError
 
+import requests
 from colorama import Fore
 
 from config import config
-from config.config import CFG_PATH_FOR_SIGNATURES, URL_FOR_SIGNATURES
+from config.config import CFG_PATH_FOR_SIGNATURES, URL_FOR_SIGNATURES, CFG_PATH_FOR_RANSOMWARE_EXTENSIONS, \
+    URL_FOR_RANSOMWARE_EXTESIONS
 from logic.check_sigs import compile_sigs, check_sig_content
 
 try:
@@ -74,8 +76,9 @@ class Timer(object):
         self.msecs = self.secs * 1000  # millisecs
         if self.verbose:
             if self.mem:
-                print(f'{Fore.YELLOW}Timing: elapsed time:{Fore.RESET} %f sec | M: start mem: %f MB delta_mem: %f MB' % (
-                    self.secs, self.start_mem, self.delta_mem))
+                print(
+                    f'{Fore.YELLOW}Timing: elapsed time:{Fore.RESET} %f sec | M: start mem: %f MB delta_mem: %f MB' % (
+                        self.secs, self.start_mem, self.delta_mem))
             else:
                 print(f'{Fore.YELLOW}Timing: elapsed time:{Fore.RESET} %f sec' % self.secs)
 
@@ -92,7 +95,7 @@ def is_known_file_type(file, content, verbose: bool = False):
     """
 
     results = check_sig_content(content, config.signatures)
-    #print(results)
+    # print(results)
 
     """
     - match at the start of the string
@@ -102,7 +105,8 @@ def is_known_file_type(file, content, verbose: bool = False):
         # It returns only the first one
         sig, desc, offset = results[0][0], results[0][1], results[0][2]
         if verbose:
-            print(f"{Fore.LIGHTBLUE_EX} + filename:{Fore.RESET} '{file}' - sig: '{sig}' - off: {str(offset)} - types: '{desc}'")
+            print(
+                f"{Fore.LIGHTBLUE_EX} + filename:{Fore.RESET} '{file}' - sig: '{sig}' - off: {str(offset)} - types: '{desc}'")
         return True, sig, desc, offset
 
     if verbose:
@@ -128,10 +132,15 @@ def check_compile_sigs():
 #  ----------------- RANSOMWARE EXTENSIONS UTILITY ----------------------------------------
 
 def load_ransomware_exts():
-    with open('./ransomware_exts.json', 'rt') as f:
-        config.BAD_FILE_EXTS = dict()
-        for i in json.loads(f.read()):
-            try:
-                config.BAD_FILE_EXTS[i['File Extension']].extend([i['Description']])
-            except KeyError:
-                config.BAD_FILE_EXTS[i['File Extension']] = [i['Description']]
+    path = os.path.expanduser(CFG_PATH_FOR_RANSOMWARE_EXTENSIONS)
+    url = URL_FOR_RANSOMWARE_EXTESIONS
+
+    response = requests.get(url)
+    if response.status_code == 200:
+        with open(path, "w") as f:
+            json.dump(response.json(), f)
+
+    with open(path, 'rt') as f:
+        config.RANSOMWARE_FILE_EXTS = dict()
+        for item in json.loads(f.read())['filters']:
+            config.RANSOMWARE_FILE_EXTS[item.replace('*.', '')] = item

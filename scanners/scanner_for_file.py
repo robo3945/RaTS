@@ -26,11 +26,11 @@ class ScannerForFile(Scanner):
         :return:
         """
         super().__init__(csv_path, verbose, anonymize=anonymize)
-        self.bad_file_ext_dict = config.BAD_FILE_EXTS
-        self.file_name_terms_set = set([line.strip().lower() for line in config.MANIFEST_FILE_NAME_TERMS.split(",") if
-                                        line.strip() != ""])
-        self.file_name_exts_set = set([line.strip().lower() for line in config.CFG_FILE_NAME_EXTS.split(",") if
-                                       line.strip() != ""])
+        self.ransomware_file_ext_dict = config.RANSOMWARE_FILE_EXTS
+        self.manifest_file_name_terms_set = set([line.strip().lower() for line in config.CFG_MANIFEST_FILE_NAME_TERMS.split(",") if
+                                                 line.strip() != ""])
+        self.manifest_file_name_exts_set = set([line.strip().lower() for line in config.CFG_MANIFEST_FILE_NAME_EXTS.split(",") if
+                                                line.strip() != ""])
         self.file_text_terms_set = set(sorted(config.FILE_TEXT_TERMS_DIC, key=itemgetter(1), reverse=True))
 
     def print_config(self):
@@ -41,12 +41,15 @@ class ScannerForFile(Scanner):
         print(Fore.RESET)
         print(f'{Fore.LIGHTCYAN_EX}{Scanner.sep} Config elements for "{__name__}" {Scanner.sep}')
         print()
-        print(f'{Fore.YELLOW}1 - ransomware file extensions detected: {Fore.GREEN}{self.bad_file_ext_dict}\n')
-        print(f'{Fore.YELLOW}2 - manifest file extensions analyzed:{Fore.GREEN} {str(self.file_name_exts_set)}\n')
+        if self.verbose:
+            print(f'{Fore.YELLOW}1 - ransomware file extensions detected: {Fore.GREEN}{self.ransomware_file_ext_dict}\n')
+        else:
+            print(f'{Fore.YELLOW}1 - ransomware file extensions detected: {Fore.GREEN}{str(self.ransomware_file_ext_dict)[:20]+"..."}\n')
+        print(f'{Fore.YELLOW}2 - ransomware manifest file extensions analyzed:{Fore.GREEN} {str(self.manifest_file_name_exts_set)}\n')
         print(
-            f'{Fore.YELLOW}  2.1 - File names detected (without the extensions):{Fore.GREEN} {str(self.file_name_terms_set)}\n')
+            f'{Fore.YELLOW}  2.1 - File names detected (without the extensions):{Fore.GREEN} {str(self.manifest_file_name_terms_set)}\n')
         print(
-            f'{Fore.YELLOW}  2.3 - List with terms and their "relevance":{Fore.GREEN} {str(self.file_text_terms_set)}')
+            f'{Fore.YELLOW}  2.3 - Ransomware terms and their "relevance":{Fore.GREEN} {str(self.file_text_terms_set)}')
         print(Fore.RESET)
 
     def file(self, full_file_path: str):
@@ -56,7 +59,7 @@ class ScannerForFile(Scanner):
 
         self.print_config()
         print(
-            f'{Fore.LIGHTCYAN_EX}{Scanner.sep} Starting search Ransomware manifest traces in: {str(full_file_path)} {Scanner.sep}')
+            f'{Fore.LIGHTCYAN_EX}{Scanner.sep} Starting search for Ransomware manifest or extension traces {str(full_file_path)} {Scanner.sep}')
         print(Fore.RESET)
 
         super()._internal_one_file(full_file_path)
@@ -68,7 +71,7 @@ class ScannerForFile(Scanner):
 
         self.print_config()
         print(
-            f'{Fore.LIGHTCYAN_EX}{Scanner.sep} Starting search Ransomware manifest traces in: {str(path)} {Scanner.sep}')
+            f'{Fore.LIGHTCYAN_EX}{Scanner.sep} Starting search for Ransomware manifest or extension traces {str(path)} {Scanner.sep}')
         print(Fore.RESET)
         self.csv_manager.print_header()
         self._search(path, dirs_to_exclude,files_to_exclude_list, recursive)
@@ -119,7 +122,7 @@ class ScannerForFile(Scanner):
         if len(ext) == 0 or ext not in config.EXT_FILES_LIST_TO_EXCLUDE:
             found = self._search_in_file(file)
             if found:
-                print(f'{Fore.MAGENTA}---> Filename analysed:{Fore.RESET} {file.path}')
+                print(f'{Fore.MAGENTA}---> Filename with problem was analysed:{Fore.RESET} {file.path}')
 
     def _search_in_file(self, file) -> Optional[CsvRow]:
         """
@@ -128,7 +131,7 @@ class ScannerForFile(Scanner):
         It searches for:
 
         1)  If the file has a Bad extension
-        2)  For the allowed extensions (not the Bad exts), if it has a file name with suspect name part or            terms in the content
+        2)  For the allowed extensions (not the Bad exts), if it has a file name with suspect name part or terms in the content
 
         :param file: the file analyzed
         :return: None or the file detected
@@ -140,22 +143,21 @@ class ScannerForFile(Scanner):
             ext = ext[1:]
 
         # check if the file has a ransomware extension
-        if self.bad_file_ext_dict.get(ext) or self.bad_file_ext_dict.get(f'.{ext}'):
-            if self.verbose:
-                print(f'{Fore.RED}-> Found ransomware ext: {Fore.RESET}{ext}')
-            csv_row = self.csv_manager.csv_row(file, "Ransomware filename extension",
-                                               f"Extension: {ext}, Value: {self.bad_file_ext_dict[ext]}")
-        # or the allowed extensions are checked for the file name and the content
+        if self.ransomware_file_ext_dict.get(ext):
+            # if self.verbose:
+            print(f'{Fore.RED}-> Ransomware ext found: {Fore.RESET}{ext}')
+            csv_row = self.csv_manager.csv_row(file, "Ransomware filename extension", f"Extension: {ext}, Value: {self.ransomware_file_ext_dict.get(ext)}")
+        # check if the file is a manifest file AND contains suspect terms
         elif file.stat().st_size <= config.CFG_MANIFEST_MAX_SIZE \
-                and ext in self.file_name_exts_set \
-                or f'.{ext}' in self.file_name_exts_set:
+                and ext in self.manifest_file_name_exts_set \
+                or f'.{ext}' in self.manifest_file_name_exts_set:
 
             if self.verbose:
                 print(
                     f"{Fore.MAGENTA}-> Processing the file '{Fore.RESET}{file.path}' {Fore.MAGENTA}for the extension{Fore.RESET} '{ext}'")
 
             # check the filename
-            csv_row = self._search_in_file_name(file)
+            csv_row = self._search_bad_terms_in_file_name(file)
 
             if not csv_row:
                 if self.verbose:
@@ -170,28 +172,29 @@ class ScannerForFile(Scanner):
 
         return csv_row
 
-    def _search_in_file_name(self, file) -> Optional[CsvRow]:
+    def _search_bad_terms_in_file_name(self, file) -> Optional[CsvRow]:
         """
-        Search the match for the file name
+        Search Ransomware filename terms in the file
         :param file:
         :return:
         """
         file_lower = Path(file).stem.lower()
-        for term in self.file_name_terms_set:
+        for term in self.manifest_file_name_terms_set:
             if file_lower.startswith(term):
-                if self.verbose:
-                    print(f"{Fore.RED}--> Found a file name starting with:{Fore.RESET} '{term}'")
-                return self.csv_manager.csv_row(file, "Bad filename prefix", f"file_name_start_with: '{term}'")
+                #if self.verbose:
+                print(f"{Fore.RED}--> Found a manifest file name starting with:{Fore.RESET} '{term}'")
+                return self.csv_manager.csv_row(file, "Ransomware manifest filename prefix found", f"file_name_start_with: '{term}'")
             if term in file_lower:
-                if self.verbose:
-                    print(f"{Fore.RED}--> Found a file name contains this term:{Fore.RESET} '{term}'")
-                return self.csv_manager.csv_row(file, "Bad filename content", f"file_name_contains: '{term}'")
+                #if self.verbose:
+                print(f"{Fore.RED}--> Found a manifest file name contains this term:{Fore.RESET} '{term}'")
+                return self.csv_manager.csv_row(file, "Ransomware manifest content found", f"file_name_contains: '{term}'")
+
             # TODO: aggiungere un riconoscimento del nome di file più raffinato, isolando le parole nel nome del file e facendo match con i pattern inseriti nel config.py ad esempio
         return None
 
     def _search_in_file_content(self, file) -> Optional[CsvRow]:
         """
-        Search for terms in the file content
+        Search for suspect ransomware terms in the file content (if not a well known file format)
         :param file:
         :return:
         """
@@ -228,13 +231,13 @@ class ScannerForFile(Scanner):
                     if sum_perc > 0 and len(list_found) > 0:
                         p = sum_perc / len(list_found)
                         if p >= config.CFG_TERM_PERC_TH:
-                            if self.verbose:
-                                print(f"--> Found patterns in the file content: '{str(list_found)}' (mean {p}%)")
-                            return self.csv_manager.csv_row(file, "Bad patterns in file content",
+                            # if self.verbose:
+                            print(f"{Fore.RED}--> Found suspect ransomware patterns in the file content: '{str(list_found)}' (mean {p}%)")
+                            return self.csv_manager.csv_row(file, "Ransomware patterns in file content found",
                                                             f'\"{str(list_found)}\"')
 
                     if len(list_found) == 0 and self.verbose:
-                        self.csv_manager.csv_row(file, IGNORED_FILE, f"No bad patterns found")
+                        self.csv_manager.csv_row(file, IGNORED_FILE, f"No ransomware patterns found")
 
         except PermissionError as e:
             msg = f'EEE => Permissions error: {e}'

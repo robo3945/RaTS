@@ -11,7 +11,7 @@ ______    _____ _____
 | |\ \ (_| | | /\__/ /
 \_| \_\__,_\_/ \____/ 
 """
-RATS_VERSION = '1.9a'
+RATS_VERSION = '1.9.1'
 
 HELP = """
 
@@ -45,13 +45,13 @@ EXT_FILES_LIST_TO_EXCLUDE = set()
 
 # ======================> File name test
 
-# ==> Bad file name extensions that reveal the high probability of ransomware presence
+# ==> Ransomware file name extensions that reveal the high probability of ransomware presence
 
-BAD_FILE_EXTS = None
+RANSOMWARE_FILE_EXTS = None
 
 # ==> File name prefixes that reveal the malware
 # TODO: expand this section
-MANIFEST_FILE_NAME_TERMS = """
+CFG_MANIFEST_FILE_NAME_TERMS = """
 cryptolocker,
 !Decrypt-All-Files-,
 decrypt_instruct,
@@ -84,7 +84,7 @@ vault,
 CFG_MANIFEST_MAX_SIZE = 10_000_000  # bytes
 
 # extension of file name to analyze
-CFG_FILE_NAME_EXTS = "html, hta, htm, txt, bmp, jpg, gif, png"
+CFG_MANIFEST_FILE_NAME_EXTS = "html, hta, htm, txt, bmp, jpg, gif, png"
 
 # RegEx pattern for searching into the text: tuples with: (regex ptrn, percentage_weight)
 # TODO: expand this section
@@ -144,6 +144,10 @@ KNOWN_FILE_SIGS = \
 
 URL_FOR_SIGNATURES = "http://www.filesignatures.net/index.php?page=all&currentpage={}"
 CFG_PATH_FOR_SIGNATURES = './file_sigs.json'
+
+URL_FOR_RANSOMWARE_EXTESIONS = "https://fsrm.experiant.ca/api/v1/combined"
+CFG_PATH_FOR_RANSOMWARE_EXTENSIONS = './ransomware_exts_new.json'
+
 # the maximum lenght of the signature to find in the Dump file
 CFG_MAX_FILE_SIGNATURE_LENGTH = 60
 # the minimum bytes length for checking the compressed item
