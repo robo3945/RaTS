@@ -12,7 +12,7 @@ from config.config import HELP
 from config.config_utils import read_config_file
 from misc import utils
 from misc.notify import MailSender
-from misc.utils import check_compile_sigs, load_ransomware_exts
+from misc.utils import check_compile_sigs, load_ransomware_file_patterns
 from scanners.scanner import Scanner
 from scanners.scanner_for_crypt import ScannerForCrypt
 from scanners.scanner_for_file import ScannerForFile
@@ -142,7 +142,7 @@ def main(argv):
         # load the signatures for file magic byte
         config.signatures = check_compile_sigs()
         # load the extension for ransomware files
-        load_ransomware_exts()
+        load_ransomware_file_patterns()
 
         try:
             if ana_type == "all":
@@ -188,7 +188,7 @@ def main(argv):
         # load the signatures for file magic byte
         config.signatures = check_compile_sigs()
         # load the extension for ransomware files
-        load_ransomware_exts()
+        load_ransomware_file_patterns()
 
         if ana_type == "all":
             process_file(input_file, 'm', crypto_type=crypto_type, verbose=verbose)

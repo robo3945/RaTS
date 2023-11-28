@@ -47,7 +47,7 @@ EXT_FILES_LIST_TO_EXCLUDE = set()
 
 # ==> Ransomware file name extensions that reveal the high probability of ransomware presence
 
-RANSOMWARE_FILE_EXTS = None
+RANSOMWARE_FILE_PATTERN = None
 
 # ==> File name prefixes that reveal the malware
 # TODO: expand this section
@@ -145,8 +145,8 @@ KNOWN_FILE_SIGS = \
 URL_FOR_SIGNATURES = "http://www.filesignatures.net/index.php?page=all&currentpage={}"
 CFG_PATH_FOR_SIGNATURES = './file_sigs.json'
 
-URL_FOR_RANSOMWARE_EXTESIONS = "https://fsrm.experiant.ca/api/v1/combined"
-CFG_PATH_FOR_RANSOMWARE_EXTENSIONS = './ransomware_exts_new.json'
+URL_FOR_RANSOMWARE_FILE_PATTERNS = "https://fsrm.experiant.ca/api/v1/combined"
+CFG_PATH_FOR_RANSOMWARE_FILE_PATTERNS = './ransomware_exts_new.json'
 
 # the maximum lenght of the signature to find in the Dump file
 CFG_MAX_FILE_SIGNATURE_LENGTH = 60

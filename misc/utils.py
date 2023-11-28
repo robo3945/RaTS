@@ -1,5 +1,6 @@
 import json
 import os
+import re
 import time
 
 import sys
@@ -9,8 +10,8 @@ import requests
 from colorama import Fore
 
 from config import config
-from config.config import CFG_PATH_FOR_SIGNATURES, URL_FOR_SIGNATURES, CFG_PATH_FOR_RANSOMWARE_EXTENSIONS, \
-    URL_FOR_RANSOMWARE_EXTESIONS
+from config.config import CFG_PATH_FOR_SIGNATURES, URL_FOR_SIGNATURES, CFG_PATH_FOR_RANSOMWARE_FILE_PATTERNS, \
+    URL_FOR_RANSOMWARE_FILE_PATTERNS
 from logic.check_sigs import compile_sigs, check_sig_content
 
 try:
@@ -131,9 +132,14 @@ def check_compile_sigs():
 
 #  ----------------- RANSOMWARE EXTENSIONS UTILITY ----------------------------------------
 
-def load_ransomware_exts():
-    path = os.path.expanduser(CFG_PATH_FOR_RANSOMWARE_EXTENSIONS)
-    url = URL_FOR_RANSOMWARE_EXTESIONS
+def load_ransomware_file_patterns():
+    """
+    Load Ransomware patterns
+
+    :return:
+    """
+    path = os.path.expanduser(CFG_PATH_FOR_RANSOMWARE_FILE_PATTERNS)
+    url = URL_FOR_RANSOMWARE_FILE_PATTERNS
 
     response = requests.get(url)
     if response.status_code == 200:
@@ -141,6 +147,6 @@ def load_ransomware_exts():
             json.dump(response.json(), f)
 
     with open(path, 'rt') as f:
-        config.RANSOMWARE_FILE_EXTS = dict()
+        config.RANSOMWARE_FILE_PATTERN = dict()
         for item in json.loads(f.read())['filters']:
-            config.RANSOMWARE_FILE_EXTS[item.replace('*.', '')] = item
+            config.RANSOMWARE_FILE_PATTERN[re.sub(r'[\[\]]', "", item)] = item
