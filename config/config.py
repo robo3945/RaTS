@@ -50,7 +50,6 @@ EXT_FILES_LIST_TO_EXCLUDE = set()
 RANSOMWARE_FILE_PATTERN = None
 
 # ==> File name prefixes that reveal the malware
-# TODO: expand this section
 CFG_MANIFEST_FILE_NAME_TERMS = """
 cryptolocker,
 !Decrypt-All-Files-,
@@ -87,7 +86,6 @@ CFG_MANIFEST_MAX_SIZE = 10_000_000  # bytes
 CFG_MANIFEST_FILE_NAME_EXTS = "html, hta, htm, txt, bmp, jpg, gif, png"
 
 # RegEx pattern for searching into the text: tuples with: (regex ptrn, percentage_weight)
-# TODO: expand this section
 FILE_TEXT_TERMS_DIC = [(r'\bcryptowall\b', 100),
                        (r'\bcryptolocker\b', 100),
                        (r'\bCryptoDefense\b', 100),
@@ -145,6 +143,7 @@ KNOWN_FILE_SIGS = \
 URL_FOR_SIGNATURES = "http://www.filesignatures.net/index.php?page=all&currentpage={}"
 CFG_PATH_FOR_SIGNATURES = './file_sigs.json'
 
+# https://fsrm.experiant.ca/
 URL_FOR_RANSOMWARE_FILE_PATTERNS = "https://fsrm.experiant.ca/api/v1/combined"
 CFG_PATH_FOR_RANSOMWARE_FILE_PATTERNS = './ransomware_exts_new.json'
 

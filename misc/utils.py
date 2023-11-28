@@ -138,13 +138,25 @@ def load_ransomware_file_patterns():
 
     :return:
     """
-    path = os.path.expanduser(CFG_PATH_FOR_RANSOMWARE_FILE_PATTERNS)
-    url = URL_FOR_RANSOMWARE_FILE_PATTERNS
 
-    response = requests.get(url)
-    if response.status_code == 200:
-        with open(path, "w") as f:
-            json.dump(response.json(), f)
+    def write_file():
+        url = URL_FOR_RANSOMWARE_FILE_PATTERNS
+        print(f'{Fore.LIGHTCYAN_EX}Fetch the signature file pattern from: {url}')
+        response = requests.get(url)
+        if response.status_code == 200:
+            with open(path, "w") as f:
+                json.dump(response.json(), f)
+
+    path = os.path.expanduser(CFG_PATH_FOR_RANSOMWARE_FILE_PATTERNS)
+
+    if os.path.exists(path):
+        mtime = os.path.getmtime(path)
+        now = time.time()
+        diff = (now - mtime) / (24 * 60 * 60)
+        if diff > 1:
+            write_file()
+    else:
+        write_file()
 
     with open(path, 'rt') as f:
         config.RANSOMWARE_FILE_PATTERN = dict()

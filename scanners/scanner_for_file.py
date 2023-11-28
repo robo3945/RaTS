@@ -151,7 +151,6 @@ class ScannerForFile(Scanner):
 
         # check if the file has a ransomware extension
         for ptrn in self.ransomware_file_patterns_dict.keys():
-            # TODO: problemi con '*[cryptservice@inbox.ru]*' che riconosce *.jpg
             if fnmatch.fnmatch(Path(file).name, ptrn):
                 # if self.verbose:
                 print(f'{Fore.RED}-> Ransomware file name pattern or extension found: {Fore.RESET}{ptrn}')

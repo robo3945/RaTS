@@ -59,7 +59,6 @@ def main(argv):
 
     print(Fore.LIGHTCYAN_EX + "---***--- Cmd line args ---***---" + Fore.RESET)
 
-    # TODO check the existence of the argument
     for opt, arg in opts:
         if opt == '-h':
             print('************ help ************', end='\n')
@@ -266,7 +265,6 @@ def process_dirs(dirs_to_process, dirs_to_exclude, files_to_exclude_list, prefix
     with utils.Timer(verbose=True):
         if scanner:
             for inputdir in dirs_to_process:
-                # TODO: is it possible to insert here multiprocessing?
                 scanner.search(inputdir, dirs_to_exclude, files_to_exclude_list, recursive=recursive)
             scanner.close_csv_handle()
             print(f'{Fore.LIGHTCYAN_EX}Closed CSV file for write outcome: {output_file}{Fore.RESET}')
