@@ -51,7 +51,7 @@ class Scanner(metaclass=abc.ABCMeta):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def _process_a_file(self, file: os.DirEntry):
+    def _process_a_file(self, file: os.DirEntry, files_to_exclude_list=None):
         raise NotImplementedError
 
     @abc.abstractmethod

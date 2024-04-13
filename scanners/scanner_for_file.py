@@ -124,7 +124,7 @@ class ScannerForFile(Scanner):
             msg = f'EEE (ScanDir) => FileNotFound error: {e}'
             print(msg)
 
-    def _process_a_file(self, file):
+    def _process_a_file(self, file, files_to_exclude_list=None):
         ext = Path(file).suffix.lower().replace('.', '')
         if len(ext) == 0 or ext not in config.EXT_FILES_LIST_TO_EXCLUDE:
             found = self._search_in_file(file)
@@ -154,7 +154,7 @@ class ScannerForFile(Scanner):
             if fnmatch.fnmatch(Path(file).name, ptrn):
                 # if self.verbose:
                 print(f'{Fore.RED}-> Ransomware file name pattern or extension found: {Fore.RESET}{ptrn}')
-                csv_row = self.csv_manager.csv_row(file, "Ransomware filename pattern or extension", f"Ptrn or Extension: {ptrn}")
+                csv_row = self.csv_manager.csv_row(file, "Ransomware filename pattern or extension", f"Ransomware ptrn or extension: {ptrn}")
                 return csv_row
 
         # check if the file is a manifest file AND contains suspect terms

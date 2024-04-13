@@ -123,14 +123,15 @@ class ScannerForCrypt(Scanner):
             msg = f'EEE (ScanDir) => FileNotFound error: {e}'
             print(msg)
 
-    def _process_a_file(self, file, files_to_exclude_list) -> CsvRow:
-        if not (file.path in files_to_exclude_list):
-            ext = Path(file).suffix.lower().replace('.', '')
-            if len(ext) == 0 or ext not in config.EXT_FILES_LIST_TO_EXCLUDE:
-                found = self._search_for_crypted_content(file)
-                if found:
-                    print(f'{Fore.RED}---> Crypto result: {Fore.RESET}{found.min_print()}')
-                    return found
+    def _process_a_file(self, file, files_to_exclude_list=None) -> CsvRow:
+        if files_to_exclude_list is not None:
+            if not (file.path in files_to_exclude_list):
+                ext = Path(file).suffix.lower().replace('.', '')
+                if len(ext) == 0 or ext not in config.EXT_FILES_LIST_TO_EXCLUDE:
+                    found = self._search_for_crypted_content(file)
+                    if found:
+                        print(f'{Fore.RED}---> Crypto result: {Fore.RESET}{found.min_print()}')
+                        return found
 
     def _search_for_crypted_content(self, file) -> Optional[CsvRow]:
         """
