@@ -129,7 +129,7 @@ def check_compile_sigs():
 #  ----------------- RANSOMWARE EXTENSIONS UTILITY ----------------------------------------
 
 def load_ransomware_exts():
-    with open('./ransomware_exts.json', 'rt') as f:
+    with open('./ransomware_exts.json', 'rt', encoding='utf-8') as f:
         config.BAD_FILE_EXTS = dict()
         for i in json.loads(f.read()):
             try:
