@@ -158,7 +158,7 @@ def load_ransomware_file_patterns():
     else:
         write_file()
 
-    with open(path, 'rt') as f:
+    with open(path, 'rt', encoding='utf-8') as f:
         config.RANSOMWARE_FILE_PATTERN = dict()
         for item in json.loads(f.read())['filters']:
             config.RANSOMWARE_FILE_PATTERN[re.sub(r'[\[\]]', "", item)] = item
